@@ -10,8 +10,9 @@
 
 .sidebar-logo {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column; /* Cambiar la dirección del flex a columna */
+  align-items: flex-start; /* Alinea los elementos al inicio del contenedor */
+  gap: 10px; /* Espacio entre los elementos */
   margin-bottom: 2rem;
 }
 
@@ -35,3 +36,4 @@
 .sidebar-menu li.active {
   background-color: #3b4b5b;
 }
+

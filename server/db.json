@@ -22,7 +22,7 @@
       "idUser": 2,
       "idInstitution": 1,
       "name": "Juanito",
-      "lastname": "Perez",
+      "lastName": "Perez",
       "telephone": "968889947"
     }
   ],
@@ -30,7 +30,7 @@
     {
       "id": 1,
       "idUser": 1,
-      "na": "UC:V"
+      "name": "UC:V"
     },
     {
       "id": "5f82",

@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {StudentService} from '../../services/student.service';
@@ -7,7 +6,6 @@ import {StudentService} from '../../services/student.service';
 @Component({
   selector: 'app-profile-student',
   imports: [
-    NgIf,
     FormsModule
   ],
   templateUrl: './profile-student.component.html',
