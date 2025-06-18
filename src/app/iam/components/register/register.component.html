@@ -1,0 +1,19 @@
+<div class="register-container">
+  <h2>Register Institution</h2>
+  <form (ngSubmit)="register()">
+    <label for="na">Institution Name:</label>
+    <input id="na" [(ngModel)]="institution.na" name="na" required />
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" [(ngModel)]="institution.email" name="email" required />
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" [(ngModel)]="institution.password" name="password" required />
+
+    <button type="submit">Register</button>
+  </form>
+  <p class="register-link">
+    Do you have an account?
+    <a routerLink="/login">Login</a>
+  </p>
+</div>

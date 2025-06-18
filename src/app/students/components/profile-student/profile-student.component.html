@@ -1,0 +1,24 @@
+<div class="profile-container">
+  <h2>Perfil del Estudiante</h2>
+
+  <div class="profile-details">
+    <label>
+      Nombre:
+      <input [(ngModel)]="student.name" type="text">
+    </label>
+    <label>
+      Email:
+      <input [(ngModel)]="student.email" type="email">
+    </label>
+    <label>
+      Carrera:
+      <input [(ngModel)]="student.career" type="text">
+    </label>
+    <label>
+      Institución:
+      <input [(ngModel)]="student.institution" type="text">
+    </label>
+
+    <button (click)="saveChanges()">Guardar Cambios</button>
+  </div>
+</div>

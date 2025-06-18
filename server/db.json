@@ -1,0 +1,36 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "na": "Demo Institución",
+      "email": "demo@institucion.com",
+      "password": "123456",
+      "role": "institucion",
+      "created_at": "2025-06-17T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "na": "Pedro Estudiante",
+      "email": "pedro@alumno.com",
+      "password": "123456",
+      "role": "estudiante",
+      "created_at": "2025-06-17T11:00:00Z"
+    }
+  ],
+  "students": [
+    {
+      "id": 1,
+      "name": "Juan Pérez",
+      "email": "juan.perez@email.com",
+      "password": "123456",
+      "career": "Ingeniería de Sistemas",
+      "institution": "Universidad Nacional"
+    }
+  ],
+  "courses": [],
+  "course_enrollments": [],
+  "grades": [],
+  "grade_structure": [],
+  "certificates": [],
+  "blockchain": []
+}
