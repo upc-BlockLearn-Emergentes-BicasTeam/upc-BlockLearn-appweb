@@ -9,15 +9,15 @@ import {forkJoin} from 'rxjs';
   providedIn: 'root'
 })
 export class StudentService {
-  private baseUrl = 'http://localhost:3000/students';
+  private baseUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient) {}
 
-  updateStudentData(user: UserEntity, student: StudentEntity){
-    return forkJoin({
-      studentUpdate: this.http.put(`${this.baseUrl}/students`, student),
-      userUpdate: this.http.put(`${this.baseUrl}/users`, user)
-    });
+  updateStudentData(student: StudentEntity){
+    return this.http.put(`${this.baseUrl}/students/${student.id}`, student);
   }
 
+  updateUserData(user: UserEntity){
+    return this.http.put(`${this.baseUrl}/users/${user.id}`, user);
+  }
 }

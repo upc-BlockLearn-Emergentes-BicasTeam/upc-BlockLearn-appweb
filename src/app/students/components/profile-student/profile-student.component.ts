@@ -31,18 +31,26 @@ export class ProfileStudentComponent implements OnInit {
       this.student.lastName = data[0].lastName;
       this.student.id=data[0].id;
       this.student.telephone = data[0].telephone;
+    });
+    this.authService.findUserByIdUser(this.student.idUser).subscribe((data:any) => {
+      this.user.id = data[0].id;
     })
-
   }
   enableEditing() {
     this.isEditing = true;
   }
   saveChanges() {
     if (this.user.email && this.user.password) {
-      this.studentService.updateStudentData(this.user, this.student).subscribe(() => {
+      console.log(this.user);
+      console.log(this.student);
+      this.studentService.updateStudentData(this.student).subscribe(() => {
         alert('Datos actualizados correctamente');
         this.isEditing = false;
       });
+      this.studentService.updateUserData(this.user).subscribe(() => {
+        alert('Datos actualizados correctamente');
+        this.isEditing = false;
+      })
     } else {
       alert('Email y contraseña son obligatorios para guardar');
     }
