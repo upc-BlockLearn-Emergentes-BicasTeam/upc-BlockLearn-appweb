@@ -1,15 +1,27 @@
 <nav class="sidebar">
   <div class="sidebar-logo">
-    <img src="/assets/logo.png" height="370" width="834"/>
+    <span class="material-icons">local_library</span>
     <h2>BlockLearn</h2>
     <div>
       <h3>Welcome: {{student.name}} {{student.lastName}}</h3>
     </div>
   </div>
   <ul class="sidebar-menu">
-    <li [routerLink]="[`/student/${student.id}`]">Profile</li>
-    <li >Courses</li>
-    <li >Certificates</li>
-    <li >Blockchain</li>
+    <li [routerLink]="[`/student/${student.idUser}`]">
+      <span class="material-icons">person</span>
+      Profile
+    </li>
+    <li>
+      <span class="material-icons">book</span>
+      Courses
+    </li>
+    <li>
+      <span class="material-icons">star</span>
+      Certificates
+    </li>
+    <li>
+      <span class="material-icons">token</span>
+      Blockchain
+    </li>
   </ul>
 </nav>

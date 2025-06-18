@@ -1,24 +1,39 @@
 <div class="profile-container">
   <h2>Perfil del Estudiante</h2>
+  <div class="profile-content">
+    <!-- Columna izquierda -->
+    <div class="profile-icon-section">
+      <span class="material-icons profile-icon">person</span>
+      <button (click)="enableEditing()">Edit</button>
+      <button
+        [disabled]="!user.email || !user.password"
+        (click)="saveChanges()"
+        class="save-btn"
+      >Guardar Cambios</button>
+    </div>
 
-  <div class="profile-details">
-    <label>
-      Nombre:
-      <input [(ngModel)]="student.name" type="text">
-    </label>
-    <label>
-      Email:
-      <input [(ngModel)]="student.email" type="email">
-    </label>
-    <label>
-      Carrera:
-      <input [(ngModel)]="student.career" type="text">
-    </label>
-    <label>
-      Institución:
-      <input [(ngModel)]="student.institution" type="text">
-    </label>
-
-    <button (click)="saveChanges()">Guardar Cambios</button>
+    <!-- Columna derecha -->
+    <div class="profile-details">
+      <label>
+        Name:
+        <input [(ngModel)]="student.name" type="text" [readonly]="!isEditing">
+      </label>
+      <label>
+        LastName:
+        <input [(ngModel)]="student.lastName" type="text" [readonly]="!isEditing">
+      </label>
+      <label>
+        Telephone:
+        <input [(ngModel)]="student.telephone" type="number" [readonly]="!isEditing">
+      </label>
+      <label>
+        Email:
+        <input [(ngModel)]="user.email" type="email" [readonly]="!isEditing">
+      </label>
+      <label>
+        Password:
+        <input [(ngModel)]="user.password" type="text" [readonly]="!isEditing">
+      </label>
+    </div>
   </div>
 </div>

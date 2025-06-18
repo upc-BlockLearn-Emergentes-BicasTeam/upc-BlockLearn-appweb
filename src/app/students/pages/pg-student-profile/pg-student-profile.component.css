@@ -1,0 +1,9 @@
+.p-sidebar {
+
+  max-width: 280px; /* Máximo ancho */
+  background-color: #2C3E50;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+  flex-shrink: 0; /* Evita que el sidebar se reduzca */
+  overflow: hidden; /* Asegura que el contenido no desborde */
+}

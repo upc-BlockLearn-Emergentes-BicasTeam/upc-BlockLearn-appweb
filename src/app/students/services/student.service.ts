@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {UserEntity} from '../../iam/model/user.entity';
+import {StudentEntity} from '../model/student.entity';
+import {forkJoin} from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +13,11 @@ export class StudentService {
 
   constructor(private http: HttpClient) {}
 
-  getStudentById(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}?id=${id}`);
+  updateStudentData(user: UserEntity, student: StudentEntity){
+    return forkJoin({
+      studentUpdate: this.http.put(`${this.baseUrl}/students`, student),
+      userUpdate: this.http.put(`${this.baseUrl}/users`, user)
+    });
   }
+
 }
