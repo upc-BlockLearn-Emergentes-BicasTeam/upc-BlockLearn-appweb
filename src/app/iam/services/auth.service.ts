@@ -23,12 +23,16 @@ export class AuthService {
   registerUser(user: UserEntity) {
     return this.http.post(`${this.baseUrl}/users`, user);
   }
-  loginStudent(email: string, password: string): Observable<any | null> {
-    return this.http.get<any[]>(`${this.baseUrl}/students`).pipe(
-      map((students) => {
-        const user = students.find(s => s.email === email && s.password === password);
-        return user || null;
-      })
-    );
+  findUserByEmailAndPassword(email: string, password: string) {
+    return this.http.get(`${this.baseUrl}/users?email=${email}&password=${password}`);
+  }
+  findInstitutionByIdUser(idUser: number) {
+    return this.http.get(`${this.baseUrl}/institutes?idUser=${idUser}`);
+  }
+  findStudentByIdUser(idUser: number) {
+    return this.http.get(`${this.baseUrl}/students?idUser=${idUser}`);
+  }
+  findTeacherByIdUser(idUser: number) {
+    return this.http.get(`${this.baseUrl}/teachers?idUser=${idUser}`);
   }
 }

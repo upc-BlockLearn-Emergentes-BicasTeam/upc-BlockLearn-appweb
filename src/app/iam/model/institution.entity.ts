@@ -1,10 +1,10 @@
 export class InstitutionEntity {
   id?: number;
   name: string;
-  idUser: number | null;
+  idUser: number ;
 
   constructor() {
     this.name = '';
-    this.idUser = null;
+    this.idUser = 0;
   }
 }
