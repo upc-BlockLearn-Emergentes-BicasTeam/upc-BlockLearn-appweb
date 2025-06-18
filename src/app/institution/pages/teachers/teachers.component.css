@@ -1,0 +1,226 @@
+:host {
+  display: block;
+  padding: 2rem;
+  background: #f0f2f5;
+  min-height: 100vh;
+}
+
+/* Card principal */
+.teachers-page {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 1rem;
+}
+
+/* Header con botón */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+}
+.header h2 {
+  margin: 0;
+  color: #1f2933;
+}
+.btn-add {
+  background-color: #3366ff;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color .2s;
+}
+.btn-add:hover {
+  background-color: #254edc;
+}
+
+/* Lista de filas */
+.teacher-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.teacher-row + .teacher-row {
+  margin-top: 0.5rem;
+}
+
+/* Fila principal */
+.row-main {
+  display: grid;
+  grid-template-columns: 40px 60px 1fr 80px;
+  align-items: center;
+  padding: 0.75rem;
+  cursor: pointer;
+}
+.col-num {
+  color: #1f2933;
+  text-align: center;
+}
+.col-avatar .avatar-icon {
+  width: 40px;
+  height: 40px;
+  background: #e0e4e8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: #1f2933;
+}
+.col-name {
+  color: #1f2933;
+}
+.col-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.btn-delete,
+.btn-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.btn-delete svg,
+.btn-toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: #1f2933;
+}
+.btn-toggle svg.up {
+  transform: rotate(180deg);
+}
+
+/* Highlight cuando está expandido */
+.teacher-row.expanded .row-main {
+  background-color: #9ab9ff;
+}
+
+/* Detalle expandido */
+.row-details {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+.row-details p {
+  margin: 0.5rem 0;
+  color: #1f2933;
+}
+.course-list {
+  list-style: disc;
+  margin: 0.5rem 0 1rem 1.5rem;
+  padding: 0;
+}
+.btn-assign {
+  background-color: #3366ff;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color .2s;
+}
+.btn-assign:hover {
+  background-color: #254edc;
+}
+
+/* Modales */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;                /* <- asegúrate de que quede encima */
+}
+.modal {
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 400px;
+  position: relative;
+  z-index: 1001;                /* <- y el modal encima del backdrop */
+}
+
+.btn-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+.modal .avatar-fallback {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1rem;
+  background: #e0e4e8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal .avatar-fallback svg {
+  width: 48px;
+  height: 48px;
+  fill: #1f2933;
+}
+.modal .form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0 auto;
+  width: 100%;
+}
+.modal label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal input {
+  width: 65%;
+  padding: 0.5rem;
+  border-radius: 24px;
+  border: 1px solid #ccc;
+  background: #9ab9ff;
+  color: #1f2933;
+}
+.modal .btn-save {
+  margin-top: 1.5rem;
+  background-color: #3366ff;
+  color: #fff;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color .2s;
+}
+.modal .btn-save:hover {
+  background-color: #254edc;
+}
+
+/* Lista de cursos en asignar */
+.assign-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+}
+.assign-list input {
+  width: 1rem;
+  height: 1rem;
+}

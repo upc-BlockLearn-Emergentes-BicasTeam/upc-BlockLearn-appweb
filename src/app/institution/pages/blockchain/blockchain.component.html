@@ -1,1 +1,65 @@
-<p>blockchain works!</p>
+<div class="blockchain-page">
+  <ul class="entry-list">
+    <li *ngFor="let e of entries">
+      <!-- Cabecera -->
+      <div class="entry-header" (click)="toggleExpand(e)">
+        <div class="col hash">{{ e.hash }}</div>
+        <div class="col type">{{ e.type }}</div>
+        <div class="col id">{{ e.id }}</div>
+        <div class="col toggle">
+          <svg
+            [ngClass]="{ 'down': !expanded[e.id], 'up': expanded[e.id] }"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path d="M7 10l5 5 5-5H7z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Detalle desplegable -->
+      <div class="entry-details" *ngIf="expanded[e.id]">
+        <ng-container [ngSwitch]="e.type">
+          <!-- Certificate -->
+          <div *ngSwitchCase="'Certificate'" class="details">
+            <p><strong>Alumno Code:</strong> {{ e.studentCode || '*****' }}</p>
+            <p><strong>Name Course:</strong> {{ e.course?.name }}</p>
+            <p><strong>Course Code:</strong> {{ e.course?.code }}</p>
+            <hr>
+            <p><strong>FINAL AVERAGE:</strong> {{ e.finalAverage }}</p>
+            <p><strong>RESULT:</strong> {{ e.result }}</p>
+          </div>
+
+          <!-- Syllabus -->
+          <div *ngSwitchCase="'Syllabus'" class="details">
+            <p><strong>Name Course:</strong> {{ e.course?.name }}</p>
+            <p><strong>Course Code:</strong> {{ e.course?.code }}</p>
+            <hr>
+            <p>
+              <strong>Document:</strong>
+              <button class="btn-download" (click)="downloadDocument(e)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0
+                           0 0 2-2V8l-6-6zm1 7V3.5L18.5 9H15z"/>
+                </svg>
+              </button>
+            </p>
+          </div>
+
+          <!-- Grade -->
+          <div *ngSwitchCase="'Grade'" class="details">
+            <p><strong>Alumno Code:</strong> {{ e.studentCode || '*****' }}</p>
+            <p><strong>Name Course:</strong> {{ e.course?.name }}</p>
+            <p><strong>Course Code:</strong> {{ e.course?.code }}</p>
+            <hr>
+            <p *ngFor="let note of e.notes">
+              <strong>{{ note.label }}:</strong> {{ note.value }}
+            </p>
+            <p><strong>FINAL AVERAGE:</strong> {{ e.finalAverage }}</p>
+            <p><strong>RESULT:</strong> {{ e.result }}</p>
+          </div>
+        </ng-container>
+      </div>
+    </li>
+  </ul>
+</div>

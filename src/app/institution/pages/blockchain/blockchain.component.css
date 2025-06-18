@@ -1,0 +1,86 @@
+:host {
+  display: block;
+  padding: 2rem;
+  background: #f0f2f5;
+  min-height: 100vh;
+}
+
+.blockchain-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Lista sin bullets */
+.entry-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.entry-list li + li {
+  margin-top: 1rem;
+}
+
+/* Cabecera */
+.entry-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 80px 40px;
+  align-items: center;
+  background-color: #9ab9ff;
+  color: #1f2933;
+  padding: 0.75rem;
+  border-radius: 12px 12px 0 0;
+  cursor: pointer;
+}
+.entry-header .col {
+  font-weight: 500;
+}
+.entry-header .hash {
+  text-align: left;
+}
+.entry-header .type {
+  text-align: center;
+}
+.entry-header .id {
+  text-align: right;
+}
+.entry-header .toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: #1f2933;
+  transition: transform 0.2s ease;
+}
+.entry-header .toggle svg.up {
+  transform: rotate(180deg);
+}
+
+/* Detalle */
+.entry-details {
+  background-color: #ffffff;
+  border: 1px solid #e0e4e8;
+  border-top: none;
+  padding: 1rem;
+  border-radius: 0 0 12px 12px;
+}
+.entry-details hr {
+  border: none;
+  border-top: 1px solid #1f2933;
+  margin: 0.5rem 0;
+}
+.details p {
+  margin: 0.5rem 0;
+  color: #1f2933;
+}
+
+/* Botón documento */
+.btn-download {
+  background: none;
+  border: none;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+}
+.btn-download svg {
+  width: 24px;
+  height: 24px;
+  fill: #1f2933;
+}

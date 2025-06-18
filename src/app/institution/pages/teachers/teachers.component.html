@@ -1,1 +1,133 @@
-<p>teachers works!</p>
+<div class="teachers-page">
+  <div class="header">
+    <h2>Teachers</h2>
+    <button class="btn-add" (click)="openAddTeacher()">Add Teacher</button>
+  </div>
+
+  <ul class="teacher-list">
+    <li *ngFor="let t of teachers; let i = index"
+        class="teacher-row"
+        [class.expanded]="expanded[t.id]">
+      <!-- fila principal -->
+      <div class="row-main">
+        <div class="col-num">{{ (i+1) | number:'2.0' }}</div>
+        <div class="col-avatar">
+          <div class="avatar-icon">
+            <!-- icono genérico -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4
+                       7.2 4.5 7.2 7.2s2.1 4.8 4.8 4.8z
+                       M4.8 21.6v-1.2c0-2.7 5.4-4.2 7.2-4.2
+                       s7.2 1.5 7.2 4.2v1.2H4.8z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="col-name">{{ t.firstName }} {{ t.lastName }}</div>
+        <div class="col-actions">
+          <button class="btn-delete" (click)="deleteTeacher(t)" title="Delete">
+            <!-- papelera -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M3 6h18v2H3V6zm2 3h14v13H5V9zm3 2v9h2v-9H8zm4 0v9h2v-9h-2z"/>
+            </svg>
+          </button>
+          <button class="btn-toggle" (click)="toggleExpand(t)">
+            <!-- flecha -->
+            <svg [ngClass]="{'down': !expanded[t.id], 'up': expanded[t.id]}"
+                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M7 10l5 5 5-5H7z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- detalle expandido -->
+      <div class="row-details" *ngIf="expanded[t.id]">
+        <p><strong>Teacher Name:</strong> {{ t.firstName }} {{ t.lastName }}</p>
+        <p><strong>Teacher Email:</strong>
+          <a [href]="'mailto:'+t.email">{{ t.email }}</a>
+        </p>
+        <p><strong>Courses:</strong></p>
+        <ul class="course-list">
+          <li *ngFor="let c of t.courses">{{ c.name }}</li>
+        </ul>
+        <button class="btn-assign" (click)="openAssign(t)">
+          Add/Modify Assigned Courses
+        </button>
+      </div>
+    </li>
+  </ul>
+
+  <!-- Modal: Add Teacher -->
+  <div class="modal-backdrop" *ngIf="showAddModal">
+    <div class="modal">
+      <button class="btn-close" (click)="closeAddTeacher()">×</button>
+      <div class="avatar-fallback">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4
+                   7.2 4.5 7.2 7.2s2.1 4.8 4.8 4.8z
+                   M4.8 21.6v-1.2c0-2.7 5.4-4.2 7.2-4.2
+                   s7.2 1.5 7.2 4.2v1.2H4.8z"/>
+        </svg>
+      </div>
+      <div class="form">
+        <label>
+          Name:
+          <input type="text" [(ngModel)]="newTeacher.firstName">
+        </label>
+        <label>
+          Last name:
+          <input type="text" [(ngModel)]="newTeacher.lastName">
+        </label>
+        <label>
+          Telephone:
+          <input type="text" [(ngModel)]="newTeacher.phone">
+        </label>
+        <label>
+          Email:
+          <input type="email" [(ngModel)]="newTeacher.email">
+        </label>
+        <label>
+          Password:
+          <input type="password" [(ngModel)]="newTeacher.password">
+        </label>
+      </div>
+      <button class="btn-save" (click)="saveNewTeacher()">Add Teacher</button>
+    </div>
+  </div>
+
+  <!-- Modal: Assign Courses -->
+  <div class="modal-backdrop" *ngIf="showAssignModal">
+    <div class="modal">
+      <button class="btn-close" (click)="closeAssign()">×</button>
+      <div class="avatar-fallback">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4
+                   7.2 4.5 7.2 7.2s2.1 4.8 4.8 4.8z
+                   M4.8 21.6v-1.2c0-2.7 5.4-4.2 7.2-4.2
+                   s7.2 1.5 7.2 4.2v1.2H4.8z"/>
+        </svg>
+      </div>
+      <p><strong>Teacher Name:</strong>
+        {{ selectedTeacher?.firstName }}
+        {{ selectedTeacher?.lastName }}
+      </p>
+      <p><strong>Teacher Email:</strong>
+        <a [href]="'mailto:'+selectedTeacher?.email">
+          {{ selectedTeacher?.email }}
+        </a>
+      </p>
+      <p><strong>Available Courses:</strong></p>
+      <ul class="course-list assign-list">
+        <li *ngFor="let c of availableCourses">
+          {{ c.name }}
+          <input type="checkbox"
+                 [checked]="assignedCourses.has(c.id)"
+                 (change)="toggleCourse(c)">
+        </li>
+      </ul>
+      <button class="btn-save" (click)="saveAssigned()">
+        Add/Modified Assigned Courses
+      </button>
+    </div>
+  </div>
+</div>
