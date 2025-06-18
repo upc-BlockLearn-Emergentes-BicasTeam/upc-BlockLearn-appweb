@@ -21,16 +21,16 @@ export class ProfileStudentComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private authService: AuthService,
               private studentService: StudentService,) {
-    this.student.idUser = this.route.snapshot.params['id'];
+    this.student.id = this.route.snapshot.params['id'];
   }
 
   ngOnInit(): void {
-    this.authService.findStudentByIdUser(this.student.idUser).subscribe((data:any) => {
+    this.authService.findStudentById(this.student.id).subscribe((data:any) => {
       console.log(data);
-      this.student.name = data[0].name;
-      this.student.lastName = data[0].lastName;
-      this.student.id=data[0].id;
-      this.student.telephone = data[0].telephone;
+      this.student.name = data.name;
+      this.student.lastName = data.lastName;
+      this.student.idUser=data.idUser;
+      this.student.telephone = data.telephone;
     });
     this.authService.findUserByIdUser(this.student.idUser).subscribe((data:any) => {
       this.user.id = data[0].id;

@@ -13,5 +13,6 @@ export class StudentEntity {
     this.telephone = '';
     this.idUser = 0;
     this.idInstitution = 0;
+    this.id = 0;
   }
 }

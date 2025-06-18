@@ -38,4 +38,8 @@ export class AuthService {
   findUserByIdUser(idUser: number) {
     return this.http.get(`${this.baseUrl}/users?idUser=${idUser}`);
   }
+
+  findStudentById(id:any){
+    return this.http.get(`${this.baseUrl}/students/${id}`);
+  }
 }
