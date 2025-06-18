@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Institution} from '../model/institution';
+
 import {map, Observable} from 'rxjs';
+import {UserEntity} from '../model/user.entity';
+import {InstitutionEntity} from '../model/institution.entity';
+
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +14,14 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  registerInstitution(institution: Institution) {
-    return this.http.post(`${this.baseUrl}/users`, institution);
+  registerInstitution(institution: InstitutionEntity) {
+    return this.http.post(`${this.baseUrl}/institutes`, institution);
+  }
+  findUserByEmail(email: string) {
+    return this.http.get(`${this.baseUrl}/users?email=${email}`);
+  }
+  registerUser(user: UserEntity) {
+    return this.http.post(`${this.baseUrl}/users`, user);
   }
   loginStudent(email: string, password: string): Observable<any | null> {
     return this.http.get<any[]>(`${this.baseUrl}/students`).pipe(

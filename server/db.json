@@ -2,32 +2,42 @@
   "users": [
     {
       "id": 1,
-      "na": "Demo Institución",
-      "email": "demo@institucion.com",
-      "password": "123456",
-      "role": "institucion",
-      "created_at": "2025-06-17T10:00:00Z"
+      "email": "demo@institucion1.com",
+      "password": "123456"
     },
     {
       "id": 2,
-      "na": "Pedro Estudiante",
-      "email": "pedro@alumno.com",
-      "password": "123456",
-      "role": "estudiante",
-      "created_at": "2025-06-17T11:00:00Z"
+      "email": "student1@institucion1.com",
+      "password": "123"
+    },
+    {
+      "id": "4e8e",
+      "email": "insti@upc.com",
+      "password": "123"
     }
   ],
   "students": [
     {
       "id": 1,
-      "name": "Juan Pérez",
-      "email": "juan.perez@email.com",
-      "password": "123456",
-      "career": "Ingeniería de Sistemas",
-      "institution": "Universidad Nacional"
+      "idUser": 2,
+      "idInstitution": 1,
+      "name": "Juanito",
+      "lastname": "Perez",
+      "telephone": "968889947"
     }
   ],
-  "courses": [],
+  "institutes": [
+    {
+      "id": 1,
+      "idUser": 1,
+      "na": "UC:V"
+    },
+    {
+      "id": "5f82",
+      "name": "UPC",
+      "idUser": "4e8e"
+    }
+  ],
   "course_enrollments": [],
   "grades": [],
   "grade_structure": [],
