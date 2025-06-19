@@ -7,11 +7,11 @@
     </div>
   </div>
   <ul class="sidebar-menu">
-    <li [routerLink]="[`/student/${student.idUser}`]">
+    <li [routerLink]="[`/student/${student.id}`]">
       <span class="material-icons">person</span>
       Profile
     </li>
-    <li>
+    <li [routerLink]="[`/student/courses/${student.id}`]">
       <span class="material-icons">book</span>
       Courses
     </li>

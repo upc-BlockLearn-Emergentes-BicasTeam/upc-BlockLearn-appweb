@@ -11,8 +11,13 @@
       "password": "123"
     },
     {
-      "id": "4e8e",
-      "email": "insti@upc.com",
+      "id": 3,
+      "email": "teacher1@institucion1.com",
+      "password": "123456"
+    },
+    {
+      "id": 4,
+      "email": "teacher2@institucion1.com",
       "password": "123"
     }
   ],
@@ -31,16 +36,60 @@
       "id": 1,
       "idUser": 1,
       "name": "UC:V"
-    },
-    {
-      "id": "5f82",
-      "name": "UPC",
-      "idUser": "4e8e"
     }
   ],
-  "course_enrollments": [],
-  "grades": [],
-  "grade_structure": [],
+  "courses": [
+    {
+      "id": 1,
+      "idTeacher": 1,
+      "name": "Excel 1"
+    },
+    {
+      "id": 2,
+      "idTeacher": 1,
+      "name": "PPT 1"
+    },
+    {
+      "id": 3,
+      "idTeacher": 2,
+      "name": "Word 1"
+    }
+  ],
+  "enrollments": [
+    {
+      "id": 1,
+      "idCourse": 3,
+      "idStudent": 1
+    },
+    {
+      "id": 2,
+      "idCourse": 1,
+      "idStudent": 1
+    },
+    {
+      "id": 3,
+      "idCourse": 2,
+      "idStudent": 1
+    }
+  ],
+  "teachers": [
+    {
+      "id": 1,
+      "idUser": 3,
+      "idInstitution": 1,
+      "name": "Angel",
+      "lastName": "Carhumacho Yungay",
+      "telephone": "947778856"
+    },
+    {
+      "id": 2,
+      "idUser": 4,
+      "idInstitution": 1,
+      "name": "Miguel",
+      "lastName": "Lujan Carrion",
+      "telephone": "954448879"
+    }
+  ],
   "certificates": [],
   "blockchain": []
 }
