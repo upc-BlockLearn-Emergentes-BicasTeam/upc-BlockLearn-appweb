@@ -31,12 +31,17 @@ export class ProfileStudentComponent implements OnInit {
       this.student.lastName = data.lastName;
       this.student.idUser=data.idUser;
       this.student.telephone = data.telephone;
+
     });
-    this.authService.findUserByIdUser(this.student.idUser).subscribe((data:any) => {
-      this.user.id = data[0].id;
-    })
+
   }
   enableEditing() {
+
+    this.authService.findUserById(this.student.idUser).subscribe((data:any) => {
+      this.user.id = data.id;
+      this.user.email = data.email;
+      this.user.password=data.password;
+    })
     this.isEditing = true;
   }
   saveChanges() {
