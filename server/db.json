@@ -90,6 +90,74 @@
       "telephone": "954448879"
     }
   ],
+  "notesRecords": [
+    {
+      "id": 1,
+      "idEnrollment":3,
+      "note": 15,
+      "percent":30,
+      "hash": "XDXDXDXDXDXDXDXDsaegf415erg541"
+    },
+    {
+      "id": 2,
+      "idEnrollment":3,
+      "note": 10,
+      "percent":60,
+      "hash": "OJNKGERJNKOLERG4156DGR6465GRW"
+    },
+    {
+      "id": 3,
+      "idEnrollment":2,
+      "note": 15,
+      "percent":50,
+      "hash": "rkolomnoiopm84fesdwXDXDXDEGTR"
+    },
+    {
+      "id": 4,
+      "idEnrollment":2,
+      "note": 18,
+      "percent":50,
+      "hash": "EGkgrirSEDG6868568hrtRGdfrex0"
+    },
+    {
+      "id": 5,
+      "idEnrollment":1,
+      "note": 20,
+      "percent":20,
+      "hash": "EGkgrirSET5651s0000rtRGdfrex0"
+    },
+    {
+      "id": 6,
+      "idEnrollment":1,
+      "note": 15,
+      "percent":30,
+      "hash": "EGkgr00tjhht574fh0rrtRGdfrex0"
+    },
+    {
+      "id": 7,
+      "idEnrollment":1,
+      "note": 10,
+      "percent":50,
+      "hash": "FWEGRGEHER00regTyretretreertr"
+    }
+  ],
+  "syllabuses": [
+    {
+      "id": 1,
+      "idCourse":2,
+      "hash": "FWE420452R00regTyre4554485000"
+    },
+    {
+      "id": 2,
+      "idCourse":1,
+      "hash": "00000yEt3R00regTyre4554485000"
+    },
+    {
+      "id": 3,
+      "idCourse":3,
+      "hash": "000ehr452Rhgrrg65t51UYT48546s"
+    }
+  ],
   "certificates": [],
   "blockchain": []
 }
