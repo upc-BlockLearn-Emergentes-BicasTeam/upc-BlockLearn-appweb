@@ -9,20 +9,16 @@ export class CourseService {
   private baseUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient) {}
-  getEnrollmentsByStudentId(studentId: number): Observable<any> {
+  getEnrollmentsByStudentId(studentId: any): Observable<any> {
     return this.http.get(`${this.baseUrl}/enrollments?idStudent=${studentId}`);
   }
 
-  getCourseById(courseId: number): Observable<any> {
+  getCourseById(courseId: any): Observable<any> {
     return this.http.get(`${this.baseUrl}/courses/${courseId}`);
   }
 
   getTeacherById(id: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/teachers/${id}`);
-  }
-
-  getUserById(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/users/${id}`);
   }
 
   getNotesByEnrollmentId(enrollmentId: number): Observable<any> {

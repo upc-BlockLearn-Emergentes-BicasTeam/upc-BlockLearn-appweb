@@ -1,25 +1,25 @@
 <div class="courses-container">
   <h2>Mis Cursos</h2>
-  <div *ngFor="let course of courses" class="course-card">
-    <h3>{{ course.name }} (Código: {{ course.id }})</h3>
-    <p><strong>Profesor:</strong> {{ course.teacherName }}</p>
-    <p><strong>Email:</strong> {{ course.teacherEmail }}</p>
-    <p><strong>Sección:</strong> {{ course.section }}</p>
+  <div *ngFor="let course of courses;let i= index" class="course-card">
+    <h3>{{ course.name }} (Code: {{ course.id }})</h3>
+    <p><strong>Teacher:</strong> {{ teachers[i].name }} {{teachers[i].lastName}}</p>
+    <p><strong>Teacher Email:</strong> {{ users[i].email }}</p>
+    <p><strong>Section:</strong> {{ course.section }}</p>
 
     <h4>Notas:</h4>
     <ul>
-      <li *ngFor="let note of course.notes">
+      <li *ngFor="let note of notes[i]; let j = index">
         Nota: {{ note.note }} | Porcentaje: {{ note.percent }}% | Hash: {{ note.hash }}
       </li>
     </ul>
 
-    <p><strong>Promedio Final:</strong> {{ course.average }}</p>
-    <p><strong>Resultado:</strong> {{ course.result }}</p>
+    <p><strong>Average Final:</strong> {{ enrollments[i].average }}</p>
+    <p><strong>Result:</strong>{{ enrollments[i].state }}</p>
 
-    <div *ngIf="course.syllabusHash">
+    <div >
       <p><strong>Syllabus:</strong></p>
-      <a href="https://ipfs.blockchain.example/{{ course.syllabusHash }}" target="_blank">
-        Ver Syllabus (Hash: {{ course.syllabusHash }})
+      <a href="https://ipfs.blockchain.example/{{ syllabuses[i] }}" target="_blank">
+        Ver Syllabus (Hash: {{ syllabuses[i][0].hash }})
       </a>
     </div>
   </div>
