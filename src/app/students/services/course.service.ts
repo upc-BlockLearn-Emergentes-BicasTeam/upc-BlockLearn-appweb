@@ -29,4 +29,15 @@ export class CourseService {
     return this.http.get(`${this.baseUrl}/syllabuses?idCourse=${courseId}`);
   }
 
+  getAllNotes() {
+    return this.http.get<any[]>(`${this.baseUrl}/notesRecords`);
+  }
+
+  getEnrollmentById(id: number) {
+    return this.http.get<any>(`${this.baseUrl}/enrollments/${id}`);
+  }
+
+  getAllSyllabuses() {
+    return this.http.get<any[]>(`${this.baseUrl}/syllabuses`);
+  }
 }

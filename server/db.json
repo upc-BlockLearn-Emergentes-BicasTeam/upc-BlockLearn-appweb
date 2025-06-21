@@ -170,5 +170,18 @@
       "hash": "000ehr452Rhgrrg65t51UYT48546s"
     }
   ],
-  "blockchain": []
+  "certifications": [
+    {
+      "id": 1,
+      "idCourse": 1,
+      "idStudent": 1,
+      "hash": "CERTIFVOIMNRERWEGFWwe56565456"
+    },
+    {
+      "id": 2,
+      "idCourse": 3,
+      "idStudent": 1,
+      "hash": "856489er54&%hrth46&Htrh9665&h5"
+    }
+  ]
 }

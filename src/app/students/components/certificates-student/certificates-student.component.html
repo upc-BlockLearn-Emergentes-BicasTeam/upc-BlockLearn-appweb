@@ -18,6 +18,12 @@
 
       <p><strong>Average Final:</strong> {{ enrollments[i]?.average }}</p>
       <p><strong>Result:</strong> {{ enrollments[i]?.state }}</p>
+      <div >
+        <p><strong>Syllabus:</strong></p>
+        <a href="https://ipfs.blockchain.example/{{ syllabuses[i] }}" target="_blank">
+          Ver Syllabus (Hash: {{ syllabuses[i][0].hash }})
+        </a>
+      </div>
     </div>
   </ng-container>
 </div>

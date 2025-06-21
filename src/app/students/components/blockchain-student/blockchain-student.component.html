@@ -1,1 +1,12 @@
-<p>blockchain-student works!</p>
+<div class="blockchain-container">
+  <h2>Blockchain de Certificaciones</h2>
+
+  <div *ngFor="let record of blockchainRecords" class="block-card">
+    <h3>{{ record.type }}</h3>
+    <p><strong>Curso:</strong> {{ record.courseName }}</p>
+    <p><strong>Profesor:</strong> {{ record.teacherName }}</p>
+    <p><strong>Email:</strong> {{ record.email }}</p>
+    <p *ngIf="record.extraInfo"><strong>Detalle:</strong> {{ record.extraInfo }}</p>
+    <p><strong>Hash:</strong> {{ record.hash }}</p>
+  </div>
+</div>

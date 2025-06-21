@@ -10,6 +10,7 @@ import {AuthService} from '../../../iam/services/auth.service';
 import {StudentService} from '../../services/student.service';
 import {CourseService} from '../../services/course.service';
 import {concatMap, forkJoin, from, tap} from 'rxjs';
+import {CertificateService} from '../../services/certificate.service';
 
 @Component({
   selector: 'app-certificates-student',
@@ -25,13 +26,14 @@ export class CertificatesStudentComponent implements OnInit{
   users: UserEntity[] = [];
   courses: CourseEntity[] = [];
   enrollments: EnrollmentEntity[] = [];
+  certificates: any[] = [];
   notes: any[] = [];
   syllabuses: any[] =[];
   teachers: TeacherEntity[] = [];
 
   constructor(private route: ActivatedRoute,
               private authService: AuthService,
-              private studentService: StudentService,
+              private certificateService: CertificateService ,
               private courseService: CourseService,) {
     this.student.id = this.route.snapshot.params['id'];
   }
@@ -77,6 +79,12 @@ export class CertificatesStudentComponent implements OnInit{
             })
           );
         })
+      ),
+      ()=> this.certificateService.findCertificateByIdStudent(this.student.id).pipe(
+        tap((certificate:any)=>{
+          console.log(certificate);
+          this.certificates.push(certificate);
+        })
       )
     ])
       .pipe(
@@ -107,12 +115,14 @@ export class CertificatesStudentComponent implements OnInit{
             }
           }
 
-// Reemplazar los arrays originales con solo los aprobados
+
           this.courses = approvedCourses.map(c => c.course);
           this.teachers = approvedCourses.map(c => c.teacher);
           this.users = approvedCourses.map(c => c.user);
           this.notes = approvedCourses.map(c => c.notes);
           this.enrollments = approvedCourses.map(c => c.enrollment);
+
+
         },
         error: (e) => console.error("❌ Error:", e)
       });
