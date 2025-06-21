@@ -1,1 +1,23 @@
-<p>certificates-student works!</p>
+<div class="courses-container">
+  <h2 *ngIf="courses.length > 0">CERTIFICATES</h2>
+  <h2 *ngIf="courses.length === 0">There are no approved courses yet.</h2>
+
+  <ng-container *ngFor="let course of courses; let i = index">
+    <div class="course-card" *ngIf="enrollments[i]?.state === 'Approved'">
+      <h3>{{ course.name }} (Code: {{ course.id }})</h3>
+      <p><strong>Teacher:</strong> {{ teachers[i]?.name }} {{teachers[i]?.lastName }}</p>
+      <p><strong>Teacher Email:</strong> {{ users[i]?.email }}</p>
+      <p><strong>Section:</strong> {{ course.section }}</p>
+
+      <h4>NOTES:</h4>
+      <ul>
+        <li *ngFor="let note of notes[i]">
+          Note: {{ note.note }} | Percent: {{ note.percent }}% | Hash: {{ note.hash }}
+        </li>
+      </ul>
+
+      <p><strong>Average Final:</strong> {{ enrollments[i]?.average }}</p>
+      <p><strong>Result:</strong> {{ enrollments[i]?.state }}</p>
+    </div>
+  </ng-container>
+</div>

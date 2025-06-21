@@ -106,7 +106,7 @@
     {
       "id": 1,
       "idEnrollment":3,
-      "note": 15,
+      "note": 20,
       "percent":30,
       "hash": "XDXDXDXDXDXDXDXDsaegf415erg541"
     },
@@ -170,6 +170,5 @@
       "hash": "000ehr452Rhgrrg65t51UYT48546s"
     }
   ],
-  "certificates": [],
   "blockchain": []
 }

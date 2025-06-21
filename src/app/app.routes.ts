@@ -7,6 +7,7 @@ import {PgStudentCoursesComponent} from './students/pages/pg-student-courses/pg-
 import {
   PgStudentCertificatesComponent
 } from './students/pages/pg-student-certificates/pg-student-certificates.component';
+import {PgStudentBlockchainComponent} from './students/pages/pg-student-blockchain/pg-student-blockchain.component';
 
 export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
@@ -16,6 +17,7 @@ export const routes: Routes = [
 
   { path: 'student/courses/:id', component: PgStudentCoursesComponent},
   { path: 'student/certificates/:id', component: PgStudentCertificatesComponent},
+  { path: 'student/blockchain/:id', component: PgStudentBlockchainComponent},
 
   { path: '**', redirectTo: 'login' }
 ];
