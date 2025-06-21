@@ -10,6 +10,7 @@ import { NgForOf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
 
+
 @Component({
   selector: 'app-blockchain-student',
   imports: [
@@ -21,6 +22,24 @@ import { NgIf } from '@angular/common';
   styleUrl: './blockchain-student.component.css'
 })
 export class BlockchainStudentComponent implements OnInit {
+
+  // Selección del modo de hash
+  selectedHashMode: string = 'nota'; // o 'silabo', 'certificado'
+
+  // Por Nota
+  course: string = '';
+  note: number | null = null;
+  percent: number | null = null;
+
+  // Por Sílabo
+  courseSyllabus: string = '';
+  teacherSyllabus: string = '';
+
+  // Por Certificado
+  courseCertificate: string = '';
+  teacherCertificate: string = '';
+  emailCertificate: string = '';
+
   studentId!: number;
   courses: CourseEntity[] = [];
   blockchainRecords: any[] = [];
@@ -53,8 +72,8 @@ export class BlockchainStudentComponent implements OnInit {
 
         // Intenta encontrar el estudiante comparando contra idUser o userId
         const student = students.find(s =>
-  s.idUser === Number(user.id) || s.userId === Number(user.id)
-);
+          s.idUser === Number(user.id) || s.userId === Number(user.id)
+        );
 
 
         if (student) {
@@ -123,9 +142,9 @@ export class BlockchainStudentComponent implements OnInit {
                     note: note.note,
                     percent: note.percent
                   };
-                  console.log('🧾 Nota registrada:', record); // 👈 verifica este log
-                  this.blockchainRecords.push(record);
                   this.noteRecords.push(record);
+                  console.log('✅ Nota registrada:', record);
+                  console.log('📋 noteRecords acumulado:', this.noteRecords);
                 });
               });
             });
@@ -134,6 +153,7 @@ export class BlockchainStudentComponent implements OnInit {
       });
     });
   }
+
 
   loadSyllabuses() {
     this.courseService.getAllSyllabuses().subscribe((syllabi: any[]) => {

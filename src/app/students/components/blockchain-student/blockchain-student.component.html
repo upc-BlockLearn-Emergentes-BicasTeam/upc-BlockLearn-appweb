@@ -5,7 +5,8 @@
     <div class="blockchain-history">
       <h2 class="blockchain-title">📜 Historial Blockchain Académico</h2>
       <div class="student-info">
-        <h3>👤 Estudiante: {{ loggedInStudent?.name }} {{ loggedInStudent?.lastName }} (ID: {{ loggedInStudent?.id }})</h3>
+        <h3>👤 Estudiante: {{ loggedInStudent?.name }} {{ loggedInStudent?.lastName }} (ID: {{ loggedInStudent?.id }})
+        </h3>
       </div>
 
       <p class="blockchain-description">
@@ -14,24 +15,29 @@
       </p>
 
       <div class="block-summary">
-        <h3>Total de registros: <span>{{ blockchainRecords.length }}</span></h3>
+        <!-- <h3>Total de registros: <span>{{ blockchainRecords.length }}</span></h3> -->
         <p>Cada entrada representa un hito único registrado en la red.</p>
       </div>
 
       <!-- Tabla 1: Notas registradas -->
       <h3 class="table-title">📊 Notas Registradas</h3>
-      <table class="blockchain-table">
+
+      <!-- Mostramos mensaje si no hay registros -->
+      <p *ngIf="noteRecords.length === 0">⚠️ No hay notas registradas aún.</p>
+
+
+      <!-- Tabla de notas si hay datos -->
+      <table *ngIf="noteRecords.length > 0" class="blockchain-table">
         <thead>
           <tr>
             <th>📘 Curso</th>
             <th>👨‍🏫 Profesor</th>
             <th>📈 Nota</th>
             <th>📉 %</th>
-            <th>🔐 Codificación</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let record of syllabusRecords">
+          <tr *ngFor="let record of noteRecords">
             <td>{{ record.courseName }}</td>
             <td>{{ record.teacherName }}</td>
             <td>{{ record.note }}</td>
@@ -69,7 +75,7 @@
             <th>📘 Curso</th>
             <th>👨‍🏫 Profesor</th>
             <th>✉️ Email</th>
-            <th>🔐 Hash</th>
+            <th>🔐 Codificación</th>
           </tr>
         </thead>
         <tbody>
@@ -83,7 +89,8 @@
       </table>
 
       <div class="blockchain-footer">
-        <p>🔐 <strong>Dato curioso:</strong> Cada registro está encriptado y sellado digitalmente, evitando alteraciones o fraudes académicos.</p>
+        <p>🔐 <strong>Dato curioso:</strong> Cada registro está encriptado y sellado digitalmente, evitando alteraciones
+          o fraudes académicos.</p>
       </div>
     </div>
 
@@ -91,21 +98,101 @@
     <div class="blockchain-management">
       <div class="management-grid">
 
-        <!-- Formulario plano para generación de hash -->
+        <!-- Selector de modo -->
         <div class="card">
           <h3>⚙️ Gestión de Blockchain</h3>
+          <label for="hashMode">🧩 Modo de generación de Hash</label>
+          <select id="hashMode" [(ngModel)]="selectedHashMode">
+            <option value="nota">📈 Por Nota</option>
+            <option value="silabo">📚 Por Sílabo</option>
+            <option value="certificado">🎓 Por Certificado</option>
+          </select>
+        </div>
+
+        <!-- Por Nota -->
+        <div class="card" *ngIf="selectedHashMode === 'nota'">
+          <div class="card">
+            <h3>⚙️ Generar Hash por Nota</h3>
+            <form>
+              <label for="course">📘 Curso</label>
+              <input id="course" type="text" placeholder="Nombre del curso" [(ngModel)]="course" name="course" />
+
+              <label for="note">📈 Nota</label>
+              <input id="note" type="number" placeholder="Ej. 17.5" [(ngModel)]="note" name="note" />
+
+              <label for="percent">📉 Porcentaje</label>
+              <input id="percent" type="number" placeholder="Ej. 85" [(ngModel)]="percent" name="percent" />
+
+              <!-- Vista previa dinámica de atributos -->
+              <div class="hash-preview" *ngIf="course || note || percent">
+                <p><strong>🔍 Atributos para hash:</strong></p>
+                <ul>
+                  <li *ngIf="course">📘 Curso: {{ course }}</li>
+                  <li *ngIf="note !== null">📈 Nota: {{ note }}</li>
+                  <li *ngIf="percent !== null">📉 Porcentaje: {{ percent }}%</li>
+                </ul>
+              </div>
+
+              <label for="hash">🔐 Hash (Estado)</label>
+              <input id="hash" type="text" value="PENDING - CREADO" disabled />
+
+              <button type="button">Generar Hash</button>
+            </form>
+          </div>
+
+        </div>
+
+        <!-- Por Silabo -->
+        <div class="card" *ngIf="selectedHashMode === 'silabo'">
+          <h4>📚 Generación de Hash por Sílabo</h4>
           <form>
-            <label for="course">📘 Curso</label>
-            <input id="course" type="text" placeholder="Nombre del curso" />
+            <label for="courseSyllabus">📘 Curso</label>
+            <input id="courseSyllabus" type="text" placeholder="Nombre del curso" />
 
-            <label for="note">📈 Nota</label>
-            <input id="note" type="number" placeholder="Ej. 17.5" />
+            <label for="teacherSyllabus">👨‍🏫 Profesor</label>
+            <input id="teacherSyllabus" type="text" placeholder="Nombre del profesor" />
 
-            <label for="percent">📉 Porcentaje</label>
-            <input id="percent" type="number" placeholder="Ej. 85" />
+            <label for="hashSyllabus">🔐 Hash generado</label>
+            <input id="hashSyllabus" type="text" value="PENDING - SÍLABO" disabled />
 
-            <label for="hash">🔐 Hash (Estado)</label>
-            <input id="hash" type="text" value="PENDING - CREADO" disabled />
+            <!-- Vista previa de atributos para hash -->
+            <div class="hash-preview">
+              <p><strong>🔍 Atributos para hash:</strong></p>
+              <ul>
+                <li>📘 Curso: {{ courseSyllabus }}</li>
+                <li>👨‍🏫 Profesor: {{ teacherSyllabus }}</li>
+              </ul>
+            </div>
+
+            <button type="button">Generar Hash</button>
+          </form>
+        </div>
+
+        <!-- Por Certificado -->
+        <div class="card" *ngIf="selectedHashMode === 'certificado'">
+          <h4>🎓 Generación de Hash por Certificado</h4>
+          <form>
+            <label for="courseCertificate">📘 Curso</label>
+            <input id="courseCertificate" type="text" placeholder="Nombre del curso" />
+
+            <label for="teacherCertificate">👨‍🏫 Profesor</label>
+            <input id="teacherCertificate" type="text" placeholder="Nombre del profesor" />
+
+            <label for="emailCertificate">✉️ Email</label>
+            <input id="emailCertificate" type="email" placeholder="profesor@ejemplo.com" />
+
+            <label for="hashCertificate">🔐 Hash generado</label>
+            <input id="hashCertificate" type="text" value="PENDING - CERTIFICADO" disabled />
+
+            <!-- Vista previa de atributos para hash -->
+            <div class="hash-preview">
+              <p><strong>🔍 Atributos para hash:</strong></p>
+              <ul>
+                <li>📘 Curso: {{ courseCertificate }}</li>
+                <li>👨‍🏫 Profesor: {{ teacherCertificate }}</li>
+                <li>✉️ Email: {{ emailCertificate }}</li>
+              </ul>
+            </div>
 
             <button type="button">Generar Hash</button>
           </form>
@@ -124,6 +211,7 @@
 
       </div>
     </div>
+
 
   </div>
 </div>
