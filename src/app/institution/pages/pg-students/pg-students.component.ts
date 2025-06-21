@@ -24,7 +24,7 @@ import {TeachersComponent} from '../../components/teachers/teachers.component';
     MatIconModule,
     MatButtonModule,
     SidebarInstitutionComponent,
-    StudentsComponent, TeachersComponent],
+    StudentsComponent],
   templateUrl: './pg-students.component.html',
   styleUrls: ['./pg-students.component.css']
 })
