@@ -10,6 +10,7 @@ import { NgForOf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
 
+import { sha256 } from 'js-sha256'; // ✅ Importar librería para generar hash
 
 @Component({
   selector: 'app-blockchain-student',
@@ -23,17 +24,18 @@ import { NgIf } from '@angular/common';
 })
 export class BlockchainStudentComponent implements OnInit {
 
-  // Selección del modo de hash
-  selectedHashMode: string = 'nota'; // o 'silabo', 'certificado'
+  selectedHashMode: string = 'nota';
 
   // Por Nota
   course: string = '';
   note: number | null = null;
   percent: number | null = null;
+  hashGenerado: string = 'PENDING - CREADO'; // ✅ Hash generado en el frontend
 
   // Por Sílabo
   courseSyllabus: string = '';
   teacherSyllabus: string = '';
+  codeSyllabus: string = '';
 
   // Por Certificado
   courseCertificate: string = '';
@@ -68,21 +70,13 @@ export class BlockchainStudentComponent implements OnInit {
       console.log('🧾 Usuario en localStorage:', user);
 
       this.courseService.getAllStudents().subscribe((students: any[]) => {
-        console.log('📦 Estudiantes recibidos:', students);
-
-        // Intenta encontrar el estudiante comparando contra idUser o userId
         const student = students.find(s =>
           s.idUser === Number(user.id) || s.userId === Number(user.id)
         );
 
-
         if (student) {
           this.loggedInStudent = student;
           this.studentId = student.id;
-
-          console.log('✅ Estudiante encontrado:', this.loggedInStudent);
-          console.log('🧑‍🎓 Nombre:', student.name, student.lastName);
-          console.log('🆔 ID estudiante:', student.id);
 
           this.loadCertificates();
           this.loadNotes();
@@ -97,10 +91,20 @@ export class BlockchainStudentComponent implements OnInit {
       this.loadSyllabuses();
       console.warn('⚠️ No hay usuario en localStorage.');
     }
-
-    // TEMP: Para asegurarte que se pinte el bloque HTML
-    // this.loggedInStudent = { id: 99, name: 'Nombre', lastName: 'Prueba' };
   }
+
+  // ✅ Método para generar el hash desde los campos de nota
+  generarHashNota(): void {
+    if (this.course && this.note !== null && this.percent !== null) {
+      const rawData = `${this.course}|${this.note}|${this.percent}`;
+      this.hashGenerado = sha256(rawData);
+      console.log('🔐 Hash generado:', this.hashGenerado);
+    } else {
+      this.hashGenerado = 'DATOS INCOMPLETOS';
+      console.warn('❗ Faltan campos para generar el hash.');
+    }
+  }
+
   loadCertificates() {
     this.certificateService.findCertificateByIdStudent(this.studentId).subscribe((certs: any[]) => {
       certs.forEach(cert => {
@@ -123,10 +127,8 @@ export class BlockchainStudentComponent implements OnInit {
     });
   }
 
-
   loadNotes() {
     this.courseService.getAllNotes().subscribe((notes: any[]) => {
-      console.log('🗒️ Notas obtenidas:', notes);
       notes.forEach(note => {
         this.courseService.getEnrollmentById(note.idEnrollment).subscribe((enroll: any) => {
           if (enroll.idStudent === this.studentId) {
@@ -143,8 +145,6 @@ export class BlockchainStudentComponent implements OnInit {
                     percent: note.percent
                   };
                   this.noteRecords.push(record);
-                  console.log('✅ Nota registrada:', record);
-                  console.log('📋 noteRecords acumulado:', this.noteRecords);
                 });
               });
             });
@@ -153,7 +153,6 @@ export class BlockchainStudentComponent implements OnInit {
       });
     });
   }
-
 
   loadSyllabuses() {
     this.courseService.getAllSyllabuses().subscribe((syllabi: any[]) => {
@@ -176,5 +175,4 @@ export class BlockchainStudentComponent implements OnInit {
       });
     });
   }
-
 }
