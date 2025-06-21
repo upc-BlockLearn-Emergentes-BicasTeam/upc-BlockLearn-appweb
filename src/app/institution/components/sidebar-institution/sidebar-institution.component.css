@@ -1,0 +1,72 @@
+/* Contenedor que ocupa toda la pantalla */
+.sidebar-container {
+  height: 100vh;
+  width: 100%;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Estilos para el mat-sidenav */
+.sidebar {
+  width: 240px;
+  background: #2f3e50; /* color original */
+  color: #fff;
+}
+
+/* Toolbar dentro del sidebar */
+.sidebar-header {
+  background: #2f3e50;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+}
+
+/* Logo junto al menú hamburguesa */
+.logo {
+  height: 32px;
+  margin-left: 1rem;
+}
+
+/* Mat-nav-list / Mat-list-item */
+.mat-nav-list {
+  margin-top: 1rem;
+}
+
+.mat-list-item {
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ffffff;
+  border-radius: 4px;
+  margin: 0 8px;
+  transition: background 0.2s ease;
+}
+
+.mat-list-item .mat-icon {
+  margin-right: 1rem;
+  font-size: 24px;
+}
+
+/* Estado activo y hover */
+.mat-list-item.active,
+.mat-list-item:hover {
+  background: #1f2a38; /* ligero más oscuro */
+}
+
+/* Contenido principal (al lado del sidebar) */
+.content {
+  padding: 1rem;
+  background: #f0f2f5;
+  min-height: 100vh;
+  overflow: auto;
+}
+
+/* Responsive: colapsa el sidebar por debajo de 800px */
+@media (max-width: 800px) {
+  .sidebar {
+    position: absolute;
+    z-index: 1000;
+  }
+  .content {
+    margin-left: 0;
+  }
+}

@@ -6,7 +6,7 @@ import { catchError } from 'rxjs/operators';
 import { Institution } from '../models/institution.entity';
 
 // Si te gusta separar la URL en una constante:
-const API_BASE_URL = 'https://upc-blocklearnbicasteam.free.beeceptor.com';
+const API_BASE_URL = 'http://localhost:3000';
 const INSTITUTIONS_ENDPOINT = `${API_BASE_URL}/institutions`;
 
 @Injectable({
@@ -37,11 +37,12 @@ export class InstitutionService {
       .pipe(catchError(this.handleError));
   }
 
-  update(id: string, institution: Partial<Institution>): Observable<Institution> {
+  update(id: string, changes: Partial<Institution>): Observable<Institution> {
     return this.http
-      .put<Institution>(`${this.apiUrl}/${id}`, institution)
+      .patch<Institution>(`${this.apiUrl}/${id}`, changes)
       .pipe(catchError(this.handleError));
   }
+
 
   delete(id: string): Observable<void> {
     return this.http

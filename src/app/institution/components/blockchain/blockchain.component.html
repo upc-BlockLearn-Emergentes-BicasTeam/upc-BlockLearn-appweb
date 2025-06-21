@@ -1,0 +1,73 @@
+<mat-card class="blockchain-card">
+  <mat-card-title>Blockchain Entries</mat-card-title>
+  <mat-divider></mat-divider>
+
+  <mat-accordion multi>
+    <mat-expansion-panel *ngFor="let e of entries">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span class="hash">{{ e.hash }}</span>
+        </mat-panel-title>
+        <mat-panel-description class="header-desc">
+          <span class="type">{{ e.type }}</span>
+          <span class="id">ID: {{ e.id }}</span>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="details" [ngSwitch]="e.type">
+        <!-- Certificate -->
+        <div *ngSwitchCase="'Certificate'">
+          <p><strong>Alumno Code:</strong> {{ e.studentCode || '*****' }}</p>
+          <p><strong>Name Course:</strong> {{ e.course?.name }}</p>
+          <p><strong>Course Code:</strong> {{ e.course?.code }}</p>
+          <mat-divider></mat-divider>
+          <p><strong>Final Average:</strong> {{ e.finalAverage }}</p>
+          <p><strong>Result:</strong> {{ e.result }}</p>
+        </div>
+
+        <!-- Syllabus -->
+        <div *ngSwitchCase="'Syllabus'">
+          <p><strong>Name Course:</strong> {{ e.course?.name }}</p>
+          <p><strong>Course Code:</strong> {{ e.course?.code }}</p>
+          <mat-divider></mat-divider>
+          <p>
+            <strong>Document:</strong>
+            <button
+              mat-icon-button
+              color="primary"
+              aria-label="Download document"
+              (click)="downloadDocument(e)"
+            >
+              <mat-icon>description</mat-icon>
+            </button>
+          </p>
+        </div>
+
+        <!-- Grade -->
+        <div *ngSwitchCase="'Grade'">
+          <p><strong>Alumno Code:</strong> {{ e.studentCode || '*****' }}</p>
+          <p><strong>Name Course:</strong> {{ e.course?.name }}</p>
+          <p><strong>Course Code:</strong> {{ e.course?.code }}</p>
+          <mat-divider></mat-divider>
+          <ng-container *ngFor="let note of e.notes">
+            <p><strong>{{ note.label }}:</strong> {{ note.value }}</p>
+          </ng-container>
+          <p><strong>Final Average:</strong> {{ e.finalAverage }}</p>
+          <p><strong>Result:</strong> {{ e.result }}</p>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+      <mat-card-actions align="end">
+        <button
+          mat-raised-button
+          color="primary"
+          aria-label="Go to block-chain"
+          (click)="goToBlock(e.id)"
+        >
+          Go to Block-Chain
+        </button>
+      </mat-card-actions>
+    </mat-expansion-panel>
+  </mat-accordion>
+</mat-card>
