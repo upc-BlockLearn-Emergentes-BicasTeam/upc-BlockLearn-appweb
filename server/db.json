@@ -1,25 +1,9 @@
 {
   "users": [
-    {
-      "id": 1,
-      "email": "demo@institucion1.com",
-      "password": "123456"
-    },
-    {
-      "id": 2,
-      "email": "student1@institucion1.com",
-      "password": "123"
-    },
-    {
-      "id": 3,
-      "email": "teacher1@institucion1.com",
-      "password": "123456"
-    },
-    {
-      "id": 4,
-      "email": "teacher2@institucion1.com",
-      "password": "123"
-    }
+    { "id": 1, "email": "demo@institucion1.com", "password": "123456" },
+    { "id": 2, "email": "student1@institucion1.com", "password": "123" },
+    { "id": 3, "email": "teacher1@institucion1.com", "password": "123456" },
+    { "id": 4, "email": "teacher2@institucion1.com", "password": "123" }
   ],
   "students": [
     {
@@ -32,57 +16,17 @@
     }
   ],
   "institutes": [
-    {
-      "id": 1,
-      "idUser": 1,
-      "name": "UC:V"
-    }
+    { "id": 1, "idUser": 1, "name": "UC:V" }
   ],
   "courses": [
-    {
-      "id": 1,
-      "idTeacher": 1,
-      "name": "Excel 1",
-      "section": "ABC",
-      "passingGrade": 11
-    },
-    {
-      "id": 2,
-      "idTeacher": 1,
-      "name": "PPT 1",
-      "section": "DEF",
-      "passingGrade": 12
-    },
-    {
-      "id": 3,
-      "idTeacher": 2,
-      "name": "Word 1",
-      "section": "GHI",
-      "passingGrade": 13
-    }
+    { "id": 1, "idTeacher": 1, "name": "Excel 1", "section": "ABC", "passingGrade": 11 },
+    { "id": 2, "idTeacher": 1, "name": "PPT 1", "section": "DEF", "passingGrade": 12 },
+    { "id": 3, "idTeacher": 2, "name": "Word 1", "section": "GHI", "passingGrade": 13 }
   ],
   "enrollments": [
-    {
-      "id": 1,
-      "idCourse": 3,
-      "idStudent": 1,
-      "state": "complete",
-      "average": 0
-    },
-    {
-      "id": 2,
-      "idCourse": 1,
-      "idStudent": 1,
-      "state": "complete",
-      "average": 0
-    },
-    {
-      "id": 3,
-      "idCourse": 2,
-      "idStudent": 1,
-      "state": "complete",
-      "average": 0
-    }
+    { "id": 1, "idCourse": 3, "idStudent": 1, "state": "complete", "average": 0 },
+    { "id": 2, "idCourse": 1, "idStudent": 1, "state": "complete", "average": 0 },
+    { "id": 3, "idCourse": 2, "idStudent": 1, "state": "complete", "average": 0 }
   ],
   "teachers": [
     {
@@ -105,69 +49,99 @@
   "notesRecords": [
     {
       "id": 1,
-      "idEnrollment":3,
+      "idEnrollment": 3,
       "note": 20,
-      "percent":30,
-      "hash": "XDXDXDXDXDXDXDXDsaegf415erg541"
+      "percent": 30,
+      "hash": "XDXDXDXDXDXDXDXDsaegf415erg541",
+      "timestamp": 1750525494,
+      "blockchainStatus": "pending",
+      "blockchainHash": ""
     },
     {
       "id": 2,
-      "idEnrollment":3,
+      "idEnrollment": 3,
       "note": 10,
-      "percent":60,
-      "hash": "OJNKGERJNKOLERG4156DGR6465GRW"
+      "percent": 60,
+      "hash": "OJNKGERJNKOLERG4156DGR6465GRW",
+      "timestamp": 1750525500,
+      "blockchainStatus": "pending",
+      "blockchainHash": ""
     },
     {
       "id": 3,
-      "idEnrollment":2,
+      "idEnrollment": 2,
       "note": 15,
-      "percent":50,
-      "hash": "rkolomnoiopm84fesdwXDXDXDEGTR"
+      "percent": 50,
+      "hash": "rkolomnoiopm84fesdwXDXDXDEGTR",
+      "timestamp": 1750525505,
+      "blockchainStatus": "pending",
+      "blockchainHash": ""
     },
     {
       "id": 4,
-      "idEnrollment":2,
+      "idEnrollment": 2,
       "note": 18,
-      "percent":50,
-      "hash": "EGkgrirSEDG6868568hrtRGdfrex0"
+      "percent": 50,
+      "hash": "EGkgrirSEDG6868568hrtRGdfrex0",
+      "timestamp": 1750525510,
+      "blockchainStatus": "pending",
+      "blockchainHash": ""
     },
     {
       "id": 5,
-      "idEnrollment":1,
+      "idEnrollment": 1,
       "note": 20,
-      "percent":20,
-      "hash": "EGkgrirSET5651s0000rtRGdfrex0"
+      "percent": 20,
+      "hash": "EGkgrirSET5651s0000rtRGdfrex0",
+      "timestamp": 1750525515,
+      "blockchainStatus": "pending",
+      "blockchainHash": ""
     },
     {
       "id": 6,
-      "idEnrollment":1,
+      "idEnrollment": 1,
       "note": 15,
-      "percent":30,
-      "hash": "EGkgr00tjhht574fh0rrtRGdfrex0"
+      "percent": 30,
+      "hash": "EGkgr00tjhht574fh0rrtRGdfrex0",
+      "timestamp": 1750525520,
+      "blockchainStatus": "pending",
+      "blockchainHash": ""
     },
     {
       "id": 7,
-      "idEnrollment":1,
+      "idEnrollment": 1,
       "note": 10,
-      "percent":50,
-      "hash": "FWEGRGEHER00regTyretretreertr"
+      "percent": 50,
+      "hash": "FWEGRGEHER00regTyretretreertr",
+      "timestamp": 1750525525,
+      "blockchainStatus": "pending",
+      "blockchainHash": ""
     }
   ],
   "syllabuses": [
     {
       "id": 1,
-      "idCourse":2,
-      "hash": "FWE420452R00regTyre4554485000"
+      "idCourse": 2,
+      "hash": "FWE420452R00regTyre4554485000",
+      "timestamp": 1750525530,
+      "blockchainStatus": "pending",
+      "blockchainHash": ""
     },
     {
       "id": 2,
-      "idCourse":1,
-      "hash": "00000yEt3R00regTyre4554485000"
+      "idCourse": 1,
+      "hash": "00000yEt3R00regTyre4554485000",
+      "timestamp": 1750525535,
+      "blockchainStatus": "pending",
+      "blockchainHash": ""
     },
     {
       "id": 3,
-      "idCourse":3,
-      "hash": "000ehr452Rhgrrg65t51UYT48546s"
+      "idCourse": 3,
+      "hash": "000ehr452Rhgrrg65t51UYT48546s",
+      "timestamp": 1750525540,
+      "blockchainStatus": "pending",
+      "blockchainHash": ""
     }
   ],
   "certifications": [
@@ -175,13 +149,19 @@
       "id": 1,
       "idCourse": 1,
       "idStudent": 1,
-      "hash": "CERTIFVOIMNRERWEGFWwe56565456"
+      "hash": "CERTIFVOIMNRERWEGFWwe56565456",
+      "timestamp": 1750525545,
+      "blockchainStatus": "pending",
+      "blockchainHash": ""
     },
     {
       "id": 2,
       "idCourse": 3,
       "idStudent": 1,
-      "hash": "856489er54&%hrth46&Htrh9665&h5"
+      "hash": "856489er54&%hrth46&Htrh9665&h5",
+      "timestamp": 1750525550,
+      "blockchainStatus": "pending",
+      "blockchainHash": ""
     }
   ]
 }

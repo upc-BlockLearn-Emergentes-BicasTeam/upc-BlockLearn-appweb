@@ -40,4 +40,7 @@ export class CourseService {
   getAllSyllabuses() {
     return this.http.get<any[]>(`${this.baseUrl}/syllabuses`);
   }
+  getAllStudents(): Observable<any[]> {
+  return this.http.get<any[]>('http://localhost:3000/students');
+}
 }

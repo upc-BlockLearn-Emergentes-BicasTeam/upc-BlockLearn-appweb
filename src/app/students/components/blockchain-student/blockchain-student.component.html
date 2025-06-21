@@ -1,12 +1,129 @@
-<div class="blockchain-container">
-  <h2>Blockchain de Certificaciones</h2>
+<div class="blockchain-wrapper">
+  <div class="blockchain-grid">
 
-  <div *ngFor="let record of blockchainRecords" class="block-card">
-    <h3>{{ record.type }}</h3>
-    <p><strong>Curso:</strong> {{ record.courseName }}</p>
-    <p><strong>Profesor:</strong> {{ record.teacherName }}</p>
-    <p><strong>Email:</strong> {{ record.email }}</p>
-    <p *ngIf="record.extraInfo"><strong>Detalle:</strong> {{ record.extraInfo }}</p>
-    <p><strong>Hash:</strong> {{ record.hash }}</p>
+    <!-- Columna 1: Historial blockchain -->
+    <div class="blockchain-history">
+      <h2 class="blockchain-title">📜 Historial Blockchain Académico</h2>
+      <div class="student-info">
+        <h3>👤 Estudiante: {{ loggedInStudent?.name }} {{ loggedInStudent?.lastName }} (ID: {{ loggedInStudent?.id }})</h3>
+      </div>
+
+      <p class="blockchain-description">
+        Explora tus registros académicos registrados en la blockchain: certificados, calificaciones y sílabos.
+        Una historia digital de tu formación, segura y verificable.
+      </p>
+
+      <div class="block-summary">
+        <h3>Total de registros: <span>{{ blockchainRecords.length }}</span></h3>
+        <p>Cada entrada representa un hito único registrado en la red.</p>
+      </div>
+
+      <!-- Tabla 1: Notas registradas -->
+      <h3 class="table-title">📊 Notas Registradas</h3>
+      <table class="blockchain-table">
+        <thead>
+          <tr>
+            <th>📘 Curso</th>
+            <th>👨‍🏫 Profesor</th>
+            <th>📈 Nota</th>
+            <th>📉 %</th>
+            <th>🔐 Codificación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of syllabusRecords">
+            <td>{{ record.courseName }}</td>
+            <td>{{ record.teacherName }}</td>
+            <td>{{ record.note }}</td>
+            <td>{{ record.percent }}%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Tabla 2: Sílabos registrados -->
+      <h3 class="table-title">📚 Sílabos Registrados</h3>
+      <table class="blockchain-table">
+        <thead>
+          <tr>
+            <th>📘 Curso</th>
+            <th>👨‍🏫 Profesor</th>
+            <th>✉️ Email</th>
+            <th>🔐 Codificación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of syllabusRecords">
+            <td>{{ record.courseName }}</td>
+            <td>{{ record.teacherName }}</td>
+            <td>{{ record.email }}</td>
+            <td><code>{{ record.hash }}</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Tabla 3: Certificados registrados -->
+      <h3 class="table-title">🎓 Certificados Registrados</h3>
+      <table class="blockchain-table">
+        <thead>
+          <tr>
+            <th>📘 Curso</th>
+            <th>👨‍🏫 Profesor</th>
+            <th>✉️ Email</th>
+            <th>🔐 Hash</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of certificateRecords">
+            <td>{{ record.courseName }}</td>
+            <td>{{ record.teacherName }}</td>
+            <td>{{ record.email }}</td>
+            <td><code>{{ record.hash }}</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="blockchain-footer">
+        <p>🔐 <strong>Dato curioso:</strong> Cada registro está encriptado y sellado digitalmente, evitando alteraciones o fraudes académicos.</p>
+      </div>
+    </div>
+
+    <!-- Columna 2: Gestión Blockchain -->
+    <div class="blockchain-management">
+      <div class="management-grid">
+
+        <!-- Formulario plano para generación de hash -->
+        <div class="card">
+          <h3>⚙️ Gestión de Blockchain</h3>
+          <form>
+            <label for="course">📘 Curso</label>
+            <input id="course" type="text" placeholder="Nombre del curso" />
+
+            <label for="note">📈 Nota</label>
+            <input id="note" type="number" placeholder="Ej. 17.5" />
+
+            <label for="percent">📉 Porcentaje</label>
+            <input id="percent" type="number" placeholder="Ej. 85" />
+
+            <label for="hash">🔐 Hash (Estado)</label>
+            <input id="hash" type="text" value="PENDING - CREADO" disabled />
+
+            <button type="button">Generar Hash</button>
+          </form>
+        </div>
+
+        <!-- Funcionalidades futuras -->
+        <div class="card">
+          <h3>📦 Funcionalidades futuras</h3>
+          <ul>
+            <li>✔️ Validar registros en la blockchain</li>
+            <li>✔️ Descargar comprobantes</li>
+            <li>✔️ Compartir registros con terceros</li>
+            <li>✔️ Visualizar estadísticas por curso o docente</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </div>
