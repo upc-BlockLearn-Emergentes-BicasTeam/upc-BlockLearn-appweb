@@ -1,8 +1,38 @@
-<mat-sidenav-container>
-  <mat-sidenav class="p-sidebar" mode="side" opened>
+
+<mat-sidenav-container class="pg-container">
+
+  <mat-sidenav
+    #drawer="matSidenav"
+    class="pg-sidenav"
+    mode="side"
+    opened
+    role="navigation"
+    aria-label="Institution sidebar"
+  >
     <app-sidebar-student/>
   </mat-sidenav>
-  <mat-sidenav-content>
-    <app-certificates-student></app-certificates-student>
+
+  <mat-sidenav-content class="pg-main">
+
+    <mat-toolbar class="pg-toolbar">
+      <button
+        mat-icon-button
+        (click)="drawer.toggle()"
+        aria-label="Toggle sidebar"
+        class="toolbar-hamburger"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="toolbar-title">STUDENT</span>
+    </mat-toolbar>
+
+    <!-- envolvemos el profiel-card en un flex-container centrador -->
+    <div class="pg-content">
+      <div class="profile-wrapper">
+        <app-certificates-student></app-certificates-student>
+      </div>
+    </div>
+
   </mat-sidenav-content>
 </mat-sidenav-container>
+

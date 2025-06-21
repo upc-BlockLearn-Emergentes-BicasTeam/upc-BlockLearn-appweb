@@ -1,48 +1,90 @@
-.sidebar {
-  width: 220px;
+/* Contenedor que ocupa toda la pantalla */
+.sidebar-container {
   height: 100vh;
-  background-color: #1e2a38;
-  color: white;
+  width: 100%;
+  font-family: "Roboto", sans-serif;
+
+}
+
+/* Sidenav */
+.sidebar {
+  width: 240px;
+  background: #2f3e50;
+  color: #fff;
+
+}
+
+/* Toolbar dentro del sidebar */
+.sidebar-header {
+  background: #2f3e50;
+  color: #ffffff;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+}
+
+/* Logo */
+.logo {
+  height: 32px;
+  margin-left: 1rem;
+}
+
+/* Bloque bienvenida */
+.welcome {
   padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.sidebar-logo {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 2rem;
+.welcome small {
+  font-size: 0.75rem;
+  opacity: 0.75;
+}
+.welcome h3 {
+  margin: 0.25rem 0 0;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-.sidebar-logo img {
-  width: 30px;
-  height: 30px;
+/* Mat-list-item */
+.mat-list-item {
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ffffff;
+  border-radius: 4px;
+  margin: 0 8px;
+  transition: background 0.2s ease;
+}
+.mat-list-item .mat-icon {
+  margin-right: 1rem;
+  font-size: 24px;
 }
 
-.sidebar-menu {
-  list-style: none;
-  padding: 0;
+/* Estado activo y hover */
+.mat-list-item.active,
+.mat-list-item:hover {
+  background: #1f2a38;
 }
 
-.sidebar-menu li {
-  display: flex; /* Para que el texto y el icono estén en una línea */
-  align-items: center; /* Alinea el icono y el texto verticalmente */
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 5px;
+/* Contenido principal */
+.content {
+  padding: 1rem;
+  background: #f0f2f5;
+  min-height: 100vh;
+  overflow: auto;
 }
 
-.sidebar-menu li:hover,
-.sidebar-menu li.active {
-  background-color: #3b4b5b;
+/* Toolbar móvil (visible cuando el sidenav se colapsa) */
+.mobile-toolbar {
+  display: none;
 }
 
-.sidebar-menu li .material-icons {
-  margin-right: 10px; /* Espacio entre el icono y el texto */
-}
 
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 800, 'GRAD' 0, 'opsz' 24;
+@media (max-width: 800px) {
+  .sidebar {
+    position: absolute;
+    z-index: 1000;
+  }
+  .content {
+    margin-left: 0;
+  }
 }

@@ -1,27 +1,82 @@
-<nav class="sidebar">
-  <div class="sidebar-logo">
-    <span class="material-icons">local_library</span>
-    <h2>BlockLearn</h2>
-    <div>
-      <h3>Welcome: {{student.name}} {{student.lastName}}</h3>
+<mat-sidenav-container class="sidebar-container">
+  <!-- Side Navigation -->
+  <mat-sidenav
+    class="sidebar"
+    [mode]="'side'"
+    [opened]="opened"
+    role="navigation"
+    aria-label="Student menu"
+  >
+    <!-- Header con logo + nombre -->
+    <mat-toolbar class="sidebar-header" color="primary">
+      <span class="material-icons">local_library</span>
+      <h2>BlockLearn</h2>
+    </mat-toolbar>
+
+    <!-- Bienvenida -->
+    <div class="welcome">
+      <small>Welcome</small>
+      <h3>{{ student.name }} {{ student.lastName }}</h3>
     </div>
-  </div>
-  <ul class="sidebar-menu">
-    <li [routerLink]="[`/student/${student.id}`]">
-      <span class="material-icons">person</span>
-      Profile
-    </li>
-    <li [routerLink]="[`/student/courses/${student.id}`]">
-      <span class="material-icons">book</span>
-      Courses
-    </li>
-    <li [routerLink]="[`/student/certificates/${student.id}`]">
-      <span class="material-icons">star</span>
-      Certificates
-    </li>
-    <li [routerLink]="[`/student/blockchain/${student.id}`]">
-      <span class="material-icons">token</span>
-      Blockchain
-    </li>
-  </ul>
-</nav>
+
+    <!-- Opciones -->
+    <mat-nav-list>
+      <a
+        mat-list-item
+        [routerLink]="['/student', student.id]"
+        routerLinkActive="active"
+        aria-label="Go to Profile"
+      >
+        <mat-icon matListIcon>person_outline</mat-icon>
+        <span>PROFILE</span>
+      </a>
+
+      <a
+        mat-list-item
+        [routerLink]="['/student/courses', student.id]"
+        routerLinkActive="active"
+        aria-label="Go to Courses"
+      >
+        <mat-icon matListIcon>book</mat-icon>
+        <span>COURSES</span>
+      </a>
+
+      <a
+        mat-list-item
+        [routerLink]="['/student/certificates', student.id]"
+        routerLinkActive="active"
+        aria-label="Go to Certificates"
+      >
+        <mat-icon matListIcon>star</mat-icon>
+        <span>CERTIFICATES</span>
+      </a>
+
+      <a
+        mat-list-item
+        [routerLink]="['/student/blockchain', student.id]"
+        routerLinkActive="active"
+        aria-label="Go to Blockchain"
+      >
+        <mat-icon matListIcon>hub</mat-icon>
+        <span>BLOCKCHAIN</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <!-- Contenido principal -->
+  <mat-sidenav-content class="content">
+    <!-- Botón hamburguesa visible solo en pantallas pequeñas -->
+    <mat-toolbar class="mobile-toolbar" color="primary">
+      <button
+        mat-icon-button
+        (click)="toggleSidenav()"
+        aria-label="Toggle sidenav"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <!-- Rutas hijas -->
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
