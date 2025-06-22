@@ -1,0 +1,50 @@
+<mat-sidenav-container class="sidebar-container">
+  <mat-sidenav
+    class="sidebar"
+    mode="side"
+    [opened]="opened"
+    role="navigation"
+    aria-label="Teacher menu"
+  >
+    <mat-toolbar class="sidebar-header" color="primary">
+      <span class="material-icons">local_library</span>
+      <h2>BlockLearn</h2>
+    </mat-toolbar>
+
+    <mat-nav-list>
+      <a
+        mat-list-item
+        routerLink="/teacher/profile"
+        routerLinkActive="active"
+        aria-label="Go to Profile"
+      >
+        <mat-icon matListIcon>person</mat-icon>
+        <span>PROFILE</span>
+      </a>
+
+      <a
+        mat-list-item
+        routerLink="/teacher/courses"
+        routerLinkActive="active"
+        aria-label="Go to Courses"
+      >
+        <mat-icon matListIcon>menu_book</mat-icon>
+        <span>COURSES</span>
+      </a>
+
+      <a
+        mat-list-item
+        routerLink="/teacher/blockchain"
+        routerLinkActive="active"
+        aria-label="Go to Blockchain"
+      >
+        <mat-icon matListIcon>hub</mat-icon>
+        <span>BLOCKCHAIN</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="content">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

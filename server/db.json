@@ -1,46 +1,159 @@
 {
-  "users": [
+  "teachers": [
     {
-      "id": 1,
-      "email": "demo@institucion1.com",
-      "password": "123456"
+      "id": "1",
+      "firstName": "Gonzalo",
+      "lastName": "Ramirez",
+      "email": "ramirez@institute.edu.pe",
+      "phone": "967778836",
+      "avatarUrl": "/assets/avatar.png",
+      "courses": ["01", "02"],
+      "blockchainEntries": ["e01", "e02", "e03"]
+    }
+  ],
+  "courses": [
+    {
+      "id": "01",
+      "name": "Excel 1",
+      "code": "0002",
+      "section": "FVT",
+      "teacher": "1",
+      "notesWeight": [25, 20, 20, 35],
+      "passingGrade": 12.5,
+      "syllabusFileName": "excel1.pdf",
+      "syllabusHash": "00001457s98fgerf189ertgtg1869efw",
+      "students": ["101", "102", "103", "104", "105", "106", "107"],
+      "blockchainEntries": ["e02"]
     },
     {
-      "id": 2,
-      "email": "student1@institucion1.com",
-      "password": "123"
-    },
-    {
-      "id": "4e8e",
-      "email": "insti@upc.com",
-      "password": "123"
+      "id": "02",
+      "name": "Word 2",
+      "code": "0006",
+      "section": "TY6",
+      "teacher": "1",
+      "notesWeight": [25, 20, 20, 35],
+      "passingGrade": 10,
+      "syllabusFileName": "word2.pdf",
+      "syllabusHash": "0000gy57s9tjdue4590ertgtg18547fw",
+      "students": ["101", "107"],
+      "blockchainEntries": ["e03"]
     }
   ],
   "students": [
     {
-      "id": 1,
-      "idUser": 2,
-      "idInstitution": 1,
-      "name": "Juanito",
+      "id": "101",
+      "firstName": "James",
       "lastName": "Perez",
-      "telephone": "968889947"
-    }
-  ],
-  "institutes": [
-    {
-      "id": 1,
-      "idUser": 1,
-      "name": "UC:V"
+      "email": "james.perez@student.edu",
+      "phone": "987654321",
+      "courses": ["01", "02"],
+      "notes": [15, 8, 0, 0],
+      "average": 12.5,
+      "state": "PROCESS"
     },
     {
-      "id": "5f82",
-      "name": "UPC",
-      "idUser": "4e8e"
+      "id": "102",
+      "firstName": "Nicolas",
+      "lastName": "Smith",
+      "email": "nicolas.smith@student.edu",
+      "phone": "912345678",
+      "courses": ["01"],
+      "notes": [15, 15, 15, 15],
+      "average": 15,
+      "state": "COMPLETE"
+    },
+    {
+      "id": "103",
+      "firstName": "Alice",
+      "lastName": "Johnson",
+      "email": "alice.johnson@student.edu",
+      "phone": "900123456",
+      "courses": ["01"],
+      "notes": [10, 12, 14, 16],
+      "average": 13,
+      "state": "PROCESS"
+    },
+    {
+      "id": "104",
+      "firstName": "Bob",
+      "lastName": "Williams",
+      "email": "bob.williams@student.edu",
+      "phone": "901234567",
+      "courses": ["02"],
+      "notes": [18, 17, 19, 20],
+      "average": 18.5,
+      "state": "COMPLETE"
+    },
+    {
+      "id": "105",
+      "firstName": "Carol",
+      "lastName": "Brown",
+      "email": "carol.brown@student.edu",
+      "phone": "902345678",
+      "courses": ["01"],
+      "notes": [12, 12, 12, 12],
+      "average": 12,
+      "state": "COMPLETE"
+    },
+    {
+      "id": "106",
+      "firstName": "David",
+      "lastName": "Lee",
+      "email": "david.lee@student.edu",
+      "phone": "903456789",
+      "courses": ["02"],
+      "notes": [8, 9, 7, 8],
+      "average": 8,
+      "state": "PROCESS"
+    },
+    {
+      "id": "107",
+      "firstName": "Eva",
+      "lastName": "Davis",
+      "email": "eva.davis@student.edu",
+      "phone": "904567890",
+      "courses": ["01", "02"],
+      "notes": [15, 14, 13, 12],
+      "average": 13.5,
+      "state": "PROCESS"
     }
   ],
-  "course_enrollments": [],
-  "grades": [],
-  "grade_structure": [],
-  "certificates": [],
-  "blockchain": []
+  "blockchainEntries": [
+    {
+      "id": "e01",
+      "type": "Certificate",
+      "hash": "00005fg78wd1qw891df98qw1ceferwvs",
+      "course": "02",
+      "studentCode": "101",
+      "notes": [
+        { "label": "Note 1", "value": "15" },
+        { "label": "Note 2", "value": "15" },
+        { "label": "Note 3", "value": "15" },
+        { "label": "Note 4", "value": "15" }
+      ],
+      "finalAverage": 15,
+      "result": "APPROVED"
+    },
+    {
+      "id": "e02",
+      "type": "Syllabus",
+      "hash": "0000asd8949898wqwqdwqgrgiojnoiee8",
+      "course": "01"
+    },
+    {
+      "id": "e03",
+      "type": "Grade",
+      "hash": "000aasdewf88few88964rhg86hrswdwge7",
+      "course": "02",
+      "studentCode": "101",
+      "notes": [
+        { "label": "Note 1", "value": "NT" },
+        { "label": "Note 2", "value": "16" },
+        { "label": "Note 3", "value": "18" },
+        { "label": "Note 4", "value": "15" }
+      ],
+      "finalAverage": 12.05,
+      "result": "DISAPPROVED"
+    }
+  ]
 }

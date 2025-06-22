@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:host {
+  display: block;
+  height: 100vh;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Contenedor total del sidenav */
+.pg-container {
+  height: 100%;
+}
+
+/* Sidebar */
+.pg-sidenav {
+  width: 240px;
+  background: #2f3e50;
+}
+
+/* Toolbar */
+.pg-toolbar {
+  background: #68b8ff;
+  color: #fff;
+  box-shadow: none;
+}
+.toolbar-hamburger {
+  margin-right: 1rem;
+}
+@media (min-width: 768px) {
+
+}
+.toolbar-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+/* Área de contenido principal */
+.pg-main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Scrollable + padding */
+.pg-content {
+  flex: 1;
+  overflow-y: auto;
+  background: #f0f2f5;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* Wrapper centrado */
+
+
+/* Responsive: overlay en móvil */
+@media (max-width: 767px) {
+  .pg-sidenav {
+    width: 200px;
+  }
+  mat-sidenav[opened] {
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+  }
+}

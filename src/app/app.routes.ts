@@ -1,18 +1,19 @@
-import {RouterModule, Routes} from '@angular/router';
-import {RegisterComponent} from './iam/components/register/register.component';
-import {NgModule} from '@angular/core';
-import {LoginComponent} from './iam/components/login/login.component';
-import {PgStudentProfileComponent} from './students/pages/pg-student-profile/pg-student-profile.component';
+// src/app/app.routes.ts
+import { Routes }             from '@angular/router';
+import {PgProfileComponent} from './teacher/pages/pg-profile/pg-profile.component';
+import {PgCoursesComponent} from './teacher/pages/pg-courses/pg-courses.component';
+import {PgBlockchainComponent} from './teacher/pages/pg-blockchain/pg-blockchain.component';
+
+// tus wrappers:
+
 
 export const routes: Routes = [
-  { path: 'register', component: RegisterComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'student/:id', component: PgStudentProfileComponent},
+  { path: '', redirectTo: 'teacher/profile', pathMatch: 'full' },
 
-  { path: '**', redirectTo: 'login' }
+  { path: 'teacher/profile',    component: PgProfileComponent },
+  { path: 'teacher/courses',    component: PgCoursesComponent },
+  { path: 'teacher/blockchain', component: PgBlockchainComponent },
+
+  // catch-all
+  { path: '**', redirectTo: 'teacher/profile' }
 ];
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }
