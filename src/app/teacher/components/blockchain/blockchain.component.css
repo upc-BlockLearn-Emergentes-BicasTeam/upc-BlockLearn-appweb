@@ -1,0 +1,58 @@
+/* Fuente moderna */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:host {
+  display: block;
+  font-family: 'Roboto', sans-serif;
+  background: #f0f2f5;
+  padding: 1rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.blockchain-card {
+  max-width: 900px;
+  margin: 1rem auto;
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+mat-card-header {
+  align-items: center;
+}
+
+.accordion {
+  margin: 1rem;
+}
+
+.panel-header .col {
+  flex: 1;
+  font-weight: 500;
+}
+
+.panel-header .hash { text-align: left; }
+.panel-header .type { text-align: center; }
+.panel-header .id   { text-align: right; }
+
+.toggle-icon {
+  margin-left: auto;
+}
+
+.panel-content {
+  padding: 1rem;
+  background: #fff;
+}
+
+.details p {
+  margin: 0.5rem 0;
+  color: #1f2933;
+}
+
+.block-button {
+  text-align: right;
+  margin-top: 1rem;
+}
+
+mat-divider {
+  margin: 0.5rem 0;
+}

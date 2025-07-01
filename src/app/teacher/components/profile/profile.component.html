@@ -1,0 +1,86 @@
+<mat-card class="profile-card">
+  <mat-card-header>
+    <mat-icon class="avatar-placeholder" mat-card-avatar>
+      person
+    </mat-icon>
+
+    <mat-card-title>
+      <ng-container *ngIf="!isEditing; else editFirstName">
+        {{ teacher.firstName || 'Teacher Profile' }}
+      </ng-container>
+      <ng-template #editFirstName>
+        <mat-form-field appearance="outline" class="field-full">
+          <mat-label>First Name</mat-label>
+          <input matInput [(ngModel)]="teacher.firstName" />
+        </mat-form-field>
+      </ng-template>
+    </mat-card-title>
+
+    <mat-card-actions class="header-actions">
+      <button
+        mat-icon-button
+        aria-label="Edit data"
+        *ngIf="!isEditing"
+        (click)="onChangeData()"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card-header>
+
+  <mat-divider></mat-divider>
+
+  <mat-card-content>
+    <div class="info-grid">
+      <!-- Last Name -->
+      <div class="info-item">
+        <mat-icon>badge</mat-icon>
+        <ng-container *ngIf="!isEditing; else editLastName">
+          <span>{{ teacher.lastName }}</span>
+        </ng-container>
+        <ng-template #editLastName>
+          <mat-form-field appearance="outline" class="field-full">
+            <mat-label>Last Name</mat-label>
+            <input matInput [(ngModel)]="teacher.lastName" />
+          </mat-form-field>
+        </ng-template>
+      </div>
+
+      <!-- Telephone -->
+      <div class="info-item">
+        <mat-icon>phone</mat-icon>
+        <ng-container *ngIf="!isEditing; else editPhone">
+          <span>{{ teacher.phone }}</span>
+        </ng-container>
+        <ng-template #editPhone>
+          <mat-form-field appearance="outline" class="field-full">
+            <mat-label>Telephone</mat-label>
+            <input matInput type="tel" [(ngModel)]="teacher.phone" />
+          </mat-form-field>
+        </ng-template>
+      </div>
+
+      <!-- Email -->
+      <div class="info-item">
+        <mat-icon>email</mat-icon>
+        <ng-container *ngIf="!isEditing; else editEmail">
+          <span>{{ teacher.email }}</span>
+        </ng-container>
+        <ng-template #editEmail>
+          <mat-form-field appearance="outline" class="field-full">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" [(ngModel)]="teacher.email" />
+          </mat-form-field>
+        </ng-template>
+      </div>
+    </div>
+  </mat-card-content>
+
+  <!-- Save / Cancel -->
+  <mat-card-actions align="end" *ngIf="isEditing" class="footer-actions">
+    <button mat-raised-button color="primary" (click)="onSave()">
+      Save
+    </button>
+    <button mat-button (click)="onCancel()">Cancel</button>
+  </mat-card-actions>
+</mat-card>

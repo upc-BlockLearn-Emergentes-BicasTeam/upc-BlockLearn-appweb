@@ -1,9 +1,29 @@
 {
-  "users": [
+  "teachers": [
     {
-      "id": 1,
-      "email": "demo@institucion1.com",
-      "password": "123456"
+      "id": "1",
+      "firstName": "Gonzalo",
+      "lastName": "Ramirez",
+      "email": "ramirez@institute.edu.pe",
+      "phone": "967778836",
+      "avatarUrl": "/assets/avatar.png",
+      "courses": ["01", "02"],
+      "blockchainEntries": ["e01", "e02", "e03"]
+    }
+  ],
+  "courses": [
+    {
+      "id": "01",
+      "name": "Excel 1",
+      "code": "0002",
+      "section": "FVT",
+      "teacher": "1",
+      "notesWeight": [25, 20, 20, 35],
+      "passingGrade": 12.5,
+      "syllabusFileName": "excel1.pdf",
+      "syllabusHash": "00001457s98fgerf189ertgtg1869efw",
+      "students": ["101", "102", "103", "104", "105", "106", "107"],
+      "blockchainEntries": ["e02"]
     },
     {
       "id": 2,
@@ -23,10 +43,8 @@
   ],
   "students": [
     {
-      "id": 1,
-      "idUser": 2,
-      "idInstitution": 1,
-      "name": "Juanito",
+      "id": "101",
+      "firstName": "James",
       "lastName": "Perez",
       "telephone": "968889947"
     }

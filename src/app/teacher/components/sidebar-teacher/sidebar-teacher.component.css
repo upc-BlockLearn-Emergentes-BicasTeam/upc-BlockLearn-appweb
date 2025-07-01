@@ -1,0 +1,71 @@
+/* full‐height container */
+.sidebar-container {
+  height: 100vh;
+  width: 100%;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* the sidenav itself */
+.sidebar {
+  width: 240px;
+  background: #2f3e50;
+  color: #fff;
+}
+
+/* toolbar at top of sidebar */
+.sidebar-header {
+  background: #2f3e50;
+  color: #fff;
+  display: flex;
+  align-items: center;
+}
+
+/* logo next to hamburger */
+.logo {
+  height: 32px;
+  margin-left: 1rem;
+}
+
+/* nav list styling */
+.mat-nav-list {
+  margin-top: 1rem;
+}
+
+.mat-list-item {
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0 8px;
+  transition: background 0.2s ease;
+}
+
+.mat-list-item .mat-icon {
+  margin-right: 1rem;
+  font-size: 24px;
+}
+
+/* active & hover */
+.mat-list-item.active,
+.mat-list-item:hover {
+  background: #1f2a38;
+}
+
+/* main content area */
+.content {
+  padding: 1rem;
+  background: #f0f2f5;
+  min-height: 100vh;
+  overflow: auto;
+}
+
+/* collapse on small screens */
+@media (max-width: 800px) {
+  .sidebar {
+    position: absolute;
+    z-index: 1000;
+  }
+  .content {
+    margin-left: 0;
+  }
+}

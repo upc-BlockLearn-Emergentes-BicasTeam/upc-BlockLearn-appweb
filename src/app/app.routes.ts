@@ -16,6 +16,11 @@ import { PgCoursesComponent }   from './institution/pages/pg-courses/pg-courses.
 import { PgBlockchainComponent }from './institution/pages/pg-blockchain/pg-blockchain.component';
 
 
+import {PgProfileComponent} from './teacher/pages/pg-profile/pg-profile.component';
+import {PgCoursesComponent} from './teacher/pages/pg-courses/pg-courses.component';
+import {PgBlockchainComponent} from './teacher/pages/pg-blockchain/pg-blockchain.component';
+
+
 export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
@@ -33,10 +38,9 @@ export const routes: Routes = [
   { path: 'institution/courses',    component: PgCoursesComponent },
   { path: 'institution/blockchain', component: PgBlockchainComponent },
 
+  { path: 'teacher/profile',    component: PgProfileComponent },
+  { path: 'teacher/courses',    component: PgCoursesComponent },
+  { path: 'teacher/blockchain', component: PgBlockchainComponent },
+
   { path: '**', redirectTo: 'login' }
 ];
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }
