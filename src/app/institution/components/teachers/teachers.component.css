@@ -1,0 +1,96 @@
+/* Fuente moderna Roboto */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:host {
+  display: block;
+  font-family: 'Roboto', sans-serif;
+  background: transparent; /* lo maneja el contenedor padre */
+}
+
+/* Card principal */
+.teachers-card {
+  max-width: 800px;        /* igual que el profile */
+  margin: 1rem auto;       /* margen vertical y centrado */
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+/* Cabecera */
+mat-card-header {
+  align-items: center;
+}
+
+mat-card-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #1f2933;
+}
+
+mat-card-actions {
+  margin-left: auto;
+}
+
+/* Accordion panels con estilo de tarjeta */
+mat-expansion-panel {
+  border-radius: 0 0 1rem 1rem;
+  margin: 0;
+  box-shadow: none;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* El primero redondea todo */
+mat-expansion-panel:first-child {
+  border-radius: 1rem 1rem 0 0;
+}
+
+/* El último solo redondea parte inferior */
+mat-expansion-panel:last-child {
+  border-radius: 0 0 1rem 1rem;
+}
+
+/* Header del panel */
+mat-expansion-panel-header {
+  padding: 0 1.5rem;
+  min-height: 64px;
+}
+
+/* Iconos de acción */
+mat-panel-description .mat-icon {
+  color: #1f2933;
+}
+
+/* Detalle interno: grid igual al profile-info */
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+/* Espaciado responsive */
+@media (max-width: 600px) {
+  mat-card-title {
+    font-size: 1.25rem;
+  }
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Diálogo “Add Teacher” y “Assign Courses” comparten contenido */
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Ajustes de botones en dialog */
+mat-dialog-actions button {
+  font-weight: 500;
+}

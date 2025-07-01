@@ -1,0 +1,108 @@
+<mat-card class="students-card">
+  <mat-card-header>
+    <mat-card-title>Students</mat-card-title>
+    <mat-card-actions>
+      <button mat-flat-button color="primary" (click)="openAddStudent()">
+        <mat-icon>person_add</mat-icon>&nbsp;Add Student
+      </button>
+    </mat-card-actions>
+  </mat-card-header>
+
+  <mat-accordion>
+    <mat-expansion-panel *ngFor="let s of students; let i = index">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ i + 1 | number:'2.0' }}. {{ s.firstName }} {{ s.lastName }}
+        </mat-panel-title>
+        <mat-panel-description>
+          <button mat-icon-button color="warn" (click)="deleteStudent(s)" aria-label="Delete student">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="detail-grid">
+        <div>
+          <mat-icon>person</mat-icon>
+          <strong>Name:</strong> {{ s.firstName }} {{ s.lastName }}
+        </div>
+        <div>
+          <mat-icon>email</mat-icon>
+          <strong>Email:</strong>
+          <a [href]="'mailto:' + s.email">{{ s.email }}</a>
+        </div>
+        <div class="full-row">
+          <mat-icon>menu_book</mat-icon>
+          <strong>Courses:</strong>
+          <mat-list dense>
+            <mat-list-item *ngFor="let c of s.courses">
+              <mat-icon matListIcon>chevron_right</mat-icon>
+              {{ c.name }}
+            </mat-list-item>
+          </mat-list>
+        </div>
+        <div class="full-row">
+          <button mat-stroked-button color="accent" (click)="openAssign(s)">
+            <mat-icon>edit</mat-icon>&nbsp;Assign Courses
+          </button>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</mat-card>
+
+<!-- Add Student Dialog -->
+<ng-template #addStudentTpl>
+  <h2 mat-dialog-title>Add Student</h2>
+  <mat-dialog-content class="dialog-content">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>First Name</mat-label>
+      <input matInput [(ngModel)]="newStudent.firstName" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Last Name</mat-label>
+      <input matInput [(ngModel)]="newStudent.lastName" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" [(ngModel)]="newStudent.email" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Phone</mat-label>
+      <input matInput type="tel" [(ngModel)]="newStudent.phone" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Password</mat-label>
+      <input matInput type="password" [(ngModel)]="newStudent.password" />
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-flat-button color="primary" (click)="saveNewStudent()">Save</button>
+  </mat-dialog-actions>
+</ng-template>
+
+<!-- Assign Courses Dialog -->
+<ng-template #assignCoursesTpl>
+  <h2 mat-dialog-title>Assign Courses</h2>
+  <mat-dialog-content class="dialog-content">
+    <p>
+      <mat-icon>person</mat-icon>
+      {{ selectedStudent?.firstName }} {{ selectedStudent?.lastName }}
+    </p>
+    <mat-selection-list>
+      <mat-list-option
+        *ngFor="let c of availableCourses"
+        [value]="c.id"
+        (click)="toggleCourse(c)"
+        [selected]="assignedCourses.has(c.id)"
+      >
+        {{ c.name }}
+      </mat-list-option>
+    </mat-selection-list>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-flat-button color="primary" (click)="saveAssigned()">Update</button>
+  </mat-dialog-actions>
+</ng-template>

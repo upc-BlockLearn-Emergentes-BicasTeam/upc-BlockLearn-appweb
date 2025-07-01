@@ -183,5 +183,1023 @@
       "idStudent": 1,
       "hash": "856489er54&%hrth46&Htrh9665&h5"
     }
+  ],
+  "institutions": [
+    {
+      "teachers": [
+        {
+          "id": "01",
+          "firstName": "ELÍAS",
+          "lastName": "TORRES ESPINOZA",
+          "email": "cepreunielias@hotmail.com",
+          "phone": "947665614",
+          "courses": [
+            {
+              "id": "01",
+              "name": "Excel",
+              "code": "01",
+              "section": "1234",
+              "passingGrade": 8,
+              "notesWeight": [
+                8
+              ],
+              "syllabusHash": "000t3t0sngqsm"
+            },
+            {
+              "id": "02",
+              "name": "Algoritmos",
+              "code": "02",
+              "section": "123",
+              "passingGrade": 13,
+              "teacher": {
+                "id": "01",
+                "firstName": "ELÍAS",
+                "lastName": "TORRES ESPINOZA",
+                "email": "cepreunielias@hotmail.com",
+                "phone": "947665614",
+                "courses": [
+                  {
+                    "id": "01",
+                    "name": "Excel",
+                    "code": "01",
+                    "section": "1234",
+                    "passingGrade": 8,
+                    "notesWeight": [
+                      8
+                    ],
+                    "syllabusHash": "000t3t0sngqsm"
+                  }
+                ]
+              },
+              "notesWeight": [
+                22,
+                25,
+                51,
+                3
+              ],
+              "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+              "syllabusHash": "000h7dks2so0lr"
+            }
+          ]
+        },
+        {
+          "id": "02",
+          "firstName": "Gonzalo ",
+          "lastName": "Ramirez",
+          "email": "Ramirez",
+          "phone": "987567654",
+          "courses": [
+            {
+              "id": "01",
+              "name": "Excel",
+              "code": "01",
+              "section": "1234",
+              "passingGrade": 8,
+              "notesWeight": [
+                8
+              ],
+              "syllabusHash": "000t3t0sngqsm"
+            },
+            {
+              "id": "02",
+              "name": "Algoritmos",
+              "code": "02",
+              "section": "123",
+              "passingGrade": 13,
+              "teacher": {
+                "id": "01",
+                "firstName": "ELÍAS",
+                "lastName": "TORRES ESPINOZA",
+                "email": "cepreunielias@hotmail.com",
+                "phone": "947665614",
+                "courses": [
+                  {
+                    "id": "01",
+                    "name": "Excel",
+                    "code": "01",
+                    "section": "1234",
+                    "passingGrade": 8,
+                    "notesWeight": [
+                      8
+                    ],
+                    "syllabusHash": "000t3t0sngqsm"
+                  }
+                ]
+              },
+              "notesWeight": [
+                22,
+                25,
+                51,
+                3
+              ],
+              "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+              "syllabusHash": "000h7dks2so0lr"
+            }
+          ]
+        },
+        {
+          "id": "03",
+          "firstName": "Ricardo",
+          "lastName": "Espinoza",
+          "email": "Ricardo@vhate.com",
+          "phone": "987567876",
+          "courses": [
+            {
+              "id": "01",
+              "name": "Excel",
+              "code": "01",
+              "section": "1234",
+              "passingGrade": 8,
+              "notesWeight": [
+                8
+              ],
+              "syllabusHash": "000t3t0sngqsm"
+            },
+            {
+              "id": "02",
+              "name": "Algoritmos",
+              "code": "02",
+              "section": "123",
+              "passingGrade": 13,
+              "teacher": {
+                "id": "01",
+                "firstName": "ELÍAS",
+                "lastName": "TORRES ESPINOZA",
+                "email": "cepreunielias@hotmail.com",
+                "phone": "947665614",
+                "courses": [
+                  {
+                    "id": "01",
+                    "name": "Excel",
+                    "code": "01",
+                    "section": "1234",
+                    "passingGrade": 8,
+                    "notesWeight": [
+                      8
+                    ],
+                    "syllabusHash": "000t3t0sngqsm"
+                  }
+                ]
+              },
+              "notesWeight": [
+                22,
+                25,
+                51,
+                3
+              ],
+              "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+              "syllabusHash": "000h7dks2so0lr"
+            },
+            {
+              "id": "03",
+              "name": "Word",
+              "code": "03",
+              "section": "2345",
+              "passingGrade": 10,
+              "teacher": {
+                "id": "02",
+                "firstName": "Gonzalo ",
+                "lastName": "Ramirez",
+                "email": "Ramirez",
+                "phone": "987567654",
+                "courses": [
+                  {
+                    "id": "01",
+                    "name": "Excel",
+                    "code": "01",
+                    "section": "1234",
+                    "passingGrade": 8,
+                    "notesWeight": [
+                      8
+                    ],
+                    "syllabusHash": "000t3t0sngqsm"
+                  },
+                  {
+                    "id": "02",
+                    "name": "Algoritmos",
+                    "code": "02",
+                    "section": "123",
+                    "passingGrade": 13,
+                    "teacher": {
+                      "id": "01",
+                      "firstName": "ELÍAS",
+                      "lastName": "TORRES ESPINOZA",
+                      "email": "cepreunielias@hotmail.com",
+                      "phone": "947665614",
+                      "courses": [
+                        {
+                          "id": "01",
+                          "name": "Excel",
+                          "code": "01",
+                          "section": "1234",
+                          "passingGrade": 8,
+                          "notesWeight": [
+                            8
+                          ],
+                          "syllabusHash": "000t3t0sngqsm"
+                        }
+                      ]
+                    },
+                    "notesWeight": [
+                      22,
+                      25,
+                      51,
+                      3
+                    ],
+                    "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+                    "syllabusHash": "000h7dks2so0lr"
+                  }
+                ]
+              },
+              "notesWeight": [
+                25,
+                25,
+                50,
+                25
+              ],
+              "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+              "syllabusHash": "000dtl0xe1qoq"
+            }
+          ]
+        }
+      ],
+      "id": "1",
+      "students": [
+        {
+          "id": "01",
+          "firstName": "Miguel",
+          "lastName": "Huarcaya",
+          "email": "Miguel@upc.edu.pe",
+          "phone": "987456543",
+          "courses": [
+            {
+              "id": "01",
+              "name": "Excel",
+              "code": "01",
+              "section": "1234",
+              "passingGrade": 8,
+              "notesWeight": [
+                8
+              ],
+              "syllabusHash": "000t3t0sngqsm"
+            },
+            {
+              "id": "02",
+              "name": "Algoritmos",
+              "code": "02",
+              "section": "123",
+              "passingGrade": 13,
+              "teacher": {
+                "id": "01",
+                "firstName": "ELÍAS",
+                "lastName": "TORRES ESPINOZA",
+                "email": "cepreunielias@hotmail.com",
+                "phone": "947665614",
+                "courses": [
+                  {
+                    "id": "01",
+                    "name": "Excel",
+                    "code": "01",
+                    "section": "1234",
+                    "passingGrade": 8,
+                    "notesWeight": [
+                      8
+                    ],
+                    "syllabusHash": "000t3t0sngqsm"
+                  }
+                ]
+              },
+              "notesWeight": [
+                22,
+                25,
+                51,
+                3
+              ],
+              "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+              "syllabusHash": "000h7dks2so0lr"
+            },
+            {
+              "id": "03",
+              "name": "Word",
+              "code": "03",
+              "section": "2345",
+              "passingGrade": 10,
+              "teacher": {
+                "id": "02",
+                "firstName": "Gonzalo ",
+                "lastName": "Ramirez",
+                "email": "Ramirez",
+                "phone": "987567654",
+                "courses": [
+                  {
+                    "id": "01",
+                    "name": "Excel",
+                    "code": "01",
+                    "section": "1234",
+                    "passingGrade": 8,
+                    "notesWeight": [
+                      8
+                    ],
+                    "syllabusHash": "000t3t0sngqsm"
+                  },
+                  {
+                    "id": "02",
+                    "name": "Algoritmos",
+                    "code": "02",
+                    "section": "123",
+                    "passingGrade": 13,
+                    "teacher": {
+                      "id": "01",
+                      "firstName": "ELÍAS",
+                      "lastName": "TORRES ESPINOZA",
+                      "email": "cepreunielias@hotmail.com",
+                      "phone": "947665614",
+                      "courses": [
+                        {
+                          "id": "01",
+                          "name": "Excel",
+                          "code": "01",
+                          "section": "1234",
+                          "passingGrade": 8,
+                          "notesWeight": [
+                            8
+                          ],
+                          "syllabusHash": "000t3t0sngqsm"
+                        }
+                      ]
+                    },
+                    "notesWeight": [
+                      22,
+                      25,
+                      51,
+                      3
+                    ],
+                    "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+                    "syllabusHash": "000h7dks2so0lr"
+                  }
+                ]
+              },
+              "notesWeight": [
+                25,
+                25,
+                50,
+                25
+              ],
+              "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+              "syllabusHash": "000dtl0xe1qoq"
+            }
+          ]
+        },
+        {
+          "id": "02",
+          "firstName": "ELÍAS",
+          "lastName": "TORRES ESPINOZA",
+          "email": "cepreunielias@hotmail.com",
+          "phone": "947665614",
+          "courses": [
+            {
+              "id": "01",
+              "name": "Excel",
+              "code": "01",
+              "section": "1234",
+              "passingGrade": 8,
+              "notesWeight": [
+                8
+              ],
+              "syllabusHash": "000t3t0sngqsm"
+            },
+            {
+              "id": "02",
+              "name": "Algoritmos",
+              "code": "02",
+              "section": "123",
+              "passingGrade": 13,
+              "teacher": {
+                "id": "01",
+                "firstName": "ELÍAS",
+                "lastName": "TORRES ESPINOZA",
+                "email": "cepreunielias@hotmail.com",
+                "phone": "947665614",
+                "courses": [
+                  {
+                    "id": "01",
+                    "name": "Excel",
+                    "code": "01",
+                    "section": "1234",
+                    "passingGrade": 8,
+                    "notesWeight": [
+                      8
+                    ],
+                    "syllabusHash": "000t3t0sngqsm"
+                  }
+                ]
+              },
+              "notesWeight": [
+                22,
+                25,
+                51,
+                3
+              ],
+              "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+              "syllabusHash": "000h7dks2so0lr"
+            }
+          ]
+        },
+        {
+          "id": "03",
+          "firstName": "Zamira",
+          "lastName": "Chate",
+          "email": "Zamira@upc.edu.pe",
+          "phone": "98756765",
+          "courses": [
+            {
+              "id": "01",
+              "name": "Excel",
+              "code": "01",
+              "section": "1234",
+              "passingGrade": 8,
+              "notesWeight": [
+                8
+              ],
+              "syllabusHash": "000t3t0sngqsm"
+            },
+            {
+              "id": "02",
+              "name": "Algoritmos",
+              "code": "02",
+              "section": "123",
+              "passingGrade": 13,
+              "teacher": {
+                "id": "01",
+                "firstName": "ELÍAS",
+                "lastName": "TORRES ESPINOZA",
+                "email": "cepreunielias@hotmail.com",
+                "phone": "947665614",
+                "courses": [
+                  {
+                    "id": "01",
+                    "name": "Excel",
+                    "code": "01",
+                    "section": "1234",
+                    "passingGrade": 8,
+                    "notesWeight": [
+                      8
+                    ],
+                    "syllabusHash": "000t3t0sngqsm"
+                  }
+                ]
+              },
+              "notesWeight": [
+                22,
+                25,
+                51,
+                3
+              ],
+              "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+              "syllabusHash": "000h7dks2so0lr"
+            },
+            {
+              "id": "03",
+              "name": "Word",
+              "code": "03",
+              "section": "2345",
+              "passingGrade": 10,
+              "teacher": {
+                "id": "02",
+                "firstName": "Gonzalo ",
+                "lastName": "Ramirez",
+                "email": "Ramirez",
+                "phone": "987567654",
+                "courses": [
+                  {
+                    "id": "01",
+                    "name": "Excel",
+                    "code": "01",
+                    "section": "1234",
+                    "passingGrade": 8,
+                    "notesWeight": [
+                      8
+                    ],
+                    "syllabusHash": "000t3t0sngqsm"
+                  },
+                  {
+                    "id": "02",
+                    "name": "Algoritmos",
+                    "code": "02",
+                    "section": "123",
+                    "passingGrade": 13,
+                    "teacher": {
+                      "id": "01",
+                      "firstName": "ELÍAS",
+                      "lastName": "TORRES ESPINOZA",
+                      "email": "cepreunielias@hotmail.com",
+                      "phone": "947665614",
+                      "courses": [
+                        {
+                          "id": "01",
+                          "name": "Excel",
+                          "code": "01",
+                          "section": "1234",
+                          "passingGrade": 8,
+                          "notesWeight": [
+                            8
+                          ],
+                          "syllabusHash": "000t3t0sngqsm"
+                        }
+                      ]
+                    },
+                    "notesWeight": [
+                      22,
+                      25,
+                      51,
+                      3
+                    ],
+                    "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+                    "syllabusHash": "000h7dks2so0lr"
+                  }
+                ]
+              },
+              "notesWeight": [
+                25,
+                25,
+                50,
+                25
+              ],
+              "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+              "syllabusHash": "000dtl0xe1qoq"
+            },
+            {
+              "id": "04",
+              "name": "Educacion ambiental",
+              "code": "04",
+              "section": "2345",
+              "passingGrade": 10,
+              "teacher": {
+                "id": "02",
+                "firstName": "Gonzalo ",
+                "lastName": "Ramirez",
+                "email": "Ramirez",
+                "phone": "987567654",
+                "courses": [
+                  {
+                    "id": "01",
+                    "name": "Excel",
+                    "code": "01",
+                    "section": "1234",
+                    "passingGrade": 8,
+                    "notesWeight": [
+                      8
+                    ],
+                    "syllabusHash": "000t3t0sngqsm"
+                  },
+                  {
+                    "id": "02",
+                    "name": "Algoritmos",
+                    "code": "02",
+                    "section": "123",
+                    "passingGrade": 13,
+                    "teacher": {
+                      "id": "01",
+                      "firstName": "ELÍAS",
+                      "lastName": "TORRES ESPINOZA",
+                      "email": "cepreunielias@hotmail.com",
+                      "phone": "947665614",
+                      "courses": [
+                        {
+                          "id": "01",
+                          "name": "Excel",
+                          "code": "01",
+                          "section": "1234",
+                          "passingGrade": 8,
+                          "notesWeight": [
+                            8
+                          ],
+                          "syllabusHash": "000t3t0sngqsm"
+                        }
+                      ]
+                    },
+                    "notesWeight": [
+                      22,
+                      25,
+                      51,
+                      3
+                    ],
+                    "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+                    "syllabusHash": "000h7dks2so0lr"
+                  }
+                ]
+              },
+              "notesWeight": [
+                15,
+                30,
+                20,
+                30
+              ],
+              "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+              "syllabusHash": "000afbqp50a4b"
+            }
+          ]
+        }
+      ],
+      "name": "UPC",
+      "email": "UPC@upc.edu.pe",
+      "phone": "987567656",
+      "courses": [
+        {
+          "id": "01",
+          "name": "Excel",
+          "code": "01",
+          "section": "1234",
+          "passingGrade": 8,
+          "notesWeight": [
+            8
+          ],
+          "syllabusHash": "000t3t0sngqsm"
+        },
+        {
+          "id": "02",
+          "name": "Algoritmos",
+          "code": "02",
+          "section": "123",
+          "passingGrade": 13,
+          "teacher": {
+            "id": "01",
+            "firstName": "ELÍAS",
+            "lastName": "TORRES ESPINOZA",
+            "email": "cepreunielias@hotmail.com",
+            "phone": "947665614",
+            "courses": [
+              {
+                "id": "01",
+                "name": "Excel",
+                "code": "01",
+                "section": "1234",
+                "passingGrade": 8,
+                "notesWeight": [
+                  8
+                ],
+                "syllabusHash": "000t3t0sngqsm"
+              }
+            ]
+          },
+          "notesWeight": [
+            22,
+            25,
+            51,
+            3
+          ],
+          "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+          "syllabusHash": "000h7dks2so0lr"
+        },
+        {
+          "id": "03",
+          "name": "Word",
+          "code": "03",
+          "section": "2345",
+          "passingGrade": 10,
+          "teacher": {
+            "id": "02",
+            "firstName": "Gonzalo ",
+            "lastName": "Ramirez",
+            "email": "Ramirez",
+            "phone": "987567654",
+            "courses": [
+              {
+                "id": "01",
+                "name": "Excel",
+                "code": "01",
+                "section": "1234",
+                "passingGrade": 8,
+                "notesWeight": [
+                  8
+                ],
+                "syllabusHash": "000t3t0sngqsm"
+              },
+              {
+                "id": "02",
+                "name": "Algoritmos",
+                "code": "02",
+                "section": "123",
+                "passingGrade": 13,
+                "teacher": {
+                  "id": "01",
+                  "firstName": "ELÍAS",
+                  "lastName": "TORRES ESPINOZA",
+                  "email": "cepreunielias@hotmail.com",
+                  "phone": "947665614",
+                  "courses": [
+                    {
+                      "id": "01",
+                      "name": "Excel",
+                      "code": "01",
+                      "section": "1234",
+                      "passingGrade": 8,
+                      "notesWeight": [
+                        8
+                      ],
+                      "syllabusHash": "000t3t0sngqsm"
+                    }
+                  ]
+                },
+                "notesWeight": [
+                  22,
+                  25,
+                  51,
+                  3
+                ],
+                "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+                "syllabusHash": "000h7dks2so0lr"
+              }
+            ]
+          },
+          "notesWeight": [
+            25,
+            25,
+            50,
+            25
+          ],
+          "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+          "syllabusHash": "000dtl0xe1qoq"
+        },
+        {
+          "id": "04",
+          "name": "Educacion ambiental",
+          "code": "04",
+          "section": "2345",
+          "passingGrade": 10,
+          "teacher": {
+            "id": "02",
+            "firstName": "Gonzalo ",
+            "lastName": "Ramirez",
+            "email": "Ramirez",
+            "phone": "987567654",
+            "courses": [
+              {
+                "id": "01",
+                "name": "Excel",
+                "code": "01",
+                "section": "1234",
+                "passingGrade": 8,
+                "notesWeight": [
+                  8
+                ],
+                "syllabusHash": "000t3t0sngqsm"
+              },
+              {
+                "id": "02",
+                "name": "Algoritmos",
+                "code": "02",
+                "section": "123",
+                "passingGrade": 13,
+                "teacher": {
+                  "id": "01",
+                  "firstName": "ELÍAS",
+                  "lastName": "TORRES ESPINOZA",
+                  "email": "cepreunielias@hotmail.com",
+                  "phone": "947665614",
+                  "courses": [
+                    {
+                      "id": "01",
+                      "name": "Excel",
+                      "code": "01",
+                      "section": "1234",
+                      "passingGrade": 8,
+                      "notesWeight": [
+                        8
+                      ],
+                      "syllabusHash": "000t3t0sngqsm"
+                    }
+                  ]
+                },
+                "notesWeight": [
+                  22,
+                  25,
+                  51,
+                  3
+                ],
+                "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+                "syllabusHash": "000h7dks2so0lr"
+              }
+            ]
+          },
+          "notesWeight": [
+            15,
+            30,
+            20,
+            30
+          ],
+          "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+          "syllabusHash": "000afbqp50a4b"
+        }
+      ],
+      "blockchainEntries": [
+        {
+          "id": "01",
+          "type": "Syllabus",
+          "course": {
+            "id": "01",
+            "name": "Excel",
+            "code": "01",
+            "section": "1234",
+            "passingGrade": 8,
+            "notesWeight": [
+              8
+            ],
+            "syllabusHash": "000t3t0sngqsm"
+          },
+          "hash": "000t3t0sngqsm"
+        },
+        {
+          "id": "02",
+          "type": "Syllabus",
+          "course": {
+            "id": "02",
+            "name": "Algoritmos",
+            "code": "02",
+            "section": "123",
+            "passingGrade": 13,
+            "teacher": {
+              "id": "01",
+              "firstName": "ELÍAS",
+              "lastName": "TORRES ESPINOZA",
+              "email": "cepreunielias@hotmail.com",
+              "phone": "947665614",
+              "courses": [
+                {
+                  "id": "01",
+                  "name": "Excel",
+                  "code": "01",
+                  "section": "1234",
+                  "passingGrade": 8,
+                  "notesWeight": [
+                    8
+                  ],
+                  "syllabusHash": "000t3t0sngqsm"
+                }
+              ]
+            },
+            "notesWeight": [
+              22,
+              25,
+              51,
+              3
+            ],
+            "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+            "syllabusHash": "000h7dks2so0lr"
+          },
+          "hash": "000h7dks2so0lr"
+        },
+        {
+          "id": "03",
+          "type": "Syllabus",
+          "course": {
+            "id": "03",
+            "name": "Word",
+            "code": "03",
+            "section": "2345",
+            "passingGrade": 10,
+            "teacher": {
+              "id": "02",
+              "firstName": "Gonzalo ",
+              "lastName": "Ramirez",
+              "email": "Ramirez",
+              "phone": "987567654",
+              "courses": [
+                {
+                  "id": "01",
+                  "name": "Excel",
+                  "code": "01",
+                  "section": "1234",
+                  "passingGrade": 8,
+                  "notesWeight": [
+                    8
+                  ],
+                  "syllabusHash": "000t3t0sngqsm"
+                },
+                {
+                  "id": "02",
+                  "name": "Algoritmos",
+                  "code": "02",
+                  "section": "123",
+                  "passingGrade": 13,
+                  "teacher": {
+                    "id": "01",
+                    "firstName": "ELÍAS",
+                    "lastName": "TORRES ESPINOZA",
+                    "email": "cepreunielias@hotmail.com",
+                    "phone": "947665614",
+                    "courses": [
+                      {
+                        "id": "01",
+                        "name": "Excel",
+                        "code": "01",
+                        "section": "1234",
+                        "passingGrade": 8,
+                        "notesWeight": [
+                          8
+                        ],
+                        "syllabusHash": "000t3t0sngqsm"
+                      }
+                    ]
+                  },
+                  "notesWeight": [
+                    22,
+                    25,
+                    51,
+                    3
+                  ],
+                  "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+                  "syllabusHash": "000h7dks2so0lr"
+                }
+              ]
+            },
+            "notesWeight": [
+              25,
+              25,
+              50,
+              25
+            ],
+            "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+            "syllabusHash": "000dtl0xe1qoq"
+          },
+          "hash": "000dtl0xe1qoq"
+        },
+        {
+          "id": "04",
+          "type": "Syllabus",
+          "course": {
+            "id": "04",
+            "name": "Educacion ambiental",
+            "code": "04",
+            "section": "2345",
+            "passingGrade": 10,
+            "teacher": {
+              "id": "02",
+              "firstName": "Gonzalo ",
+              "lastName": "Ramirez",
+              "email": "Ramirez",
+              "phone": "987567654",
+              "courses": [
+                {
+                  "id": "01",
+                  "name": "Excel",
+                  "code": "01",
+                  "section": "1234",
+                  "passingGrade": 8,
+                  "notesWeight": [
+                    8
+                  ],
+                  "syllabusHash": "000t3t0sngqsm"
+                },
+                {
+                  "id": "02",
+                  "name": "Algoritmos",
+                  "code": "02",
+                  "section": "123",
+                  "passingGrade": 13,
+                  "teacher": {
+                    "id": "01",
+                    "firstName": "ELÍAS",
+                    "lastName": "TORRES ESPINOZA",
+                    "email": "cepreunielias@hotmail.com",
+                    "phone": "947665614",
+                    "courses": [
+                      {
+                        "id": "01",
+                        "name": "Excel",
+                        "code": "01",
+                        "section": "1234",
+                        "passingGrade": 8,
+                        "notesWeight": [
+                          8
+                        ],
+                        "syllabusHash": "000t3t0sngqsm"
+                      }
+                    ]
+                  },
+                  "notesWeight": [
+                    22,
+                    25,
+                    51,
+                    3
+                  ],
+                  "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+                  "syllabusHash": "000h7dks2so0lr"
+                }
+              ]
+            },
+            "notesWeight": [
+              15,
+              30,
+              20,
+              30
+            ],
+            "syllabusFileName": "UG-202510_1ASI0728-4283 (1).pdf",
+            "syllabusHash": "000afbqp50a4b"
+          },
+          "hash": "000afbqp50a4b"
+        }
+      ]
+    }
   ]
 }
