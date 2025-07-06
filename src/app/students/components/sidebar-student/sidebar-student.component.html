@@ -14,16 +14,12 @@
     </mat-toolbar>
 
     <!-- Bienvenida -->
-    <div class="welcome">
-      <small>Welcome</small>
-      <h3>{{ student.name }} {{ student.lastName }}</h3>
-    </div>
 
     <!-- Opciones -->
     <mat-nav-list>
       <a
         mat-list-item
-        [routerLink]="['/student', student.id]"
+        [routerLink]="['/student/profile', studentId]"
         routerLinkActive="active"
         aria-label="Go to Profile"
       >
@@ -33,7 +29,7 @@
 
       <a
         mat-list-item
-        [routerLink]="['/student/courses', student.id]"
+        [routerLink]="['/student/courses', studentId]"
         routerLinkActive="active"
         aria-label="Go to Courses"
       >
@@ -43,7 +39,7 @@
 
       <a
         mat-list-item
-        [routerLink]="['/student/certificates', student.id]"
+        [routerLink]="['/student/certificates', studentId]"
         routerLinkActive="active"
         aria-label="Go to Certificates"
       >
@@ -53,7 +49,7 @@
 
       <a
         mat-list-item
-        [routerLink]="['/student/blockchain', student.id]"
+        [routerLink]="['/student/blockchain', studentId]"
         routerLinkActive="active"
         aria-label="Go to Blockchain"
       >

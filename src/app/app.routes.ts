@@ -9,38 +9,45 @@ import {
 } from './students/pages/pg-student-certificates/pg-student-certificates.component';
 import {PgStudentBlockchainComponent} from './students/pages/pg-student-blockchain/pg-student-blockchain.component';
 // tus wrappers:
-import { PgProfileComponent }   from './institution/pages/pg-profile/pg-profile.component';
-import { PgTeachersComponent }  from './institution/pages/pg-teachers/pg-teachers.component';
-import { PgStudentsComponent }  from './institution/pages/pg-students/pg-students.component';
-import { PgCoursesComponent }   from './institution/pages/pg-courses/pg-courses.component';
-import { PgBlockchainComponent }from './institution/pages/pg-blockchain/pg-blockchain.component';
+import { PgTeachersInstitutionComponent }  from './institution/pages/pg-teachers-institution/pg-teachers-institution.component';
+import { PgStudentsInstitutionComponent }  from './institution/pages/pg-students-institution/pg-students-institution.component';
 
 
-import {PgProfileComponent} from './teacher/pages/pg-profile/pg-profile.component';
-import {PgCoursesComponent} from './teacher/pages/pg-courses/pg-courses.component';
-import {PgBlockchainComponent} from './teacher/pages/pg-blockchain/pg-blockchain.component';
+import {PgCoursesTeacherComponent} from './teacher/pages/pg-courses-teacher/pg-courses-teacher.component';
+import {PgBlockchainTeacherComponent} from './teacher/pages/pg-blockchain-teacher/pg-blockchain-teacher.component';
+import {ProfileComponent} from './institution/components/profile/profile.component';
+import {PgProfileTeacherComponent} from './teacher/pages/pg-profile-teacher/pg-profile-teacher.component';
+import {
+  PgProfileInstitutionComponent
+} from './institution/pages/pg-profile-institution/pg-profile-institution.component';
+import {
+  PgCoursesInstitutionComponent
+} from './institution/pages/pg-courses-institution/pg-courses-institution.component';
+import {
+  PgBlockchainInstitutionComponent
+} from './institution/pages/pg-blockchain-institution/pg-blockchain-institution.component';
 
 
 export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
 
-  { path: 'student/:id', component: PgStudentProfileComponent},
+  { path: 'student/profile/:id', component: PgStudentProfileComponent},
 
   { path: 'student/courses/:id', component: PgStudentCoursesComponent},
   { path: 'student/certificates/:id', component: PgStudentCertificatesComponent},
   { path: 'student/blockchain/:id', component: PgStudentBlockchainComponent},
 
 
-  { path: 'institution/profile',    component: PgProfileComponent },
-  { path: 'institution/teachers',   component: PgTeachersComponent },
-  { path: 'institution/students',   component: PgStudentsComponent },
-  { path: 'institution/courses',    component: PgCoursesComponent },
-  { path: 'institution/blockchain', component: PgBlockchainComponent },
+  { path: 'institution/profile/:id',    component: PgProfileInstitutionComponent },
+  { path: 'institution/teachers/:id',   component: PgTeachersInstitutionComponent },
+  { path: 'institution/students/:id',   component: PgStudentsInstitutionComponent },
+  { path: 'institution/courses/:id',    component: PgCoursesInstitutionComponent },
+  { path: 'institution/blockchain/:id', component: PgBlockchainInstitutionComponent },
 
-  { path: 'teacher/profile',    component: PgProfileComponent },
-  { path: 'teacher/courses',    component: PgCoursesComponent },
-  { path: 'teacher/blockchain', component: PgBlockchainComponent },
+  { path: 'teacher/profile/:id',    component: PgProfileTeacherComponent },
+  { path: 'teacher/courses/:id',    component: PgCoursesTeacherComponent },
+  { path: 'teacher/blockchain/:id', component: PgBlockchainTeacherComponent },
 
   { path: '**', redirectTo: 'login' }
 ];

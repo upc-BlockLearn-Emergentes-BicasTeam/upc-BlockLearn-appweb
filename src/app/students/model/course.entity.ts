@@ -1,14 +1,12 @@
-export class CourseEntity {
-  id?: number;
-  idTeacher: number ;
-  name: string;
-  section:string;
-  passingGrade: number;
-  constructor() {
-    this.idTeacher = 0;
-    this.name = '';
-    this.id = 0;
-    this.section = '';
-    this.passingGrade = 0;
-  }
+export interface CourseEntity {
+  id:            string;   // ← antes number
+  name:          string;
+  code:          string;
+  section:       string;
+  passingGrade:  number;
+  idInstitution: string;
+  idTeacher:     string;
+  notesWeight:   number[];
+  syllabusFileName: string;
+  syllabusHash:  string;
 }

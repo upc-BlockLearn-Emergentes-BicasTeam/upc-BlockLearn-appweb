@@ -1,76 +1,63 @@
-/* Roboto para todo el componente */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
 
 :host {
   display: block;
   font-family: 'Roboto', sans-serif;
-  background: #f0f2f5;
-  padding: 2rem;
-  box-sizing: border-box;
+  padding: 1.5rem;
+  background-color: #f9fafb;
 }
 
-/* Contenedor principal */
-.blockchain-card {
+.blockchain-container {
   max-width: 900px;
   margin: 0 auto;
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
-/* Título */
+mat-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+}
+
 mat-card-title {
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #1f2933;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1e293b;
 }
 
-/* Paneles */
+mat-card-subtitle {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
 mat-expansion-panel {
-  background: #fff;
-  border-radius: 0.5rem;
-  margin-top: 1rem;
-}
-mat-expansion-panel:not(:last-child) {
-  margin-bottom: 1.25rem;
+  margin-top: 0.75rem;
 }
 
-/* Cabecera de cada panel */
-.mat-expansion-panel-header {
-  padding: 0 1.5rem;
-  background: #9ab9ff;
-  color: #1f2933;
-}
-.hash {
-  font-family: monospace;
-  word-break: break-all;
-}
-.header-desc {
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-}
-.type,
-.id {
-  font-weight: 500;
+.entry-details {
+  padding: 0.5rem 1rem;
+  color: #374151;
 }
 
-/* Contenido interno */
-.details {
-  padding: 1.25rem 1.5rem;
-  color: #1f2933;
-}
-.details p {
-  margin: 0.5rem 0;
-}
-mat-divider {
-  margin: 0 1.5rem;
+.entry-details p {
+  margin: 0.4rem 0;
+  font-size: 0.95rem;
 }
 
-/* Botón de acciones */
-mat-card-actions {
-  padding: 0.75rem 1.5rem 1.25rem;
+button {
+  margin-top: 0.5rem;
 }
-mat-card-actions button {
-  font-weight: 500;
+
+@media (max-width: 600px) {
+  .blockchain-container {
+    padding: 0.5rem;
+  }
+
+  mat-card {
+    padding: 0.8rem;
+  }
+
+  .entry-details {
+    font-size: 0.9rem;
+  }
 }

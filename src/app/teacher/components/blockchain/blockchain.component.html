@@ -16,6 +16,7 @@
       </mat-expansion-panel-header>
 
       <div class="panel-content">
+        <p class="entry-label">{{ getEntryLabel(e) }}</p>
         <ng-container [ngSwitch]="e.type">
 
           <!-- Certificate -->

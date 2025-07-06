@@ -1,116 +1,137 @@
-import {Component, OnInit} from '@angular/core';
-import {StudentEntity} from '../../model/student.entity';
-import {UserEntity} from '../../../iam/model/user.entity';
-import {ActivatedRoute} from '@angular/router';
-import {AuthService} from '../../../iam/services/auth.service';
-import {StudentService} from '../../services/student.service';
-import {CourseEntity} from '../../model/course.entity';
-import {NgForOf, NgIf} from '@angular/common';
-import {EnrollmentEntity} from '../../model/enrollment.entity';
-import {CourseService} from '../../services/course.service';
-import {concatMap, forkJoin, from, tap} from 'rxjs';
-import {TeacherEntity} from '../../model/teacher.entity';
+/* src/app/students/components/courses-student/courses-student.component.ts */
+import { Component, OnInit }     from '@angular/core';
+import { ActivatedRoute }        from '@angular/router';
+import { CommonModule }          from '@angular/common';
+import { FormsModule }           from '@angular/forms';
+import { MatSnackBar }           from '@angular/material/snack-bar';
+
+/* Material */
+import { MatCardModule }         from '@angular/material/card';
+import { MatButtonModule }       from '@angular/material/button';
+import { MatIconModule }         from '@angular/material/icon';
+import { MatDividerModule }      from '@angular/material/divider';
+import { MatExpansionModule }    from '@angular/material/expansion';
+
+/* Servicio + modelos */
+import { StudentService }        from '../../services/student.service';
+import {
+  Student, Course, Syllabus
+}                                 from '../../model/student.entity';
 
 @Component({
-  selector: 'app-courses-student',
-  imports: [
-
-    NgForOf
+  selector   : 'app-courses-student',
+  standalone : true,
+  imports    : [
+    CommonModule, FormsModule,
+    MatCardModule, MatButtonModule, MatIconModule,
+    MatDividerModule, MatExpansionModule
   ],
   templateUrl: './courses-student.component.html',
-  styleUrl: './courses-student.component.css'
+  styleUrls  : ['./courses-student.component.css']
 })
-export class CoursesStudentComponent implements OnInit{
-  student: StudentEntity = new StudentEntity();
-  users: UserEntity[] = [];
-  courses: CourseEntity[] = [];
-  enrollments: EnrollmentEntity[] = [];
-  notes: any[] = [];
-  syllabuses: any[] =[];
-  teachers: TeacherEntity[] = [];
+export class CoursesStudentComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute,
-              private authService: AuthService,
-              private studentService: StudentService,
-              private courseService: CourseService,) {
-    this.student.id = this.route.snapshot.params['id'];
+  /* ───────── datos del alumno ───────── */
+  studentId = '';
+  student!  : Student;
+
+  courses  : Course[]   = [];
+  syllabi  : Syllabus[] = [];
+
+  selectedCourse : Course | null = null;
+
+  /* cabeceras de notas (se rellenan al abrir el curso) */
+  noteLabels: string[] = [];
+
+  constructor(
+    private route : ActivatedRoute,
+    private stuSvc: StudentService,
+    private snack : MatSnackBar
+  ) {}
+
+  /* ═══ ciclo de vida ═══ */
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) { console.error('[Student] sin ID en la URL'); return; }
+    this.studentId = id;
+    this.loadData();
   }
 
-  ngOnInit(): void {
-    from([
-      () => this.courseService.getEnrollmentsByStudentId(this.student.id).pipe(
-        concatMap((enrollments: any[]) => {
-          this.enrollments = enrollments;
+  /* carga inicial */
+  private loadData(): void {
+    this.stuSvc.getById(this.studentId).subscribe(st => {
+      this.student  = st;
+      this.courses  = st.courses ?? [];
+      this.syllabi  = this.courses
+        .map(c => (c as any).syllabus)
+        .filter(Boolean) as Syllabus[];
+    });
+  }
 
-          return from(enrollments).pipe(
-            concatMap((enrollment: any) => {
-              // Obtener course y notes en paralelo
-              return forkJoin({
-                course: this.courseService.getCourseById(enrollment.idCourse),
-                notes: this.courseService.getNotesByEnrollmentId(enrollment.id)
-              }).pipe(
-                tap(({ course, notes }) => {
-                  this.courses.push(course);
-                  this.notes.push(notes);
-                  console.log(`📚 Enrollment ${enrollment.id}:`, { course, notes });
-                }),
-                // Luego obtener teacher y syllabus en paralelo
-                concatMap(({ course }) => {
-                  return forkJoin({
-                    teacher: this.courseService.getTeacherById(course.idTeacher),
-                    syllabus: this.courseService.getSyllabusByCourseId(course.id)
-                  }).pipe(
-                    tap(({ teacher, syllabus }) => {
-                      this.teachers.push(teacher);
-                      this.syllabuses.push(syllabus);
-                    }),
-                    concatMap(({ teacher }) =>
-                      this.authService.findUserById(teacher.idUser).pipe(
-                        tap((user: any) => {
-                          this.users.push(user);
-                        })
-                      )
-                    )
-                  );
-                })
-              );
-            })
-          );
-        })
-      )
-    ])
-      .pipe(
-        concatMap(fn => fn())
-      )
-      .subscribe({
-        complete: () => {
-          console.log(
-            "✅ DONE.",
-            "\nEnrollments:", this.enrollments,
-            "\nCourses:", this.courses,
-            "\nNotes:", this.notes,
-            "\nTeachers:", this.teachers,
-            "\nUsers:", this.users,
-            "\nSyllabi:", this.syllabuses
-          );
+  /* ─── navegación ─── */
+  selectCourse(c: Course): void {
+    const isAlreadySelected = this.selectedCourse?.id === c.id;
 
-          for (let i = 0; i < this.notes.length; i++) {
-            this.enrollments[i].average = 0;
-            for (let j = 0; j < this.notes[i].length; j++) {
-              this.enrollments[i].average += this.notes[i][j].note * (this.notes[i][j].percent / 100);
-            }
+    if (isAlreadySelected) {
+      this.selectedCourse = null;
+      return; // Salimos de la función aquí.
+    }
 
-            if (this.enrollments[i].average > this.courses[i].passingGrade) {
-              this.enrollments[i].state = "Approved";
-            } else {
-              this.enrollments[i].state = "Disapproved";
-            }
-          }
-        },
-        error: (e) => console.error("❌ Error:", e)
-      });
+    this.selectedCourse = c;
+
+    const len = c.notesWeight?.length ?? 4;          // p.e. 4
+
+    const base = ['PC1', 'EA', 'PC2', 'EB'];         // hasta 4
+
+    this.noteLabels =
+      len <= base.length
+        ? base.slice(0, len)                         // PC1-EA-…
+        : [
+          ...base,
+          ...Array.from(
+            { length: len - base.length },
+            (_, i) => `N${i + base.length + 1}`  // N5, N6…
+          )
+        ];
+  }
+
+  goBack() { this.selectedCourse = null; }
+
+  /* ─── mostrador de PDF ─── */
+  private openBase64Pdf(dataUri: string, title = 'syllabus.pdf') {
+    const base64 = dataUri.split(',')[1];
+    const bytes  = Uint8Array.from(atob(base64), ch => ch.charCodeAt(0));
+    const blob   = new Blob([bytes], { type: 'application/pdf' });
+    const url    = URL.createObjectURL(blob);
+    const win    = window.open(url, '_blank');
+    if (!win) {
+      this.snack.open('Pop-up bloqueado por el navegador', 'Cerrar', { duration: 4000 });
+    }
+    win?.addEventListener('beforeunload', () => URL.revokeObjectURL(url));
+  }
+  private encode(f: string) { return encodeURIComponent(f); }
+
+  viewSyllabus(c: Course): void {
+    const syl = this.syllabi.find(s => s.idCourse === c.id);
+    if (!syl) {
+      this.snack.open('Curso sin sílabo', 'Cerrar', { duration: 2500 });
+      return;
+    }
+    if (syl.fileData?.startsWith('data:application/pdf')) {
+      this.openBase64Pdf(syl.fileData, syl.fileName || 'syllabus.pdf');
+      return;
+    }
+    if (syl.fileName) {
+      window.open(`/assets/${this.encode(syl.fileName)}`, '_blank');
+      return;
+    }
+    this.snack.open('No se encontró el PDF', 'Cerrar', { duration: 2500 });
+  }
 
 
+
+  formatWeights(arr?: number[]): string {
+    return arr?.length ? arr.map(w => `${w}%`).join(' / ') : '';
   }
 
 }

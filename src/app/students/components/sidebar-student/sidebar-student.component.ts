@@ -6,7 +6,7 @@ import { MatToolbarModule }                  from '@angular/material/toolbar';
 import { MatIconModule }                     from '@angular/material/icon';
 import { MatListModule }                     from '@angular/material/list';
 
-import { StudentEntity }                     from '../../model/student.entity';
+import { Course, Student, Syllabus }                     from '../../model/student.entity';
 import { AuthService }                       from '../../../iam/services/auth.service';
 
 @Component({
@@ -26,25 +26,14 @@ import { AuthService }                       from '../../../iam/services/auth.se
 })
 export class SidebarStudentComponent implements OnInit {
 
-  opened = true;                        // controla el colapso en viewports pequeños
-  student: StudentEntity = new StudentEntity();
-
-  constructor(
-    private route: ActivatedRoute,
-    private authService: AuthService
-  ) {
-    this.student.id = this.route.snapshot.params['id'];
-  }
+  opened = true;
+  studentId: string = '';
 
   ngOnInit(): void {
-    this.authService.findStudentById(this.student.id).subscribe((data: any) => {
-      this.student.name     = data.name;
-      this.student.lastName = data.lastName;
-      this.student.id       = data.id;
-    });
+    this.studentId = localStorage.getItem('studentId') || '';
   }
 
-  toggleSidenav(): void {
+  toggleSidenav() {
     this.opened = !this.opened;
   }
 }

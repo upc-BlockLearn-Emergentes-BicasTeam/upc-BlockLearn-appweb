@@ -1,87 +1,171 @@
-/* Fuente moderna */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+/*
+ * ==========================================================
+ *  STYLESHEET: PROFILE COMPONENT
+ *  AUTHOR: Frontend Expert
+ *  VERSION: 2.0 (Aligned with global intranet styles)
+ * ==========================================================
+ */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/*
+ * ----------------------------------------------------------
+ *  1. DESIGN TOKENS (CSS CUSTOM PROPERTIES)
+ * ----------------------------------------------------------
+ */
+:host {
+  /* Fonts */
+  --font-primary: 'Inter', 'Roboto', sans-serif;
+  /* Colors */
+  --color-primary: #4f46e5;
+  --color-text-header: #111827;
+  --color-text-body: #374151;
+  --color-text-muted: #6b7280;
+  --color-text-subtle: #9ca3af;
+  --color-background: #f8f9fa;
+  --color-surface: #ffffff;
+  --color-border: #e5e7eb;
+  --color-border-subtle: #f3f4f6;
+  --color-focus-ring: rgba(79, 70, 229, 0.5);
+  /* Spacing */
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+  /* Borders & Shadows */
+  --border-radius-sm: 0.25rem;
+  --border-radius-md: 0.5rem;
+  --border-radius-lg: 0.75rem;
+  --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  /* Transitions */
+  --transition-speed: 0.2s;
+  --transition-ease: ease-in-out;
+}
+
+/*
+ * ----------------------------------------------------------
+ *  2. GLOBAL & ACCESSIBILITY STYLES
+ * ----------------------------------------------------------
+ */
 :host {
   display: block;
-  font-family: 'Roboto', sans-serif;
-  background: transparent;  /* ya define el background el contenedor padre */
+  font-family: var(--font-primary);
+  background-color: var(--color-background);
+  padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-xxl);
 }
 
-.profile-card {
-  max-width: 800px;
-  margin: 1rem auto;        /* margen superior e inferior */
-  border-radius: 1rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+button:focus-visible, a:focus-visible, input:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+  border-radius: var(--border-radius-sm);
 }
 
-/* Cabecera */
-mat-card-header { align-items: center; }
+/*
+ * ----------------------------------------------------------
+ *  3. PAGE LAYOUT & HEADER
+ * ----------------------------------------------------------
+ */
+.page-container { max-width: 1200px; margin: 0 auto; }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xl); }
+.page-title { font-size: 1.75rem; font-weight: 600; color: var(--color-text-header); margin: 0; display: flex; align-items: center; gap: var(--spacing-md); }
+.page-icon { font-size: 1.8rem; width: 1.8rem; height: 1.8rem; }
+.header-actions { display: flex; gap: var(--spacing-sm); }
 
-.avatar-container {
-  width: 80px; height: 80px;
-  border-radius: 50%; overflow: hidden;
-  background: #e0e4e8; display: flex;
-  align-items: center; justify-content: center;
+/*
+ * ----------------------------------------------------------
+ *  4. PROFILE CONTENT LAYOUT
+ * ----------------------------------------------------------
+ */
+.profile-content-wrapper {
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--box-shadow-sm);
+  padding: var(--spacing-xl);
 }
 
-.avatar-img {
+.profile-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr; /* Columna fija para sidebar, resto para formulario */
+  gap: var(--spacing-xxl);
+}
+
+/* --- Sidebar (Logo) --- */
+.profile-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.logo-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.profile-logo {
   width: 100%;
   height: 100%;
+  border-radius: 50%;
   object-fit: cover;
+  border: 4px solid var(--color-surface);
+  box-shadow: var(--box-shadow-md);
+  transition: filter var(--transition-speed) var(--transition-ease);
+}
+.profile-logo.is-uploading {
+  filter: blur(2px) brightness(0.9);
 }
 
-.avatar-placeholder {
-  font-size: 40px;
-  color: #9ab9ff;
-}
-
-/* Título y acciones */
-mat-card-title {
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #1f2933;
-  margin-left: 1rem;
-}
-
-.header-actions {
-  margin-left: auto;
-}
-
-/* Divisor */
-mat-divider {
-  margin: 0 1.5rem;
-}
-
-/* Contenido: grid de items */
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
-  padding: 1.5rem 1.5rem 0;
-}
-
-.info-item {
+.logo-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
 }
 
-.field-full {
-  width: 100%;
+.upload-section button { width: 100%; }
+.upload-hint {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: var(--spacing-sm);
 }
 
-/* Botones del pie */
-.footer-actions {
-  padding: 1rem 1.5rem;
+/* --- Form --- */
+.profile-form .form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md) var(--spacing-lg);
+}
+.profile-form .full-span {
+  grid-column: 1 / -1;
 }
 
-/* Responsive: en pantallas pequeñas apilar */
-@media (max-width: 600px) {
-  .info-grid {
-    grid-template-columns: 1fr;
+/*
+ * ----------------------------------------------------------
+ *  5. RESPONSIVE MEDIA QUERIES
+ * ----------------------------------------------------------
+ */
+@media (max-width: 992px) {
+  .profile-layout {
+    grid-template-columns: 1fr; /* Apila las columnas */
+    gap: var(--spacing-xl);
   }
-  mat-card-title {
-    margin-left: 0.5rem;
-    font-size: 1.25rem;
+}
+
+@media (max-width: 600px) {
+  .page-header {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    align-items: flex-start;
+  }
+  .profile-form .form-grid {
+    grid-template-columns: 1fr; /* Una sola columna para el formulario */
   }
 }

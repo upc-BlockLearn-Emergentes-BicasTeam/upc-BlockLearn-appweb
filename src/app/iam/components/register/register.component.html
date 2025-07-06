@@ -1,19 +1,65 @@
-<div class="register-container">
-  <h2>Register Institution</h2>
-  <form (ngSubmit)="registerInstitution()">
-    <label for="na">Institution Name:</label>
-    <input id="na" [(ngModel)]="institution.name" name="na" required />
+<div class="login-wrapper">
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" [(ngModel)]="user.email" name="email" required />
+  <!-- ========================================================== -->
+  <!-- Columna Izquierda: Branding (Idéntica a la de Login) -->
+  <!-- ========================================================== -->
+  <div class="branding-pane">
+    <div class="branding-content">
+      <img src="assets/images/intranet-logo.svg" alt="Intranet Logo" class="branding-logo">
+      <h1 class="branding-title">Crea tu Cuenta</h1>
+      <p class="branding-subtitle">Registra tu institución y empieza a transformar la gestión académica.</p>
+    </div>
+  </div>
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" [(ngModel)]="user.password" name="password" required />
+  <!-- ========================================================== -->
+  <!-- Columna Derecha: Formulario de Registro -->
+  <!-- ========================================================== -->
+  <div class="form-pane">
+    <div class="form-container">
+      <h2 class="form-title">Registro Institucional</h2>
+      <p class="form-subtitle">Completa los siguientes datos para crear tu acceso.</p>
 
-    <button type="submit">Register</button>
-  </form>
-  <p class="register-link">
-    Do you have an account?
-    <a routerLink="/login">Login</a>
-  </p>
+      <!-- Formulario de Registro -->
+      <form (ngSubmit)="registerInstitution()" novalidate>
+        <!-- Campo de Nombre de la Institución -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre de la Institución</mat-label>
+          <mat-icon matPrefix>domain</mat-icon>
+          <input matInput id="institutionName" [(ngModel)]="institution.name" name="institutionName" required>
+        </mat-form-field>
+
+        <!-- Campo de Email -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Correo Electrónico del Administrador</mat-label>
+          <mat-icon matPrefix>email</mat-icon>
+          <input matInput type="email" id="email" [(ngModel)]="user.email" name="email" required placeholder="tu@correo.com">
+        </mat-form-field>
+
+        <!-- Campo de Contraseña -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input matInput type="password" id="password" [(ngModel)]="user.password" name="password" required>
+        </mat-form-field>
+
+        <!-- Mensaje de Error (Ahora dinámico) -->
+        <div class="error-message" *ngIf="error">
+          <mat-icon>warning</mat-icon>
+          <span>{{ error }}</span>
+        </div>
+
+        <!-- Botón de Submit -->
+        <button mat-flat-button color="primary" type="submit" class="full-width login-button">
+          Registrar Institución
+        </button>
+      </form>
+
+      <!-- Enlace a Login -->
+      <p class="register-link">
+        ¿Ya tienes una cuenta?
+        <a routerLink="/login">Inicia sesión aquí</a>
+      </p>
+    </div>
+  </div>
+
 </div>

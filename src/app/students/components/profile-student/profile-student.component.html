@@ -1,39 +1,105 @@
-<div class="profile-container">
-  <h2>Perfil del Estudiante</h2>
-  <div class="profile-content">
-    <!-- Columna izquierda -->
-    <div class="profile-icon-section">
-      <span class="material-icons profile-icon">person</span>
-      <button (click)="enableEditing()">Edit</button>
-      <button
-        [disabled]="!user.email || !user.password"
-        (click)="saveChanges()"
-        class="save-btn"
-      >Guardar Cambios</button>
-    </div>
+<!-- Título de página consistente con el resto de la app -->
+<h2 class="page-title">
+  MI PERFIL <mat-icon class="page-icon">account_circle</mat-icon>
+</h2>
 
-    <!-- Columna derecha -->
-    <div class="profile-details">
-      <label>
-        Name:
-        <input [(ngModel)]="student.name" type="text" [readonly]="!isEditing">
-      </label>
-      <label>
-        LastName:
-        <input [(ngModel)]="student.lastName" type="text" [readonly]="!isEditing">
-      </label>
-      <label>
-        Telephone:
-        <input [(ngModel)]="student.telephone" type="number" [readonly]="!isEditing">
-      </label>
-      <label>
-        Email:
-        <input [(ngModel)]="user.email" type="email" [readonly]="!isEditing">
-      </label>
-      <label>
-        Password:
-        <input [(ngModel)]="user.password" type="text" [readonly]="!isEditing">
-      </label>
-    </div>
-  </div>
+<!-- Contenedor para el spinner de carga -->
+<div class="loading-spinner" *ngIf="isLoading">
+  <mat-spinner diameter="60"></mat-spinner>
 </div>
+
+<!-- Tarjeta principal del perfil -->
+<mat-card class="profile-card" *ngIf="!isLoading">
+
+  <!-- ═══ CABECERA ═══ -->
+  <mat-card-header class="profile-card-header">
+    <div mat-card-avatar class="avatar" [style.background-image]="'url(' + (student.avatarUrl || defaultAvatar) + ')'"></div>
+    <mat-card-title>{{ student.firstName }} {{ student.lastName }}</mat-card-title>
+    <mat-card-subtitle *ngIf="!isEditing">{{ student.email }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <!-- ═══ CONTENIDO ═══ -->
+  <mat-card-content class="profile-card-content">
+
+    <!-- ① Modo EDICIÓN -->
+    <form *ngIf="isEditing; else viewMode" class="edit-form">
+
+      <!-- Fila para el avatar -->
+      <div class="form-row avatar-edit-row">
+        <img class="avatar-preview" [src]="student.avatarUrl || defaultAvatar" alt="Avatar Preview">
+        <label for="avatar-upload" class="avatar-upload-label">
+          <mat-icon>upload</mat-icon>
+          <span>Cambiar foto</span>
+        </label>
+        <input id="avatar-upload" class="avatar-upload-input" type="file" accept="image/*" (change)="onAvatarSelected($event)">
+      </div>
+
+      <!-- Fila para Nombre y Apellido -->
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Nombres</mat-label>
+          <input matInput [(ngModel)]="student.firstName" name="firstName">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Apellidos</mat-label>
+          <input matInput [(ngModel)]="student.lastName" name="lastName">
+        </mat-form-field>
+      </div>
+
+      <!-- Fila para Correo y Teléfono -->
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Correo Electrónico</mat-label>
+          <input matInput [(ngModel)]="student.email" name="email">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Teléfono</mat-label>
+          <input matInput [(ngModel)]="student.phone" name="phone">
+        </mat-form-field>
+      </div>
+    </form>
+
+    <!-- ② Modo LECTURA (rediseñado como una lista de información) -->
+    <ng-template #viewMode>
+      <div class="info-list">
+        <div class="info-item">
+          <mat-icon class="info-icon">email</mat-icon>
+          <span class="info-label">Email:</span>
+          <span class="info-value">{{ student.email }}</span>
+        </div>
+        <div class="info-item">
+          <mat-icon class="info-icon">phone</mat-icon>
+          <span class="info-label">Teléfono:</span>
+          <span class="info-value">{{ student.phone || 'No especificado' }}</span>
+        </div>
+        <div class="info-item">
+          <mat-icon class="info-icon">school</mat-icon>
+          <span class="info-label">Promedio General:</span>
+          <span class="info-value">{{ student.average ?? 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <mat-icon class="info-icon">check_circle</mat-icon>
+          <span class="info-label">Estado:</span>
+          <span class="info-value status-active">{{ student.state || 'Activo' }}</span>
+        </div>
+      </div>
+    </ng-template>
+
+  </mat-card-content>
+
+  <!-- ═══ ACCIONES ═══ -->
+  <mat-card-actions class="profile-card-actions" align="end">
+    <button *ngIf="!isEditing" mat-flat-button color="primary" (click)="onChangeData()">
+      <mat-icon>edit</mat-icon>
+      Editar Perfil
+    </button>
+
+    <ng-container *ngIf="isEditing">
+      <button mat-stroked-button (click)="onCancel()">Cancelar</button>
+      <button mat-flat-button color="primary" (click)="onSave()">
+        <mat-icon>save</mat-icon>
+        Guardar Cambios
+      </button>
+    </ng-container>
+  </mat-card-actions>
+</mat-card>

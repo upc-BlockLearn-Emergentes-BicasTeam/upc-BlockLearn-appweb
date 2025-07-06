@@ -1,209 +1,89 @@
+/* Importar la fuente para consistencia */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 :host {
-  display: block;
-  padding: 1rem;
-  font-family: 'Roboto', sans-serif;
+  display: block; padding: 1rem 1.5rem 3rem; font-family: 'Inter', 'Roboto', sans-serif;
+  background-color: #f3f4f6;
 }
 
-/* ===== Tabla de cursos ===== */
+/* ───── Título de Página ───── */
 .page-title {
-  text-align: center;
-  font-size: 1.75rem;
-  margin-bottom: 1rem;
+  font-size: 1.875rem; font-weight: 700; color: #111827;
+  text-align: center; margin: 1.5rem 0 2.5rem; display: flex;
+  align-items: center; justify-content: center; gap: 0.75rem;
+  text-transform: uppercase;
 }
-.course-table {
-  max-width: 800px;
-  margin: 0 auto 2rem;
-  border: 1px solid #e0e4e8;
-  border-radius: 8px;
-  overflow: hidden;
+.page-icon { font-size: 2rem; width: 2rem; height: 2rem; }
+
+/* ───── VISTA 1: LISTA DE CURSOS ───── */
+.course-list-container {
+  display: flex; flex-direction: column; gap: 1.5rem;
+  max-width: 840px; margin: 0 auto;
 }
-.course-table .row {
+.course-card-wrapper { position: relative; padding-left: 12px; }
+.course-card-wrapper::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+  border-radius: 6px 0 0 6px; background-color: #3b82f6; /* Azul por defecto para profes */
+}
+.course-card {
+  transition: box-shadow 0.2s ease-in-out; border: 1px solid #e5e7eb;
+  border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+  background-color: #fff;
+}
+.course-card:hover { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+.course-card-header .mat-card-title { font-weight: 600; }
+.course-info-line { display: flex; align-items: center; gap: 0.5rem; color: #4b5563; }
+.course-card-actions { justify-content: flex-end; padding: 0.5rem 1rem !important; }
+
+/* ───── VISTA 2: DETALLE DE CURSO ───── */
+.back-btn { margin-bottom: 1.5rem; font-weight: 500; }
+.detail-layout {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  padding: 0.75rem 1rem;
-  align-items: center;
-  cursor: pointer;
+  grid-template-columns: 2fr 1fr; /* Layout 2/3 para contenido, 1/3 para sidebar */
+  gap: 1.5rem;
+  align-items: flex-start;
 }
-.course-table .row.header {
-  background: #f8f9fa;
-  font-weight: 600;
-  color: #1f2933;
-}
-.course-table .row:not(.header):hover {
-  background: #eef2f7;
-}
+/* Responsividad para el layout principal */
+@media (max-width: 960px) { .detail-layout { grid-template-columns: 1fr; } }
 
-/* ===== Botón Volver ===== */
-.back-btn {
-  margin-bottom: 1rem;
+/* ───── Columna Principal: Estudiantes ───── */
+.students-card { padding: 0.5rem; }
+.student-panel-header { font-size: 1rem; }
+.student-title { font-weight: 500; display: flex; align-items: center; gap: 1rem; }
+.student-index {
+  color: #9ca3af; font-weight: 400; font-size: 0.9rem;
+  width: 2rem; text-align: right;
 }
-.back-btn mat-icon {
-  vertical-align: middle;
+.student-avg { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #6b7280; }
+.avg-chip {
+  font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 1rem;
+  background-color: #e5e7eb; color: #374151;
 }
+.avg-chip.low-avg { background-color: #fee2e2; color: #b91c1c; }
+.avg-chip.high-avg { background-color: #dcfce7; color: #166534; }
 
-/* ===== Detalle de curso ===== */
-.detail-card {
-  max-width: 900px;
-  margin: 0 auto 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+/* Editor de notas */
+.grades-editor { display: flex; flex-direction: column; gap: 1.5rem; padding: 1rem 0; }
+.grade-row {
+  display: flex; align-items: center; gap: 1rem; padding-left: 3rem;
 }
-.detail-header {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  padding: 1rem;
-}
-.detail-header .info p {
-  margin: 0.25rem 0;
-}
-.detail-header .legend {
-  background: #9ab9ff;
-  border-radius: 1rem;
-  padding: 1rem;
-  color: #1f2933;
-  min-width: 180px;
-}
+.note-field { flex: 1; max-width: 150px; }
+.percent-tag { font-size: 0.9rem; color: #6b7280; width: 4rem; }
+.blockchain-btn { font-weight: 500; }
+.empty-state { text-align: center; padding: 2rem; color: #6b7280; }
+.empty-icon { font-size: 3rem; width: 3rem; height: 3rem; }
 
-/* ===== Lista de alumnos ===== */
-.students-card {
-  max-width: 900px;
-  margin: 0 auto;
-  border-radius: 1rem;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-}
-.grade-detail {
-  display: flex;
-  gap: 2rem;
-  padding: 1rem;
-  flex-wrap: wrap;
-}
-.notes {
-  flex: 1;
-}
-.note-field {
-  width: 5rem;
-  margin-bottom: 0.5rem;
-}
-.percents {
-  flex: 1;
-}
-.percents p {
-  margin: 0.25rem 0;
-}
-.actions {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* ───── Barra Lateral ───── */
+.sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+.info-card, .eval-card { padding: 0.5rem; }
+.info-card mat-card-content p { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #4b5563;}
+.info-card a { color: #4f46e5; cursor: pointer; text-decoration: underline; }
+.eval-card mat-card-header { padding-bottom: 0.5rem; }
+.eval-form { display: flex; align-items: center; gap: 1rem; }
+.eval-list { list-style-type: none; padding-left: 0; }
+.eval-list li { padding: 0.5rem; border-bottom: 1px solid #f3f4f6; }
+.empty-text { color: #6b7280; font-style: italic; }
 
-/* ===== Grilla de notas vs porcentajes ===== */
-.grade-rows {
-  display: grid;
-  grid-template-columns: 6rem 4rem 1fr;
-  column-gap: 1rem;
-  row-gap: 0.75rem;
-  align-items: center;
-}
-.grade-header {
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #ccc;
-  color: #1f2933;
-  font-weight: 600;
-}
-.note-col   { /* opcional para ajustar */ }
-.percent-col {}
-.action-col  {}
-.note-cell, .percent-cell, .action-cell {
-  display: flex;
-  align-items: center;
-}
-.note-field {
-  width: 100%;
-}
-
-/* Tabla contenedora */
-.course-table {
-  width: 100%;
-  margin: 1.5rem auto 2rem;
-  border-collapse: separate;
-  border-spacing: 0;
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-  transition: box-shadow 0.3s ease;
-  background: #ffffff;
-  font-family: 'Roboto', sans-serif;
-}
-
-/* Encabezados */
-.course-table thead th {
-  padding: 1rem;
-  background: #f8f9fa;
-  color: #1f2933;
-  font-weight: 500;
-  text-align: left;
-}
-
-/* Celdas de datos */
-.course-table tbody td {
-  padding: 1rem;
-  color: #1f2933;
-  vertical-align: middle;
-}
-
-/* Icono */
-.icon-cell {
-  width: 3rem;
-}
-.course-icon {
-  color: #3366ff;
-  font-size: 1.5rem;
-  vertical-align: middle;
-}
-
-/* Filas interactivas */
-.course-table tbody tr {
-  transition: background 0.2s ease, transform 0.2s ease;
-  cursor: pointer;
-}
-.course-table tbody tr:hover {
-  background: #eef2fb;
-  transform: translateX(4px);
-}
-
-/* Primera columna sin separador izquierdo */
-.course-table tbody tr td:first-child {
-  border-right: 1px solid #e0e4e8;
-}
-
-/* Ajustes responsive */
-@media (max-width: 768px) {
-  .course-table thead {
-    display: none; /* puedes esconder encabezados y usar cards en móvil */
-  }
-  .course-table tbody tr {
-    display: block;
-    margin-bottom: 1rem;
-    transform: none !important;
-  }
-  .course-table tbody td {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.75rem 1rem;
-  }
-  .icon-cell {
-    flex: 0 0 2.5rem;
-  }
-}
-
-
-/* ===== Responsive ===== */
-@media (max-width: 800px) {
-  .course-table .row { grid-template-columns: 1fr; }
-  .grade-detail { flex-direction: column; }
-}
-@media (max-width: 500px) {
-  .detail-header { flex-direction: column; }
-}
+/* Estilos de botones consistentes */
+button[mat-flat-button] { background-color: #4f46e5; }
+button[mat-flat-button]:hover { background-color: #4338ca; }

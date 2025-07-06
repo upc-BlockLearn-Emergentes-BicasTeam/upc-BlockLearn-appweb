@@ -1,17 +1,59 @@
-<div class="login-container">
-  <h2>Login</h2>
-  <form (ngSubmit)="login()">
-    <label for="email">Email:</label>
-    <input type="email" id="email" [(ngModel)]="user.email" name="email" required />
+<div class="login-wrapper">
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" [(ngModel)]="user.password" name="password" required />
+  <!-- ========================================================== -->
+  <!-- Columna Izquierda: Branding (Visible en escritorio) -->
+  <!-- ========================================================== -->
+  <div class="branding-pane">
+    <div class="branding-content">
+      <!-- Puedes poner aquí el logo principal de la intranet o de la universidad -->
+      <img [src]="logoPath" alt="Intranet Logo" class="branding-logo">
+      <h1 class="branding-title">Bienvenido a Block Learn</h1>
+      <p class="branding-subtitle">Gestiona tu institución de forma fácil y eficiente.</p>
+    </div>
+  </div>
 
-    <button type="submit">Login</button>
-  </form>
+  <!-- ========================================================== -->
+  <!-- Columna Derecha: Formulario de Login -->
+  <!-- ========================================================== -->
+  <div class="form-pane">
+    <div class="form-container">
+      <h2 class="form-title">Iniciar Sesión</h2>
+      <p class="form-subtitle">Ingresa tus credenciales para acceder a tu panel.</p>
 
-  <p class="register-link">
-    Don't have an account?
-    <a routerLink="/register">Register here</a>
-  </p>
+      <!-- Formulario -->
+      <form (ngSubmit)="login()" novalidate>
+        <!-- Campo de Email -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Correo Electrónico</mat-label>
+          <mat-icon matPrefix>email</mat-icon>
+          <input matInput type="email" id="email" [(ngModel)]="user.email" name="email" required placeholder="ejemplo@correo.com">
+        </mat-form-field>
+
+        <!-- Campo de Contraseña -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input matInput type="password" id="password" [(ngModel)]="user.password" name="password" required>
+        </mat-form-field>
+
+        <!-- Mensaje de Error -->
+        <div class="error-message" *ngIf="error">
+          <mat-icon>warning</mat-icon>
+          <span>El correo o la contraseña son incorrectos.</span>
+        </div>
+
+        <!-- Botón de Submit -->
+        <button mat-flat-button color="primary" type="submit" class="full-width login-button">
+          Ingresar
+        </button>
+      </form>
+
+      <!-- Enlace a Registro -->
+      <p class="register-link">
+        ¿No tienes una cuenta institucional?
+        <a routerLink="/register">Regístrate aquí</a>
+      </p>
+    </div>
+  </div>
+
 </div>

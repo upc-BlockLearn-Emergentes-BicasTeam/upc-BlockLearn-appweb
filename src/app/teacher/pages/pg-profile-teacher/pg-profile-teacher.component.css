@@ -7,8 +7,15 @@
 }
 
 /* Contenedor total del sidenav */
+.mat-sidenav-container,
 .pg-container {
   height: 100%;
+  border-radius: 0 !important;
+
+}
+
+.mat-drawer-container {
+  border-radius: 0 !important;
 }
 
 /* Sidebar */
@@ -42,21 +49,13 @@
 }
 
 /* Scrollable + padding */
-.pg-content {
-  flex: 1;
-  overflow-y: auto;
-  background: #f0f2f5;
-  padding: 2rem;
-  box-sizing: border-box;
-}
-
-/* Wrapper centrado */
 
 
 /* Responsive: overlay en móvil */
 @media (max-width: 767px) {
   .pg-sidenav {
     width: 200px;
+    border-radius: 0 !important;
   }
   mat-sidenav[opened] {
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);

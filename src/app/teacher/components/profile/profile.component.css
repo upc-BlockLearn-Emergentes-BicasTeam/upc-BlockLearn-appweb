@@ -1,75 +1,139 @@
-/* Fuente moderna */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+/* Importar la fuente para consistencia */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :host {
   display: block;
-  font-family: 'Roboto', sans-serif;
-  background: transparent;
+  padding: 1rem 1.5rem 3rem;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  background-color: #f3f4f6; /* Mismo fondo que las páginas anteriores */
 }
 
+/* ───── Título de la página ───── */
+.page-title {
+  font-size: 1.875rem; font-weight: 700; color: #111827;
+  text-align: center; margin: 1.5rem 0 2.5rem; display: flex;
+  align-items: center; justify-content: center; gap: 0.75rem;
+  text-transform: uppercase;
+}
+.page-icon {
+  font-size: 2rem; width: 2rem; height: 2rem;
+}
+
+/* ───── Tarjeta de Perfil ───── */
 .profile-card {
   max-width: 800px;
-  margin: 1rem auto;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  margin: 0 auto;
+  border-radius: 0.75rem; /* 12px */
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  overflow: hidden; /* Para que el radio de borde se aplique bien */
 }
 
-/* Cabecera */
-mat-card-header {
-  align-items: center;
+/* ───── Cabecera de la Tarjeta ───── */
+.profile-card-header {
+  padding: 1.5rem;
+}
+.avatar {
+  width: 80px; height: 80px;
+  background-size: cover; background-position: center;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #4f46e5; /* Anillo de color primario (consistente) */
+}
+.profile-card-header .mat-card-title {
+  font-size: 1.5rem; font-weight: 600;
+}
+.profile-card-header .mat-card-subtitle {
+  font-size: 1rem; color: #6b7280;
 }
 
-.avatar-placeholder {
-  font-size: 48px;
-  color: #3366ff;
+/* ───── Contenido de la Tarjeta ───── */
+.profile-card-content {
+  padding: 1.5rem;
+  border-top: 1px solid #f3f4f6;
 }
 
-/* Título y acciones */
-mat-card-title {
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #1f2933;
-  margin-left: 1rem;
-}
-
-.header-actions {
-  margin-left: auto;
-}
-
-/* Divisor */
-mat-divider {
-  margin: 0 1.5rem;
-}
-
-/* Contenido: grid de items */
-.info-grid {
+/* ───── ② Estilos para MODO VISTA ───── */
+.info-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
-  padding: 1.5rem 1.5rem 0;
 }
-
 .info-item {
   display: flex;
   align-items: center;
+  gap: 1rem;
+}
+.info-icon {
+  color: #9ca3af;
+}
+.info-label {
+  color: #6b7280;
+}
+.info-value {
+  font-weight: 500;
+  color: #374151;
+}
+
+/* ───── ① Estilos para MODO EDICIÓN ───── */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+.avatar-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background-color: #f9fafb;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+.avatar-preview {
+  width: 64px; height: 64px; border-radius: 50%;
+  object-fit: cover; border: 2px solid #e5e7eb;
+}
+.avatar-upload-input {
+  display: none; /* Ocultamos el input feo */
+}
+.avatar-upload-label {
+  display: inline-flex;
+  align-items: center;
   gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-weight: 500;
+}
+.avatar-upload-label:hover {
+  background-color: #f9fafb;
 }
 
-.field-full {
-  width: 100%;
+/* ───── Acciones de la Tarjeta ───── */
+.profile-card-actions {
+  background-color: #f9fafb;
+  padding: 1rem 1.5rem !important;
+  border-top: 1px solid #f3f4f6;
 }
-
-/* Botones del pie */
-.footer-actions {
-  padding: 1rem 1.5rem;
+.profile-card-actions button {
+  padding: 0.5rem 1rem !important;
+  font-weight: 600;
 }
-
-/* Responsive: en pantallas pequeñas apilar */
-@media (max-width: 600px) {
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-  mat-card-title {
-    margin-left: 0.5rem;
-    font-size: 1.25rem;
-  }
+.profile-card-actions button[mat-stroked-button] {
+  color: #4b5563;
+  border-color: #d1d5db;
+}
+.profile-card-actions button[mat-flat-button] {
+  background-color: #4f46e5;
+}
+.profile-card-actions button[mat-flat-button]:hover {
+  background-color: #4338ca;
 }

@@ -15,7 +15,8 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   registerInstitution(institution: InstitutionEntity) {
-    return this.http.post(`${this.baseUrl}/institutes`, institution);
+    return this.http.post(`${this.baseUrl}/institutions`, institution);
+
   }
   findUserByEmail(email: string) {
     return this.http.get(`${this.baseUrl}/users?email=${email}`);
@@ -27,7 +28,7 @@ export class AuthService {
     return this.http.get(`${this.baseUrl}/users?email=${email}&password=${password}`);
   }
   findInstitutionByIdUser(idUser: number) {
-    return this.http.get(`${this.baseUrl}/institutes?idUser=${idUser}`);
+    return this.http.get(`${this.baseUrl}/institutions?idUser=${idUser}`);
   }
   findStudentByIdUser(idUser: number) {
     return this.http.get(`${this.baseUrl}/students?idUser=${idUser}`);

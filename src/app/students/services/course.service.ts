@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
+import {Syllabus} from '../../teacher/models/teacher.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,7 @@ export class CourseService {
   }
 
   getAllSyllabuses() {
-    return this.http.get<any[]>(`${this.baseUrl}/syllabuses`);
+    return this.http.get<Syllabus[]>(`${this.baseUrl}/syllabuses`);
   }
+
 }

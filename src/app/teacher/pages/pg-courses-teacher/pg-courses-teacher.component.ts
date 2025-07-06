@@ -9,7 +9,7 @@ import {CoursesComponent} from '../../components/courses/courses.component';
 import {BlockchainComponent} from '../../components/blockchain/blockchain.component';
 
 @Component({
-  selector: 'app-pg-courses',
+  selector: 'app-pg-courses-teacher-institution',
   standalone: true,
 
   imports: [
@@ -23,9 +23,9 @@ import {BlockchainComponent} from '../../components/blockchain/blockchain.compon
     CoursesComponent
 
   ],
-  templateUrl: './pg-courses.component.html',
-  styleUrl: './pg-courses.component.css'
+  templateUrl: './pg-courses-teacher.component.html',
+  styleUrl: './pg-courses-teacher.component.css'
 })
-export class PgCoursesComponent {
+export class PgCoursesTeacherComponent {
 
 }

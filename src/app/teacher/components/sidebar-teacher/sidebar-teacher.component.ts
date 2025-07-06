@@ -28,6 +28,11 @@ import { MatButtonModule }   from '@angular/material/button';
 })
 export class SidebarTeacherComponent {
   opened = true;
+  teacherId: string = '';
+
+  ngOnInit(): void {
+    this.teacherId = localStorage.getItem('teacherId') || '';
+  }
 
   toggleSidenav() {
     this.opened = !this.opened;

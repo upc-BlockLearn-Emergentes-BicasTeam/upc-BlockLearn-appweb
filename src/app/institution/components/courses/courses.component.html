@@ -1,153 +1,158 @@
+<!-- src/app/institution/pages/courses/courses.component.html -->
+
+<!-- Contenedor principal con nuestro estilo unificado -->
 <div class="page-container">
-  <mat-card class="courses-card">
-    <mat-card-header class="card-header">
-      <mat-card-title>Gestión de Cursos</mat-card-title>
-      <mat-card-subtitle>Añada, edite o elimine los cursos de la institución</mat-card-subtitle>
-      <span class="spacer"></span>
-      <button mat-flat-button color="primary" (click)="openAddCourse()">
-        <mat-icon>add</mat-icon>
-        <span>Añadir Curso</span>
-      </button>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-accordion multi="true">
-        <div *ngIf="!courses.length" class="empty-state">
-          <mat-icon>school</mat-icon>
-          <p>No hay cursos registrados.</p>
-          <p>Haga clic en "Añadir Curso" para empezar.</p>
-        </div>
 
-        <mat-expansion-panel *ngFor="let c of courses">
-          <mat-expansion-panel-header>
-            <mat-panel-title class="panel-title">
-              <mat-icon>class</mat-icon>
-              {{ c.name }}
-            </mat-panel-title>
-            <mat-panel-description class="panel-description">
-              <span>Cód: {{ c.code }}</span>
-              <!-- AJUSTE 2: Campo de profesor faltaba en el HTML original del usuario -->
-              <span>Prof: {{ c.teacher?.firstName }} {{ c.teacher?.lastName }}</span>
-              <button mat-icon-button color="warn"
-                      (click)="$event.stopPropagation(); openDeleteConfirmation(c)"
-                      matTooltip="Eliminar curso"
-                      aria-label="Eliminar curso">
-                <mat-icon>delete_outline</mat-icon>
-              </button>
-            </mat-panel-description>
-          </mat-expansion-panel-header>
+  <!-- Encabezado de la página con título y botón de acción principal -->
+  <div class="page-header">
+    <h2 class="page-title">
+      Gestión de Cursos <mat-icon class="page-icon">class</mat-icon>
+    </h2>
+    <button mat-flat-button color="primary" (click)="openAddCourse()">
+      <mat-icon>add_circle_outline</mat-icon>
+      Nuevo Curso
+    </button>
+  </div>
 
-          <div class="course-details">
-            <div class="detail-item">
-              <mat-icon>label</mat-icon>
-              <div><strong>Sección:</strong> {{ c.section }}</div>
-            </div>
-            <div class="detail-item">
-              <mat-icon>check_circle</mat-icon>
-              <div><strong>Nota Aprobatoria:</strong> {{ c.passingGrade }} / 100</div>
-            </div>
-            <div class="detail-item">
-              <mat-icon>email</mat-icon>
-              <div><strong>Email Profesor:</strong> {{ c.teacher?.email }}</div>
-            </div>
+  <!-- Lista de cursos rediseñada con tarjetas -->
+  <div class="course-list-container" *ngIf="courses.length; else noCourses">
+    <div class="course-card-wrapper" *ngFor="let course of courses; trackBy: trackById">
+      <mat-card class="course-card">
+        <mat-card-header>
+          <mat-card-title>{{ course.name }}</mat-card-title>
+          <mat-card-subtitle>{{ course.code }}  •  Sección {{ course.section }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="course-card-content">
+          <div class="info-item">
+            <mat-icon class="info-icon">person_outline</mat-icon>
+            <span class="info-label">Docente:</span>
+            <span class="info-value">{{ getTeacherFullName(course.idTeacher) || 'No asignado' }}</span>
           </div>
-
-          <mat-divider></mat-divider>
-          <div class="syllabus-section">
-            <h4>Registro de Syllabus en Blockchain</h4>
-            <ng-container *ngIf="getSyllabusForCourse(c.id) as syllabus; else noSyllabus">
-              <div class="syllabus-info">
-                <mat-icon>description</mat-icon>
-                <span>{{ c.syllabusFileName || 'Syllabus.pdf' }}</span>
-                <span class="hash-text" matTooltip="{{ syllabus.hash }}">Hash: {{ syllabus.hash | slice:0:15 }}...</span>
-                <span class="spacer"></span>
-                <button mat-stroked-button color="accent" (click)="goToBlock(syllabus.id)">
-                  <mat-icon>link</mat-icon>
-                  Ir al Bloque
-                </button>
-              </div>
-            </ng-container>
-            <ng-template #noSyllabus>
-              <p class="no-syllabus-text">No hay un syllabus registrado para este curso.</p>
-            </ng-template>
+          <div class="info-item">
+            <mat-icon class="info-icon">group</mat-icon>
+            <span class="info-label">Matriculados:</span>
+            <span class="info-value">{{ getStudentsForCourse(course.id).length }}</span>
           </div>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </mat-card-content>
-  </mat-card>
+          <div class="info-item">
+            <mat-icon class="info-icon">assessment</mat-icon>
+            <span class="info-label">Fórmula:</span>
+            <span class="info-value">{{ getFormulaString(course.notesWeight) }}</span>
+          </div>
+          <div class="info-item">
+            <mat-icon class="info-icon">picture_as_pdf</mat-icon>
+            <span class="info-label">Sílabo:</span>
+            <button mat-stroked-button color="primary" class="syllabus-btn" (click)="viewSyllabus(course)" [disabled]="!course.syllabusFileName">
+              Ver Sílabo
+            </button>
+            <span class="info-value-subtle" *ngIf="!course.syllabusFileName">(No subido)</span>
+          </div>
+        </mat-card-content>
+        <mat-card-actions class="course-card-actions">
+          <button mat-icon-button color="primary" matTooltip="Editar curso" (click)="openEditCourse(course)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" matTooltip="Eliminar curso" (click)="deleteCourse(course.id)">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <ng-template #noCourses>
+    <div class="empty-state">
+      <mat-icon class="empty-icon">school</mat-icon>
+      <h2>No hay cursos registrados</h2>
+      <p>Haz clic en "Nuevo Curso" para empezar a agregar.</p>
+    </div>
+  </ng-template>
+
 </div>
 
-<!-- Diálogo para añadir curso -->
-<ng-template #addCourseTpl>
-  <h2 mat-dialog-title>Añadir Nuevo Curso</h2>
-  <mat-dialog-content class="dialog-content">
-    <div class="dialog-grid">
-      <mat-form-field appearance="outline" class="grid-col-span-2">
-        <mat-label>Nombre del Curso</mat-label>
-        <input matInput [(ngModel)]="newCourse.name" required>
+<!-- ═══════════ Diálogo de Formulario (rediseñado) ═══════════ -->
+<ng-template #courseFormTpl>
+  <h2 mat-dialog-title>{{ isEditing ? 'Editar Curso' : 'Crear Nuevo Curso' }}</h2>
+  <mat-dialog-content class="form-dialog-content">
+    <div class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre del curso</mat-label>
+        <input matInput [(ngModel)]="formCourse.name">
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Sección</mat-label>
-        <input matInput [(ngModel)]="newCourse.section">
+        <input matInput [(ngModel)]="formCourse.section">
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Nota Aprobatoria</mat-label>
-        <input matInput type="number" min="0" max="100" [(ngModel)]="newCourse.passingGrade">
+        <mat-label>Nota mínima aprobatoria</mat-label>
+        <input type="number" matInput [(ngModel)]="formCourse.passingGrade">
       </mat-form-field>
 
-      <!-- AJUSTE 2: Este campo faltaba en el código HTML que me enviaste. Es VITAL para el layout y la funcionalidad. -->
-      <mat-form-field appearance="outline" class="grid-col-span-2">
-        <mat-label>Profesor Asignado</mat-label>
-        <mat-select [(ngModel)]="newCourse.teacher" required>
-          <mat-option *ngFor="let t of teachers" [value]="t">
-            {{t.firstName}} {{t.lastName}}
-          </mat-option>
+      <mat-form-field appearance="outline">
+        <mat-label>Docente a cargo</mat-label>
+        <mat-select [(ngModel)]="formCourse.teacher">
+          <mat-option *ngFor="let t of teachers" [value]="t">{{ t.firstName }} {{ t.lastName }}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
 
-    <fieldset class="notes-config">
-      <legend>Ponderación de Notas (%)</legend>
-      <div *ngFor="let w of newCourse.notesWeight!; let i = index; trackBy: trackByIndex" class="note-row">
-        <mat-form-field appearance="outline" class="note-input">
-          <mat-label>Nota {{ i + 1 }}</mat-label>
-          <input matInput type="number" min="0" max="100" [(ngModel)]="newCourse.notesWeight![i]">
-          <span matSuffix>%</span>
-        </mat-form-field>
-        <button mat-icon-button (click)="removeNoteWeight(i)" matTooltip="Eliminar ponderación" aria-label="Eliminar ponderación">
-          <mat-icon>remove_circle_outline</mat-icon>
+    <mat-divider></mat-divider>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Peso por Evaluación (%)</h3>
+      <div class="weight-list">
+        <div *ngFor="let w of formCourse.notesWeight; let i = index" class="weight-row">
+          <mat-form-field appearance="outline" class="weight-field">
+            <mat-label>Peso {{ i + 1 }}</mat-label>
+            <input type="number" matInput [(ngModel)]="formCourse.notesWeight[i]">
+          </mat-form-field>
+          <button mat-icon-button color="warn" (click)="removeNoteWeight(i)" matTooltip="Eliminar peso">
+            <mat-icon>remove_circle_outline</mat-icon>
+          </button>
+        </div>
+        <button mat-stroked-button color="primary" (click)="addNoteWeight()">
+          <mat-icon>add</mat-icon>
+          Añadir Peso
         </button>
       </div>
-      <button mat-stroked-button (click)="addNoteWeight()" class="add-note-btn">
-        <mat-icon>add</mat-icon> Añadir Nota
-      </button>
-    </fieldset>
-
-    <div class="file-upload-area">
-      <button type="button" mat-stroked-button (click)="fileInput.click()">
-        <mat-icon>attach_file</mat-icon>
-        Seleccionar Syllabus (PDF)
-      </button>
-      <span class="file-name">{{ newCourse.syllabusFileName || 'Ningún archivo seleccionado' }}</span>
-      <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept=".pdf,.doc,.docx">
     </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Archivo del Sílabo</h3>
+      <div class="file-upload-row">
+        <label for="syllabus-upload" class="file-upload-label">
+          <mat-icon>attach_file</mat-icon>
+          <span>Seleccionar archivo PDF</span>
+        </label>
+        <input id="syllabus-upload" class="file-upload-input" type="file" (change)="onFileSelected($event)" accept=".pdf">
+        <span class="file-name" *ngIf="formCourse.syllabusFileName">{{ formCourse.syllabusFileName }}</span>
+      </div>
+    </div>
+
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close>Cancelar</button>
-    <button mat-flat-button color="primary" (click)="saveNewCourse()">Guardar Curso</button>
+    <button mat-flat-button color="primary" (click)="saveCourse()">
+      {{ isEditing ? 'Actualizar Curso' : 'Guardar Curso' }}
+    </button>
   </mat-dialog-actions>
 </ng-template>
 
-<!-- Diálogo de confirmación -->
-<ng-template #confirmDeleteTpl let-course>
+<!-- ═══════════ Diálogo de Confirmación de Eliminación ═══════════ -->
+<ng-template #deleteConfirmTpl>
   <h2 mat-dialog-title>Confirmar Eliminación</h2>
   <mat-dialog-content>
-    <p>¿Está seguro de que desea eliminar el curso <strong>"{{ course.name }}"</strong>?</p>
-    <p class="warning-text">Esta acción no se puede deshacer.</p>
+    <p>¿Estás seguro de que deseas eliminar este curso?</p>
+    <p class="dialog-warning">Esta acción no se puede deshacer.</p>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close>Cancelar</button>
-    <button mat-flat-button color="warn" [mat-dialog-close]="true">Eliminar</button>
+    <!-- [mat-dialog-close]="true" enviará 'true' como resultado cuando se cierre -->
+    <button mat-flat-button color="warn" [mat-dialog-close]="true">
+      Sí, Eliminar
+    </button>
   </mat-dialog-actions>
 </ng-template>

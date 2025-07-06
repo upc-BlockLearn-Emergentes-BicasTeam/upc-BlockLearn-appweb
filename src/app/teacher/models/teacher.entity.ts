@@ -19,20 +19,15 @@ export interface Course {
   name: string;
   code: string;
   section: string;
-  /** assigned teacher */
-  teacher: Teacher;
-  /** note weights (percentages) */
+  teacherId: string;
   notesWeight?: number[];
-  /** passing threshold */
   passingGrade?: number;
-  /** syllabus filename on server */
   syllabusFileName?: string;
-  /** syllabus file hash */
   syllabusHash?: string;
-  /** enrolled students */
   students?: Student[];
-  /** related blockchain entries */
   blockchainEntries?: BlockchainEntry[];
+  evaluations?: Evaluation[]; // <-- NUEVO
+
 }
 
 export interface Student {
@@ -41,22 +36,34 @@ export interface Student {
   lastName: string;
   email: string;
   phone?: string;
-  courses?: Course[];
-  notes: number[];      // ej. [15, 12, 10, 18]
-  average: number;      // ej. 13.75
-  state: 'PROCESS' | 'COMPLETE';  // o string
+  notes: number[];
+  average: number;
+  state: 'PROCESS' | 'COMPLETE';
 }
 
 export interface Teacher {
   id: string;
+  idUser: string;
+  idInstitution: string;
   firstName: string;
   lastName: string;
   email: string;
   phone?: string;
-  /** courses this teacher instructs */
   courses?: Course[];
-
-  blockchainEntries: BlockchainEntry[];
-  /** Optional avatar URL for profile picture preview */
+  blockchainEntries?: BlockchainEntry[];
   avatarUrl?: string;
+}
+export interface Evaluation {
+  id: string;
+  question: string;
+  answer: boolean;
+}
+
+
+export interface Syllabus {
+  id: string;
+  idCourse: string;
+  fileName: string;        // mantiene el nombre “humano”
+  fileData: string;        // <-- NUEVO  (Base-64)
+  hash: string;
 }

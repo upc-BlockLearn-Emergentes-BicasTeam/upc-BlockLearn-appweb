@@ -1,40 +1,201 @@
-.register-container {
-  background: #f0f4ff;
-  padding: 2rem;
-  border-radius: 12px;
-  width: 300px;
-  margin: 5% auto;
-  box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+/*
+ * ==========================================================
+ *  STYLESHEET: REGISTER COMPONENT
+ *  AUTHOR: Frontend Expert
+ *  VERSION: 2.0 (Aligned with Login component styles)
+ * ==========================================================
+ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/*
+ * ----------------------------------------------------------
+ *  1. DESIGN TOKENS (CSS CUSTOM PROPERTIES)
+ * ----------------------------------------------------------
+ */
+:host {
+  /* Usamos las mismas variables que en el resto de la app para consistencia */
+  --font-primary: 'Inter', 'Roboto', sans-serif;
+  --color-primary: #4f46e5;
+  --color-text-header: #111827;
+  --color-text-body: #374151;
+  --color-text-muted: #6b7280;
+  --color-surface: #ffffff;
+  --color-border: #e5e7eb;
+  --color-error: #ef4444;
+  --color-error-bg: #fee2e2;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --transition-speed: 0.2s;
+  --transition-ease: ease-in-out;
 }
 
-.register-container h2 {
-  text-align: center;
-  margin-bottom: 1rem;
+/*
+ * ----------------------------------------------------------
+ *  2. LAYOUT PRINCIPAL (DOS COLUMNAS)
+ * ----------------------------------------------------------
+ */
+.login-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dos columnas de igual tamaño */
+  min-height: 100vh;
+  width: 100%;
+  font-family: var(--font-primary);
 }
 
-.register-container form {
-  display: flex;
-  flex-direction: column;
-}
-
-.register-container label {
-  margin-top: 0.5rem;
-  font-weight: bold;
-}
-
-.register-container input {
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-.register-container button {
-  margin-top: 1rem;
-  padding: 0.5rem;
-  border: none;
-  background-color: #4285f4;
+/*
+ * ----------------------------------------------------------
+ *  3. PANEL DE BRANDING (IZQUIERDA)
+ * ----------------------------------------------------------
+ */
+.branding-pane {
+  background: linear-gradient(45deg, var(--color-primary), #7c3aed);
   color: white;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  text-align: center;
+}
+
+.branding-content {
+  max-width: 400px;
+}
+
+.branding-logo {
+  max-width: 120px;
+  margin-bottom: var(--spacing-xl);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+
+.branding-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 var(--spacing-sm);
+}
+
+.branding-subtitle {
+  font-size: 1.125rem;
+  opacity: 0.8;
+  line-height: 1.6;
+}
+
+/*
+ * ----------------------------------------------------------
+ *  4. PANEL DEL FORMULARIO (DERECHA)
+ * ----------------------------------------------------------
+ */
+.form-pane {
+  background-color: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+}
+
+.form-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-header);
+  margin-bottom: var(--spacing-sm);
+}
+
+.form-subtitle {
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-xl);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.mat-mdc-form-field {
+  margin-bottom: var(--spacing-sm);
+}
+
+.login-button {
+  margin-top: var(--spacing-md);
+  padding: 0.8rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color var(--transition-speed) var(--transition-ease),
+  transform var(--transition-speed) var(--transition-ease);
+}
+.login-button:hover {
+  transform: translateY(-2px);
+}
+
+/*
+ * ----------------------------------------------------------
+ *  5. MENSAJES Y ENLACES
+ * ----------------------------------------------------------
+ */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: 6px;
-  cursor: pointer;
+  font-weight: 500;
+  margin-top: var(--spacing-md);
+}
+
+.error-message mat-icon {
+  font-size: 1.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: var(--spacing-xl);
+  color: var(--color-text-muted);
+}
+
+.register-link a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity var(--transition-speed) var(--transition-ease);
+}
+.register-link a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+
+/*
+ * ----------------------------------------------------------
+ *  6. DISEÑO RESPONSIVO
+ * ----------------------------------------------------------
+ */
+@media (max-width: 992px) {
+  .login-wrapper {
+    grid-template-columns: 1fr; /* Apila las columnas */
+  }
+
+  .branding-pane {
+    display: none; /* Ocultamos el panel de branding en móvil para priorizar el formulario */
+  }
+
+  .form-pane {
+    min-height: 100vh; /* Aseguramos que ocupe toda la pantalla */
+  }
+}
+
+@media (max-width: 480px) {
+  .form-pane {
+    padding: var(--spacing-lg);
+  }
+  .form-title {
+    font-size: 1.75rem;
+  }
 }

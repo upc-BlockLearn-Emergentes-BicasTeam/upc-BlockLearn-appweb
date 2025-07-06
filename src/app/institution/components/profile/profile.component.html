@@ -1,98 +1,96 @@
-<mat-card class="profile-card">
-  <mat-card-header>
-    <div mat-card-avatar class="avatar-container">
-      <ng-container *ngIf="institution.logoUrl; else placeholder">
-        <img
-          [src]="institution.logoUrl"
-          alt="Institution Logo"
-          class="avatar-img"
-        />
+<div class="page-container">
+
+  <!-- ========================================================== -->
+  <!-- Encabezado de página consistente con el resto de la app -->
+  <!-- ========================================================== -->
+  <div class="page-header">
+    <h1 class="page-title">
+      <mat-icon class="page-icon">domain</mat-icon>
+      Perfil de la Institución
+    </h1>
+
+    <!-- Acciones principales de la página -->
+    <div class="header-actions">
+      <!-- Botones que se muestran en modo de EDICIÓN -->
+      <ng-container *ngIf="isEditing">
+        <button mat-stroked-button (click)="onCancel()" [disabled]="isUploadingLogo">
+          Cancelar
+        </button>
+        <button mat-flat-button color="primary" (click)="onSave()" [disabled]="isUploadingLogo">
+          <mat-icon>save</mat-icon>
+          Guardar Cambios
+        </button>
       </ng-container>
-      <ng-template #placeholder>
-        <mat-icon class="avatar-placeholder">account_balance</mat-icon>
-      </ng-template>
-    </div>
 
-    <mat-card-title>
-      <ng-container *ngIf="!isEditing; else editName">
-        {{ institution.name || 'Institution Profile' }}
+      <!-- Botón que se muestra en modo de VISTA -->
+      <ng-container *ngIf="!isEditing">
+        <button mat-flat-button color="primary" (click)="onChangeData()">
+          <mat-icon>edit</mat-icon>
+          Editar Perfil
+        </button>
       </ng-container>
-      <ng-template #editName>
-        <mat-form-field appearance="outline" class="field-full">
-          <mat-label>Name</mat-label>
-          <input matInput [(ngModel)]="institution.name" />
-        </mat-form-field>
-      </ng-template>
-    </mat-card-title>
-
-    <mat-card-actions class="header-actions">
-      <button
-        mat-icon-button
-        aria-label="Change logo"
-        *ngIf="isEditing"
-        (click)="fileInput.click()"
-      >
-        <mat-icon>image</mat-icon>
-      </button>
-      <input
-        #fileInput
-        type="file"
-        hidden
-        (change)="onLogoSelected($event)"
-      />
-
-      <button
-        mat-icon-button
-        aria-label="Edit data"
-        *ngIf="!isEditing"
-        (click)="onChangeData()"
-      >
-        <mat-icon>edit</mat-icon>
-      </button>
-    </mat-card-actions>
-  </mat-card-header>
-
-  <mat-divider></mat-divider>
-
-  <mat-card-content>
-    <div class="info-grid">
-      <div class="info-item">
-        <mat-icon>phone</mat-icon>
-        <ng-container *ngIf="!isEditing; else editPhone">
-          <span>{{ institution.phone }}</span>
-        </ng-container>
-        <ng-template #editPhone>
-          <mat-form-field appearance="outline" class="field-full">
-            <mat-label>Telephone</mat-label>
-            <input matInput type="tel" [(ngModel)]="institution.phone" />
-          </mat-form-field>
-        </ng-template>
-      </div>
-
-      <div class="info-item">
-        <mat-icon>email</mat-icon>
-        <ng-container *ngIf="!isEditing; else editEmail">
-          <span>{{ institution.email }}</span>
-        </ng-container>
-        <ng-template #editEmail>
-          <mat-form-field appearance="outline" class="field-full">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" [(ngModel)]="institution.email" />
-          </mat-form-field>
-        </ng-template>
-      </div>
-
-      <div class="info-item">
-        <mat-icon>lock</mat-icon>
-        <span>********</span>
-      </div>
     </div>
-  </mat-card-content>
+  </div>
 
-  <mat-card-actions align="end" *ngIf="isEditing" class="footer-actions">
-    <button mat-raised-button color="primary" (click)="onSave()">
-      Save
-    </button>
-    <button mat-button (click)="onCancel()">Cancel</button>
-  </mat-card-actions>
-</mat-card>
+
+  <!-- ========================================================== -->
+  <!-- Contenedor principal del contenido del perfil -->
+  <!-- ========================================================== -->
+  <div class="profile-content-wrapper">
+    <div class="profile-layout">
+
+      <!-- Columna Izquierda: Logo e Información Adicional -->
+      <div class="profile-sidebar">
+        <div class="logo-container">
+          <img
+            [src]="institution.logoUrl || 'assets/images/default-logo.svg'"
+            alt="Logo de la institución"
+            class="profile-logo"
+            [class.is-uploading]="isUploadingLogo"
+          />
+          <!-- NUEVO: Overlay con spinner que aparece durante la carga -->
+          <div class="logo-overlay" *ngIf="isUploadingLogo">
+            <mat-spinner diameter="50"></mat-spinner>
+          </div>
+        </div>
+
+        <div class="upload-section" *ngIf="isEditing">
+          <button mat-stroked-button (click)="fileInput.click()" [disabled]="isUploadingLogo">
+            <mat-icon>upload</mat-icon>
+            {{ isUploadingLogo ? 'Subiendo...' : 'Cambiar logo' }}
+          </button>
+          <input #fileInput type="file" hidden (change)="onLogoSelected($event)" accept="image/*" />
+          <p class="upload-hint">PNG, JPG, o SVG (máx 2MB)</p>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Formulario de Datos -->
+      <div class="profile-form">
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre de la Institución</mat-label>
+            <input matInput [(ngModel)]="institution.name" name="name" [readonly]="!isEditing" />
+          </mat-form-field>
+
+
+          <mat-form-field appearance="outline" class="full-span">
+            <mat-label>Dirección</mat-label>
+            <input matInput [(ngModel)]="institution.address" name="address" [readonly]="!isEditing" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Correo Electrónico de Contacto</mat-label>
+            <input matInput type="email" [(ngModel)]="institution.email" name="email" [readonly]="!isEditing" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Teléfono de Contacto</mat-label>
+            <input matInput [(ngModel)]="institution.phone" name="phone" [readonly]="!isEditing" />
+          </mat-form-field>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

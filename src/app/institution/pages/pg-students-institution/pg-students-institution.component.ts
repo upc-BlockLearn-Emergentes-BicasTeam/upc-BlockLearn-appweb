@@ -1,6 +1,7 @@
 import { Component }                          from '@angular/core';
 import { CommonModule }                       from '@angular/common';
 
+
 // Angular Material
 import { MatSidenavModule }  from '@angular/material/sidenav';
 import { MatToolbarModule }  from '@angular/material/toolbar';
@@ -9,12 +10,12 @@ import { MatButtonModule }   from '@angular/material/button';
 
 
 import {SidebarInstitutionComponent} from '../../components/sidebar-institution/sidebar-institution.component';
-import {BlockchainComponent} from '../../components/blockchain/blockchain.component';
-import {CoursesComponent} from '../../components/courses/courses.component';
+import {StudentsComponent} from '../../components/students/students.component';
+import {TeachersComponent} from '../../components/teachers/teachers.component';
 
 
 @Component({
-  selector: 'app-pg-blockchain',
+  selector: 'app-pg-students-teacher-institution',
   standalone: true,
   imports: [CommonModule,
     // Material modules
@@ -22,9 +23,9 @@ import {CoursesComponent} from '../../components/courses/courses.component';
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
-
-    SidebarInstitutionComponent, BlockchainComponent, CoursesComponent],
-  templateUrl: './pg-blockchain.component.html',
-  styleUrls: ['./pg-blockchain.component.css']
+    SidebarInstitutionComponent,
+    StudentsComponent],
+  templateUrl: './pg-students-institution.component.html',
+  styleUrls: ['./pg-students-institution.component.css']
 })
-export class PgBlockchainComponent {}
+export class PgStudentsInstitutionComponent {}

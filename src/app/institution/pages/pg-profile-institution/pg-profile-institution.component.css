@@ -42,15 +42,6 @@
 }
 
 /* Scrollable + padding */
-.pg-content {
-  flex: 1;
-  overflow-y: auto;
-  background: #f0f2f5;
-  padding: 2rem;
-  box-sizing: border-box;
-}
-
-/* Wrapper centrado */
 
 
 /* Responsive: overlay en móvil */

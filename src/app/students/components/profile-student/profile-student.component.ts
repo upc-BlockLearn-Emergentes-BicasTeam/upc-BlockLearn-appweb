@@ -1,63 +1,107 @@
-import {Component, OnInit} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {ActivatedRoute} from '@angular/router';
-import {StudentService} from '../../services/student.service';
-import {StudentEntity} from '../../model/student.entity';
-import {AuthService} from '../../../iam/services/auth.service';
-import {UserEntity} from '../../../iam/model/user.entity';
+/* src/app/student/components/profile/profile-student.component.ts */
+import { Component, OnInit } from '@angular/core';
+import { CommonModule }      from '@angular/common';
+import { FormsModule }       from '@angular/forms';
+
+/* ── Angular Material ─────────────────────── */
+import { MatCardModule }     from '@angular/material/card';
+import { MatIconModule }     from '@angular/material/icon';
+import { MatButtonModule }   from '@angular/material/button';
+import { MatDividerModule }  from '@angular/material/divider';
+import { MatFormFieldModule} from '@angular/material/form-field';
+import { MatInputModule }    from '@angular/material/input';
+
+/* ── Router / servicio ────────────────────── */
+import { ActivatedRoute }    from '@angular/router';
+import { StudentService }    from '../../services/student.service';
+
+/* ── Modelo ───────────────────────────────── */
+import {Course, Student} from '../../model/student.entity';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
 
 @Component({
-  selector: 'app-profile-student',
+  selector   : 'app-profile-student',
+  standalone : true,
   imports: [
-    FormsModule
+    CommonModule, FormsModule,
+    MatCardModule, MatIconModule, MatButtonModule,
+    MatDividerModule, MatFormFieldModule, MatInputModule, MatProgressSpinner, MatProgressSpinner, MatProgressSpinner, MatProgressSpinner
   ],
-  templateUrl: './profile-student.component.html',
-  styleUrl: './profile-student.component.css'
+  templateUrl : './profile-student.component.html',
+  styleUrls   : ['./profile-student.component.css']
 })
 export class ProfileStudentComponent implements OnInit {
-  student: StudentEntity = new StudentEntity();
-  user: UserEntity = new UserEntity();
-  isEditing = false;
-  constructor(private route: ActivatedRoute,
-              private authService: AuthService,
-              private studentService: StudentService,) {
-    this.student.id = this.route.snapshot.params['id'];
-  }
 
+  /* ───── estado ───── */
+  student: Student = {
+    id           : '',
+    idUser       : '',
+    idInstitution: '',
+    firstName    : '',
+    lastName     : '',
+    email        : '',
+    phone        : '',
+    avatarUrl    : '',     // opcional
+    notes        :[],
+    average      : 0,
+    state        : 'PROCESS',
+    courses      :  []
+  };
+  readonly defaultAvatar = 'assets/img/avatar-placeholder.png';
+
+  isEditing  = false;
+  isLoading  = false;
+
+  constructor(
+    private stuSvc : StudentService,
+    private route  : ActivatedRoute
+  ) {}
+
+  /* ═════════ ciclo de vida ═════════ */
   ngOnInit(): void {
-    this.authService.findStudentById(this.student.id).subscribe((data:any) => {
-      console.log(data);
-      this.student.name = data.name;
-      this.student.lastName = data.lastName;
-      this.student.idUser=data.idUser;
-      this.student.telephone = data.telephone;
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) { console.error('No ID de estudiante en la URL'); return; }
+    this.student.id = id;
+    this.loadStudent();
+  }
 
+  /* ───── carga ───── */
+  private loadStudent(): void {
+    this.isLoading = true;
+    this.stuSvc.getById(this.student.id).subscribe({
+      next : s  => { this.student = s; this.isLoading = false; },
+      error: err => { console.error('Error cargando estudiante', err);
+        this.isLoading = false; }
     });
-
   }
-  enableEditing() {
 
-    this.authService.findUserById(this.student.idUser).subscribe((data:any) => {
-      this.user.id = data.id;
-      this.user.email = data.email;
-      this.user.password=data.password;
-    })
-    this.isEditing = true;
+  /* ───── edición ───── */
+  onChangeData() { this.isEditing = true; }
+  onCancel()     { this.isEditing = false; this.loadStudent(); }
+
+  onSave(): void {
+    const updated: Partial<Student> = {
+      firstName : this.student.firstName,
+      lastName  : this.student.lastName,
+      email     : this.student.email,
+      phone     : this.student.phone,
+      avatarUrl : this.student.avatarUrl
+    };
+
+    this.stuSvc.update(this.student.id, updated).subscribe({
+      next : ()  => { this.isEditing = false; this.loadStudent(); },
+      error: err => console.error('Error guardando cambios', err)
+    });
   }
-  saveChanges() {
-    if (this.user.email && this.user.password) {
-      console.log(this.user);
-      console.log(this.student);
-      this.studentService.updateStudentData(this.student).subscribe(() => {
-        alert('Datos actualizados correctamente');
-        this.isEditing = false;
-      });
-      this.studentService.updateUserData(this.user).subscribe(() => {
-        alert('Datos actualizados correctamente');
-        this.isEditing = false;
-      })
-    } else {
-      alert('Email y contraseña son obligatorios para guardar');
-    }
+
+  /* ───── avatar (opcional) ───── */
+  onAvatarSelected(evt: Event): void {
+    const inp = evt.target as HTMLInputElement;
+    if (!inp.files?.length) { return; }
+
+    const file    = inp.files[0];
+    const reader  = new FileReader();
+    reader.onload = () => this.student.avatarUrl = reader.result as string;
+    reader.readAsDataURL(file);
   }
 }

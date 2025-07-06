@@ -8,7 +8,7 @@ import {SidebarTeacherComponent} from '../../components/sidebar-teacher/sidebar-
 import {ProfileComponent} from '../../components/profile/profile.component';
 
 @Component({
-  selector: 'app-pg-profile',
+  selector: 'app-pg-profile-teacher-institution',
   imports: [
     CommonModule,
     // Material modules
@@ -22,9 +22,9 @@ import {ProfileComponent} from '../../components/profile/profile.component';
 
 
   ],
-  templateUrl: './pg-profile.component.html',
-  styleUrl: './pg-profile.component.css'
+  templateUrl: './pg-profile-teacher.component.html',
+  styleUrl: './pg-profile-teacher.component.css'
 })
-export class PgProfileComponent {
+export class PgProfileTeacherComponent {
 
 }

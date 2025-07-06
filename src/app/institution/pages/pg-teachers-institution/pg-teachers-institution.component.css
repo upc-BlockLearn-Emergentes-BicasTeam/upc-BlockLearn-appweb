@@ -42,20 +42,10 @@
 }
 
 /* Scrollable + padding */
-.pg-content {
-  flex: 1;
-  overflow-y: auto;
-  background: #f0f2f5;
-  padding: 2rem;
-  box-sizing: border-box;
-}
+
 
 /* Wrapper centrado */
-.profile-wrapper {
-  display: flex;
-  justify-content: center;
-  padding-bottom: 2rem;        /* espacio inferior */
-}
+
 
 /* Responsive: overlay en móvil */
 @media (max-width: 767px) {

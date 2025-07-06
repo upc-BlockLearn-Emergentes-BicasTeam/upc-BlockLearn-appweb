@@ -1,108 +1,178 @@
-<mat-card class="students-card">
-  <mat-card-header>
-    <mat-card-title>Students</mat-card-title>
-    <mat-card-actions>
-      <button mat-flat-button color="primary" (click)="openAddStudent()">
-        <mat-icon>person_add</mat-icon>&nbsp;Add Student
-      </button>
-    </mat-card-actions>
-  </mat-card-header>
+<div class="page-container">
 
-  <mat-accordion>
-    <mat-expansion-panel *ngFor="let s of students; let i = index">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          {{ i + 1 | number:'2.0' }}. {{ s.firstName }} {{ s.lastName }}
-        </mat-panel-title>
-        <mat-panel-description>
-          <button mat-icon-button color="warn" (click)="deleteStudent(s)" aria-label="Delete student">
-            <mat-icon>delete</mat-icon>
+  <!-- Encabezado de la página -->
+  <div class="page-header">
+    <h1 class="page-title">
+      <mat-icon class="page-icon">people</mat-icon>
+      Gestión de Estudiantes
+    </h1>
+    <button mat-flat-button color="primary" (click)="openAddStudent()">
+      <mat-icon>person_add</mat-icon>
+      Nuevo Estudiante
+    </button>
+  </div>
+
+  <!-- Barra de herramientas con búsqueda -->
+  <div class="table-toolbar">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar estudiante...</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Por nombre o correo">
+    </mat-form-field>
+  </div>
+
+  <!-- Contenedor de la Tabla Responsiva -->
+  <div class="table-container" *ngIf="filteredStudents.length > 0; else noData">
+    <table class="data-table">
+      <!-- Cabecera de la tabla -->
+      <thead>
+      <tr>
+        <th>Estudiante</th>
+        <th>Teléfono</th>
+        <th>Cursos Matriculados</th>
+        <th class="actions-column">Acciones</th>
+      </tr>
+      </thead>
+      <!-- Cuerpo de la tabla -->
+      <tbody>
+      <tr *ngFor="let student of filteredStudents">
+        <!-- Columna: Información del Estudiante -->
+        <td data-label="Estudiante">
+          <div class="user-info-cell">
+            <div class="avatar" [style.background-image]="'url(' + (student.avatarUrl || defaultAvatar) + ')'"></div>
+            <div class="name-email-block">
+              <span class="user-name">{{ student.firstName }} {{ student.lastName }}</span>
+              <span class="user-email">{{ student.email }}</span>
+            </div>
+          </div>
+        </td>
+
+        <!-- Columna: Teléfono -->
+        <td data-label="Teléfono">{{ student.phone || 'No registrado' }}</td>
+
+        <!-- ========================================================== -->
+        <!-- CAMBIO CLAVE: Celda de Cursos Matriculados -->
+        <!-- Reemplazamos los tags por un botón que abre el diálogo. -->
+        <!-- ========================================================== -->
+        <td data-label="Cursos">
+          <ng-container *ngIf="(coursesByStudent[student.id] || []).length > 0; else noCourses">
+            <button mat-stroked-button class="view-courses-btn" (click)="openViewCourses(student)">
+              <mat-icon>visibility</mat-icon>
+              Ver ({{ (coursesByStudent[student.id] || []).length }})
+            </button>
+          </ng-container>
+          <ng-template #noCourses>
+            <span class="info-value-subtle">Ninguno matriculado</span>
+          </ng-template>
+        </td>
+
+        <!-- Columna: Acciones (con Menú) -->
+        <td class="actions-cell" data-label="Acciones">
+          <button mat-icon-button [matMenuTriggerFor]="studentMenu" aria-label="Menú de acciones del estudiante">
+            <mat-icon>more_vert</mat-icon>
           </button>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
+          <mat-menu #studentMenu="matMenu">
+            <button mat-menu-item (click)="openAssign(student)">
+              <mat-icon>class</mat-icon>
+              <span>Asignar Cursos</span>
+            </button>
+            <button mat-menu-item color="warn" (click)="deleteStudent(student)">
+              <mat-icon color="warn">delete_outline</mat-icon>
+              <span>Eliminar Estudiante</span>
+            </button>
+          </mat-menu>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 
-      <div class="detail-grid">
-        <div>
-          <mat-icon>person</mat-icon>
-          <strong>Name:</strong> {{ s.firstName }} {{ s.lastName }}
-        </div>
-        <div>
-          <mat-icon>email</mat-icon>
-          <strong>Email:</strong>
-          <a [href]="'mailto:' + s.email">{{ s.email }}</a>
-        </div>
-        <div class="full-row">
-          <mat-icon>menu_book</mat-icon>
-          <strong>Courses:</strong>
-          <mat-list dense>
-            <mat-list-item *ngFor="let c of s.courses">
-              <mat-icon matListIcon>chevron_right</mat-icon>
-              {{ c.name }}
-            </mat-list-item>
-          </mat-list>
-        </div>
-        <div class="full-row">
-          <button mat-stroked-button color="accent" (click)="openAssign(s)">
-            <mat-icon>edit</mat-icon>&nbsp;Assign Courses
-          </button>
-        </div>
-      </div>
-    </mat-expansion-panel>
-  </mat-accordion>
-</mat-card>
+  <!-- Estado Vacío -->
+  <ng-template #noData>
+    <div class="empty-state">
+      <mat-icon class="empty-icon">search_off</mat-icon>
+      <h2>No se encontraron estudiantes</h2>
+      <p>Intenta con otro término de búsqueda o añade un nuevo estudiante.</p>
+    </div>
+  </ng-template>
 
-<!-- Add Student Dialog -->
+</div>
+
+
+<!-- ═══════════ Diálogos ═══════════ -->
+
+<!-- Diálogo: Nuevo Estudiante (sin cambios) -->
 <ng-template #addStudentTpl>
-  <h2 mat-dialog-title>Add Student</h2>
-  <mat-dialog-content class="dialog-content">
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>First Name</mat-label>
-      <input matInput [(ngModel)]="newStudent.firstName" />
+  <h2 mat-dialog-title>Nuevo Estudiante</h2>
+  <mat-dialog-content class="form-dialog-content">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput [(ngModel)]="newStudent.firstName" name="firstName" required>
     </mat-form-field>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Last Name</mat-label>
-      <input matInput [(ngModel)]="newStudent.lastName" />
+    <mat-form-field appearance="outline">
+      <mat-label>Apellido</mat-label>
+      <input matInput [(ngModel)]="newStudent.lastName" name="lastName" required>
     </mat-form-field>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Email</mat-label>
-      <input matInput type="email" [(ngModel)]="newStudent.email" />
+    <mat-form-field appearance="outline">
+      <mat-label>Correo Electrónico</mat-label>
+      <input matInput type="email" [(ngModel)]="newStudent.email" name="email" required>
     </mat-form-field>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Phone</mat-label>
-      <input matInput type="tel" [(ngModel)]="newStudent.phone" />
+    <mat-form-field appearance="outline">
+      <mat-label>Contraseña Temporal</mat-label>
+      <input matInput type="password" [(ngModel)]="newStudent.password" name="password" required>
     </mat-form-field>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Password</mat-label>
-      <input matInput type="password" [(ngModel)]="newStudent.password" />
+    <mat-form-field appearance="outline">
+      <mat-label>Teléfono (Opcional)</mat-label>
+      <input matInput [(ngModel)]="newStudent.phone" name="phone">
     </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-flat-button color="primary" (click)="saveNewStudent()">Save</button>
+    <button mat-button mat-dialog-close>Cancelar</button>
+    <button mat-flat-button color="primary" (click)="saveNewStudent()">Guardar Estudiante</button>
   </mat-dialog-actions>
 </ng-template>
 
-<!-- Assign Courses Dialog -->
+<!-- Diálogo: Asignar Cursos (sin cambios) -->
 <ng-template #assignCoursesTpl>
-  <h2 mat-dialog-title>Assign Courses</h2>
-  <mat-dialog-content class="dialog-content">
-    <p>
-      <mat-icon>person</mat-icon>
-      {{ selectedStudent?.firstName }} {{ selectedStudent?.lastName }}
+  <h2 mat-dialog-title>Matricular en Cursos</h2>
+  <mat-dialog-content>
+    <p class="dialog-subtitle" *ngIf="selectedStudent">
+      Selecciona los cursos para <strong>{{ selectedStudent.firstName }} {{ selectedStudent.lastName }}</strong>
     </p>
     <mat-selection-list>
-      <mat-list-option
-        *ngFor="let c of availableCourses"
-        [value]="c.id"
-        (click)="toggleCourse(c)"
-        [selected]="assignedCourses.has(c.id)"
-      >
-        {{ c.name }}
+      <mat-list-option *ngFor="let c of availableCourses"
+                       [selected]="assignedCourses.has(c.id)"
+                       (click)="toggleCourse(c)">
+        {{ c.name }} – {{ c.section }}
       </mat-list-option>
     </mat-selection-list>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-flat-button color="primary" (click)="saveAssigned()">Update</button>
+    <button mat-button mat-dialog-close>Cancelar</button>
+    <button mat-flat-button color="primary" (click)="saveAssigned()">Guardar Matrícula</button>
+  </mat-dialog-actions>
+</ng-template>
+
+<!-- ========================================================== -->
+<!-- NUEVO: Diálogo para Ver los Cursos Matriculados -->
+<!-- ========================================================== -->
+<ng-template #viewCoursesTpl>
+  <h2 mat-dialog-title *ngIf="selectedStudent">
+    Cursos de {{ selectedStudent.firstName }} {{ selectedStudent.lastName }}
+  </h2>
+  <mat-dialog-content>
+    <p *ngIf="coursesForViewing.length === 0" class="info-value-subtle">
+      Este estudiante no está matriculado en ningún curso.
+    </p>
+    <mat-list class="course-view-list" *ngIf="coursesForViewing.length > 0">
+      <mat-list-item *ngFor="let course of coursesForViewing">
+        <mat-icon matListItemIcon>class</mat-icon>
+        <div matListItemTitle>{{ course.name }}</div>
+        <div matListItemLine>Sección: {{ course.section }}</div>
+      </mat-list-item>
+    </mat-list>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cerrar</button>
   </mat-dialog-actions>
 </ng-template>

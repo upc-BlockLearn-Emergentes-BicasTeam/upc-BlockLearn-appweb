@@ -1,125 +1,128 @@
-<!-- ===== LISTA TABULAR DE CURSOS ===== -->
-<h2 class="page-title">MY ASSIGNED COURSES <mat-icon matListIcon>menu_book</mat-icon> </h2>
+<h2 class="page-title">
+  GESTIÓN DE CURSOS <mat-icon class="page-icon">menu_book</mat-icon>
+</h2>
 
-
-<div *ngIf="!selectedCourse" class="course-table">
-  <div class="row header">
-    <div>Course</div>
-    <div>Code</div>
-    <div>Section</div>
-    <div>Passing Grade</div>
-  </div>
-  <div
-    class="row"
-    *ngFor="let c of courses"
-    (click)="selectCourse(c)"
-  >
-    <div>{{ c.name }}</div>
-    <div>{{ c.code }}</div>
-    <div>{{ c.section }}</div>
-    <div>{{ c.passingGrade }}</div>
+<!-- ═════════ VISTA 1: LISTA DE CURSOS (rediseñada con tarjetas) ═════════ -->
+<div *ngIf="!selectedCourse; else detailView" class="course-list-container">
+  <div class="course-card-wrapper" *ngFor="let c of courses">
+    <mat-card class="course-card">
+      <mat-card-header>
+        <mat-card-title>{{ c.name }}</mat-card-title>
+        <mat-card-subtitle>{{ c.code }}  •  Sección {{ c.section }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="course-card-content">
+        <p class="course-info-line">
+          <mat-icon>check_circle_outline</mat-icon>
+          <span>Nota mínima aprobatoria: {{ c.passingGrade }}</span>
+        </p>
+      </mat-card-content>
+      <mat-card-actions class="course-card-actions">
+        <button mat-flat-button color="primary" (click)="selectCourse(c)">
+          <mat-icon>group</mat-icon>
+          Gestionar Curso
+        </button>
+      </mat-card-actions>
+    </mat-card>
   </div>
 </div>
 
-<!-- ===== DETALLE DEL CURSO ===== -->
-<ng-container *ngIf="selectedCourse">
-  <button mat-button class="back-btn" (click)="goBack()">
-    <mat-icon>arrow_back</mat-icon> Volver
-  </button>
+<!-- ═════════ VISTA 2: DETALLE DE CURSO (rediseñada con layout de 2 columnas) ═════════ -->
+<ng-template #detailView>
+  <div class="detail-view-container" *ngIf="selectedCourse">
 
-  <mat-card class="detail-card">
-    <mat-card-header>
-      <mat-card-title>
-        {{ selectedCourse.name }} ({{ selectedCourse.code }})
-      </mat-card-title>
-    </mat-card-header>
-    <mat-divider></mat-divider>
+    <button mat-stroked-button class="back-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Volver a mis cursos
+    </button>
 
-    <mat-card-content class="detail-header">
-      <div class="info">
-        <p><strong>Section:</strong> {{ selectedCourse.section }}</p>
-        <p>
-          <strong>Teacher:</strong>
-          {{ selectedCourse.teacher.firstName }}
-          {{ selectedCourse.teacher.lastName }}
-        </p>
-        <p><strong>Email:</strong> {{ selectedCourse.teacher.email }}</p>
-        <p>
-          <strong>Course Syllabus:</strong>
-          <button mat-button color="primary" (click)="downloadSyllabus()">
-            <mat-icon>picture_as_pdf</mat-icon>
-            Download PDF
-          </button>
-        </p>
-      </div>
-      <div class="legend">
-        <p><strong>LEGEND:</strong></p>
-        <p><em>NT:</em> not taken</p>
-        <p><em>--:</em> not yet taken</p>
-        <p><strong>PASSING GRADE: {{ selectedCourse.passingGrade }}</strong></p>
-      </div>
-    </mat-card-content>
-  </mat-card>
+    <div class="detail-layout">
 
-  <mat-card class="students-card">
-    <mat-card-header>
-      <mat-card-title>Students &amp; Grades</mat-card-title>
-    </mat-card-header>
-    <mat-divider></mat-divider>
-    <mat-card-content>
-      <mat-accordion multi>
-        <mat-expansion-panel
-          *ngFor="let s of studentList; let i = index"
-          [expanded]="expanded[s.id]"
-          (opened)="toggleExpand(s.id)"
-          (closed)="toggleExpand(s.id)"
-        >
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{ (i+1) | number:'2.0' }} — {{ s.firstName }} {{ s.lastName }}
-            </mat-panel-title>
-            <mat-panel-description>
-              Prom: {{ s.average }} — {{ s.state }}
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-          <div class="grade-detail">
-            <!-- cabeceras -->
-            <div class="grade-rows">
-              <div class="grade-header note-col"><strong>NOTES</strong></div>
-              <div class="grade-header percent-col"><strong>PERCENT</strong></div>
-              <div class="grade-header action-col"></div> <!-- espacio para el botón -->
+      <!-- ───── Columna Principal: Lista de Estudiantes ───── -->
+      <div class="main-content">
+        <mat-card class="students-card">
+          <mat-card-header>
+            <mat-card-title>Estudiantes Inscritos en: {{ selectedCourse.name }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-accordion multi>
+              <ng-container *ngIf="studentsByCourse[selectedCourse.id]?.length; else noStudents">
+                <mat-expansion-panel *ngFor="let s of studentsByCourse[selectedCourse.id]; let i = index">
+                  <mat-expansion-panel-header class="student-panel-header">
+                    <mat-panel-title class="student-title">
+                      <span class="student-index">{{ i + 1 | number:'2.0' }}</span>
+                      {{ s.firstName }} {{ s.lastName }}
+                    </mat-panel-title>
+                    <mat-panel-description class="student-avg">
+                      <span>Promedio:</span>
+                      <span class="avg-chip" [ngClass]="{'low-avg': s.average < (selectedCourse.passingGrade ?? 101), 'high-avg': s.average > 17}">                        {{ s.average | number:'1.1-1' }}
+                      </span>
+                    </mat-panel-description>
+                  </mat-expansion-panel-header>
 
-              <!-- una fila por cada nota -->
-              <ng-container *ngFor="let lbl of noteLabels; let i = index">
-                <!-- celda de selector de nota -->
-                <div class="note-cell">
-                  <mat-form-field appearance="outline" class="note-field">
-                    <mat-label>{{ lbl }}</mat-label>
-                    <mat-select [(ngModel)]="s.notes[i]">
-                      <mat-option *ngFor="let opt of noteOptions" [value]="opt">
-                        {{ opt }}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-                <!-- celda de porcentaje -->
-                <div class="percent-cell">
-                  {{ selectedCourse?.notesWeight?.[i] ?? 0 }}%
-                </div>
-                <!-- en la última fila ponemos el botón -->
-                <div class="action-cell" *ngIf="i === 0; else emptyCell">
-                  <button mat-raised-button color="primary" (click)="goToBlock(s.id)">
-                    Register Grade in Block-Chain
-                  </button>
-                </div>
-                <ng-template #emptyCell><div></div></ng-template>
+                  <!-- Contenido del panel: edición de notas -->
+                  <div class="grades-editor">
+                    <div class="grade-row" *ngFor="let lbl of noteLabels; let idx = index">
+                      <mat-form-field appearance="outline" class="note-field">
+                        <mat-label>{{ lbl }}</mat-label>
+                        <mat-select [(ngModel)]="s.notes[idx]" (selectionChange)="updateNote(s, idx, $event.value)">
+                          <mat-option *ngFor="let opt of noteOptions" [value]="opt">{{ opt }}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <span class="percent-tag">{{ selectedCourse.notesWeight?.[idx] ?? 0 }}%</span>
+                      <button *ngIf="idx === 0" mat-stroked-button color="primary" class="blockchain-btn" (click)="goToBlock(s.id)">
+                        Blockchain
+                      </button>
+                    </div>
+                  </div>
+                </mat-expansion-panel>
               </ng-container>
-            </div>
-          </div>
+            </mat-accordion>
+            <ng-template #noStudents>
+              <div class="empty-state">
+                <mat-icon class="empty-icon">sentiment_dissatisfied</mat-icon>
+                <p>No hay estudiantes inscritos en este curso.</p>
+              </div>
+            </ng-template>
+          </mat-card-content>
+        </mat-card>
+      </div>
 
+      <!-- ───── Barra Lateral: Info y Acciones ───── -->
+      <div class="sidebar">
+        <!-- Card de Información -->
+        <mat-card class="info-card">
+          <mat-card-header>
+            <mat-card-title>Detalles del Curso</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p><mat-icon>picture_as_pdf</mat-icon><strong>Sílabo:</strong> <a (click)="viewSyllabus(selectedCourse!)">Ver PDF</a></p>
+            <p><mat-icon>info</mat-icon><strong>Leyenda:</strong> <em>NT</em> (no tomado), <em>--</em> (no evaluado)</p>
+          </mat-card-content>
+        </mat-card>
 
-        </mat-expansion-panel>
-      </mat-accordion>
-    </mat-card-content>
-  </mat-card>
-</ng-container>
+        <!-- Card de Evaluaciones -->
+        <mat-card class="eval-card">
+          <mat-card-header>
+            <mat-card-title>Evaluaciones</mat-card-title>
+            <button mat-icon-button color="primary" (click)="toggleEvalForm()">
+              <mat-icon>{{ showCreateEval ? 'close' : 'add_circle' }}</mat-icon>
+            </button>
+          </mat-card-header>
+          <mat-card-content *ngIf="showCreateEval" class="eval-form">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Nueva pregunta (V/F)</mat-label>
+              <input matInput [(ngModel)]="newEvalQuestion">
+            </mat-form-field>
+            <button mat-flat-button color="primary" (click)="addEvalQuestion()">Agregar</button>
+          </mat-card-content>
+          <mat-card-content>
+            <ul *ngIf="evalQuestions.length; else none" class="eval-list">
+              <li *ngFor="let q of evalQuestions">{{ q }}</li>
+            </ul>
+            <ng-template #none><p class="empty-text">No hay evaluaciones creadas.</p></ng-template>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</ng-template>

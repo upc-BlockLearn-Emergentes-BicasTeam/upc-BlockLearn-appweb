@@ -9,21 +9,22 @@ import { MatButtonModule }   from '@angular/material/button';
 
 
 import {SidebarInstitutionComponent} from '../../components/sidebar-institution/sidebar-institution.component';
-import {CoursesComponent} from '../../components/courses/courses.component';
 import {TeachersComponent} from '../../components/teachers/teachers.component';
 
 
 @Component({
-  selector: 'app-pg-courses',
+  selector: 'app-pg-teachers-institution',
   standalone: true,
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     // Material modules
     MatSidenavModule,
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
-    SidebarInstitutionComponent, CoursesComponent, TeachersComponent],
-  templateUrl: './pg-courses.component.html',
-  styleUrls: ['./pg-courses.component.css']
+    SidebarInstitutionComponent,
+    TeachersComponent],
+  templateUrl: './pg-teachers-institution.component.html',
+  styleUrls: ['./pg-teachers-institution.component.css']
 })
-export class PgCoursesComponent {}
+export class PgTeachersInstitutionComponent {}

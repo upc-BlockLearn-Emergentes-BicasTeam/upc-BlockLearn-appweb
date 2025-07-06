@@ -1,7 +1,7 @@
 <mat-sidenav-container class="sidebar-container">
   <mat-sidenav
     class="sidebar"
-    mode="side"
+    [mode]="'side'"
     [opened]="opened"
     role="navigation"
     aria-label="Teacher menu"
@@ -14,7 +14,7 @@
     <mat-nav-list>
       <a
         mat-list-item
-        routerLink="/teacher/profile"
+        [routerLink]="['/teacher/profile', teacherId]"
         routerLinkActive="active"
         aria-label="Go to Profile"
       >
@@ -24,7 +24,7 @@
 
       <a
         mat-list-item
-        routerLink="/teacher/courses"
+        [routerLink]="['/teacher/courses', teacherId]"
         routerLinkActive="active"
         aria-label="Go to Courses"
       >
@@ -34,7 +34,7 @@
 
       <a
         mat-list-item
-        routerLink="/teacher/blockchain"
+        [routerLink]="['/teacher/blockchain', teacherId]"
         routerLinkActive="active"
         aria-label="Go to Blockchain"
       >

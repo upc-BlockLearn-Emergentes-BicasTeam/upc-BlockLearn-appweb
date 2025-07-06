@@ -1,17 +1,16 @@
-// src/app/teacher/components/profile/profile.component.ts
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { ActivatedRoute } from '@angular/router';
 
-import { Component, OnInit }      from '@angular/core';
-import { CommonModule }            from '@angular/common';
-import { FormsModule }             from '@angular/forms';
-import { MatCardModule }           from '@angular/material/card';
-import { MatIconModule }           from '@angular/material/icon';
-import { MatButtonModule }         from '@angular/material/button';
-import { MatDividerModule }        from '@angular/material/divider';
-import { MatFormFieldModule }      from '@angular/material/form-field';
-import { MatInputModule }          from '@angular/material/input';
-
-import { TeacherService }          from '../../services/teacher.service';
-import { Teacher }                 from '../../models/teacher.entity';
+import { TeacherService } from '../../services/teacher.service';
+import { Teacher } from '../../models/teacher.entity';
 
 @Component({
   selector: 'app-profile',
@@ -30,29 +29,50 @@ import { Teacher }                 from '../../models/teacher.entity';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  // Initialize with all required fields
   teacher: Teacher = {
-    id:               '1',
-    firstName:        '',
-    lastName:         '',
-    email:            '',
-    phone:            '',
-    courses:          [],
+    id: '',
+    idUser: '',
+    idInstitution: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    avatarUrl: '',
+    courses: [],
     blockchainEntries: []
   };
 
-  isEditing = false;
+  defaultAvatar = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNjYWQxZGUiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWNpcmNsZS11c2VyLXJvdW5kIj48cGF0aCBkPSJNMjQgMTAuM2ExMCAxMCAwIDAgMCAxMC4zLTEwLjMiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjEwIiByPSI0Ii8+PHBhdGggZD0iTTE4LjM3IDE4LjgzYTYgNiAwIDAgMC0xMi43NCAwIi8+PC9zdmc+';
 
-  constructor(private teacherSvc: TeacherService) {}
+  isEditing = false;
+  isLoading = false;
+
+  constructor(
+    private teacherSvc: TeacherService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
-    this.loadTeacher();
+    const teacherId = this.route.snapshot.paramMap.get('id');
+    if (teacherId) {
+      this.teacher.id = teacherId;
+      this.loadTeacher();
+    } else {
+      console.error('No se encontró el ID del docente en la URL');
+    }
   }
 
   private loadTeacher(): void {
+    this.isLoading = true;
     this.teacherSvc.getById(this.teacher.id).subscribe({
-      next: t => this.teacher = t,
-      error: err => console.error('Error loading teacher', err)
+      next: t => {
+        this.teacher = t;
+        this.isLoading = false;
+      },
+      error: err => {
+        console.error('Error al cargar el perfil del docente', err);
+        this.isLoading = false;
+      }
     });
   }
 
@@ -63,9 +83,10 @@ export class ProfileComponent implements OnInit {
   onSave(): void {
     const updated: Partial<Teacher> = {
       firstName: this.teacher.firstName,
-      lastName:  this.teacher.lastName,
-      email:     this.teacher.email,
-      phone:     this.teacher.phone
+      lastName: this.teacher.lastName,
+      email: this.teacher.email,
+      phone: this.teacher.phone,
+      avatarUrl: this.teacher.avatarUrl
     };
 
     this.teacherSvc.update(this.teacher.id, updated).subscribe({
@@ -73,7 +94,7 @@ export class ProfileComponent implements OnInit {
         this.isEditing = false;
         this.loadTeacher();
       },
-      error: err => console.error('Error saving teacher', err)
+      error: err => console.error('Error al guardar los cambios', err)
     });
   }
 
@@ -84,10 +105,13 @@ export class ProfileComponent implements OnInit {
 
   onLogoSelected(evt: Event): void {
     const input = evt.target as HTMLInputElement;
-    if (!input.files?.length) { return; }
+    if (!input.files?.length) return;
+
     const file = input.files[0];
-    // Preview locally
-    // (You may want to upload it to your backend instead)
-    this.teacher['avatarUrl'] = URL.createObjectURL(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.teacher.avatarUrl = reader.result as string;
+    };
+    reader.readAsDataURL(file);
   }
 }

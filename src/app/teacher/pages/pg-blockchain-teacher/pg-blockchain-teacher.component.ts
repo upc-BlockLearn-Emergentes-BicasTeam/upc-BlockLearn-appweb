@@ -7,24 +7,31 @@ import { MatToolbarModule }  from '@angular/material/toolbar';
 import { MatIconModule }     from '@angular/material/icon';
 import { MatButtonModule }   from '@angular/material/button';
 
-import { SidebarInstitutionComponent } from '../../components/sidebar-institution/sidebar-institution.component';
-import { ProfileComponent }            from '../../components/profile/profile.component';
+import {SidebarTeacherComponent} from '../../components/sidebar-teacher/sidebar-teacher.component';
+import {BlockchainComponent} from '../../components/blockchain/blockchain.component';
 
 @Component({
-  selector: 'app-pg-profile',
+  selector: 'app-pg-blockchain-teacher-institution',
   standalone: true,
   imports: [
+
     CommonModule,
     // Material modules
     MatSidenavModule,
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
-    // Your components
-    SidebarInstitutionComponent,
-    ProfileComponent
+    SidebarTeacherComponent,
+
+
+    BlockchainComponent
+
   ],
-  templateUrl: './pg-profile.component.html',
-  styleUrls: ['./pg-profile.component.css']
+  templateUrl: './pg-blockchain-teacher.component.html',
+  styleUrl: './pg-blockchain-teacher.component.css'
 })
-export class PgProfileComponent {}
+export class PgBlockchainTeacherComponent {
+
+}
+
+

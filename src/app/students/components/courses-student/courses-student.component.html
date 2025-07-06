@@ -1,26 +1,85 @@
-<div class="courses-container">
-  <h2>Mis Cursos</h2>
-  <div *ngFor="let course of courses;let i= index" class="course-card">
-    <h3>{{ course.name }} (Code: {{ course.id }})</h3>
-    <p><strong>Teacher:</strong> {{ teachers[i].name }} {{teachers[i].lastName}}</p>
-    <p><strong>Teacher Email:</strong> {{ users[i].email }}</p>
-    <p><strong>Section:</strong> {{ course.section }}</p>
+<h2 class="page-title">
+  MIS CURSOS <mat-icon class="page-icon">school</mat-icon>
+</h2>
 
-    <h4>Notas:</h4>
-    <ul>
-      <li *ngFor="let note of notes[i]; let j = index">
-        Nota: {{ note.note }} | Porcentaje: {{ note.percent }}% | Hash: {{ note.hash }}
-      </li>
-    </ul>
+<!-- ═════════ GRID DE CURSOS ═════════ -->
+<div class="course-grid">
 
-    <p><strong>Average Final:</strong> {{ enrollments[i].average }}</p>
-    <p><strong>Result:</strong>{{ enrollments[i].state }}</p>
+  <!-- Usamos un wrapper para la barra de color y el *ngFor -->
+  <div class="course-card-wrapper" *ngFor="let c of courses">
 
-    <div >
-      <p><strong>Syllabus:</strong></p>
-      <a href="https://ipfs.blockchain.example/{{ syllabuses[i] }}" target="_blank">
-        Ver Syllabus (Hash: {{ syllabuses[i][0].hash }})
-      </a>
-    </div>
-  </div>
+    <mat-card class="course-card">
+      <!-- ───── Cabecera de la Tarjeta ───── -->
+      <mat-card-header>
+        <mat-card-title>{{ c.name }}</mat-card-title>
+        <mat-card-subtitle>{{ c.code }}  •  Sección {{ c.section }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <!-- ───── Cuerpo de la Tarjeta ───── -->
+      <mat-card-content class="course-card-content">
+
+        <!-- INFO IZQUIERDA -->
+        <section class="course-info">
+          <p class="teacher-line">
+            <mat-icon>person</mat-icon>
+            <span>Docente: {{ c.teacherName || 'Cargando...' }}</span>
+          </p>
+          <p class="grade-line">
+            <mat-icon>verified</mat-icon>
+            <span>Nota mínima aprobatoria: {{ c.passingGrade }}</span>
+          </p>
+        </section>
+
+        <!-- NOTAS A LA DERECHA (solo cuando la tarjeta está seleccionada) -->
+        <section class="note-table-wrapper" *ngIf="selectedCourse?.id === c.id">
+          <h4>Mis Notas</h4>
+          <div class="table-container">
+            <table class="note-table">
+              <thead>
+              <tr>
+                <!-- Mapeamos los pesos a nombres más descriptivos -->
+                <th *ngFor="let w of c.notesWeight; let idx = index">
+                  {{ noteLabels[idx] }}
+                  <span class="weight">{{ w }}%</span>
+                </th>
+                <th>Prom. Final</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td *ngFor="let n of student.notes" [ngClass]="{'low-grade': n < (c.passingGrade ?? 101), 'high-grade': n >= 18}">{{ n }}</td>                <td>
+                  <div class="final-average">{{ student.average }}</div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </mat-card-content>
+
+      <!-- ───── Acciones de la Tarjeta ───── -->
+      <mat-card-actions class="course-card-actions">
+        <button mat-stroked-button color="primary" (click)="viewSyllabus(c)">
+          <mat-icon>picture_as_pdf</mat-icon>
+          Ver Sílabo
+        </button>
+        <!-- Este botón ahora controla la visibilidad de las notas -->
+        <button mat-flat-button color="primary" (click)="selectCourse(c)">
+          <mat-icon>visibility</mat-icon>
+          {{ selectedCourse?.id === c.id ? 'Ocultar Notas' : 'Ver Notas' }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+  </div> <!-- /course-card-wrapper -->
+
+</div> <!-- /course-grid -->
+
+
+<!-- Mensaje cuando aún no hay cursos -->
+<div class="empty-state" *ngIf="!courses.length">
+  <mat-icon class="empty-icon">school</mat-icon>
+  <h2>No tienes cursos asignados</h2>
+  <p>Cuando te inscribas en un curso, aparecerá aquí.</p>
 </div>

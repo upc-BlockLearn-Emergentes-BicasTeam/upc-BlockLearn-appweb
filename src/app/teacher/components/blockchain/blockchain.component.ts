@@ -1,12 +1,14 @@
-import { Component, OnInit }         from '@angular/core';
-import { CommonModule }               from '@angular/common';
-import { MatCardModule }              from '@angular/material/card';
-import { MatButtonModule }            from '@angular/material/button';
-import { MatIconModule }              from '@angular/material/icon';
-import { MatExpansionModule }         from '@angular/material/expansion';
-import { MatDividerModule }           from '@angular/material/divider';
-import { TeacherService }             from '../../services/teacher.service';
-import { BlockchainEntry }            from '../../models/teacher.entity';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDividerModule } from '@angular/material/divider';
+
+import { TeacherService } from '../../services/teacher.service';
+import { BlockchainEntry } from '../../models/teacher.entity';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-blockchain',
@@ -25,23 +27,49 @@ import { BlockchainEntry }            from '../../models/teacher.entity';
 export class BlockchainComponent implements OnInit {
   entries: BlockchainEntry[] = [];
 
-  constructor(private teacherSvc: TeacherService) {}
+  constructor(private teacherSvc: TeacherService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    // Carga las entradas de blockchain para el profesor actual (id "1" de ejemplo)
-    this.teacherSvc.getById('1')
-      .subscribe(teacher => {
-        this.entries = teacher.blockchainEntries || [];
+    const teacherId = this.route.snapshot.paramMap.get('id');
+    if (teacherId) {
+      this.teacherSvc.getById(teacherId).subscribe({
+        next: teacher => {
+          this.entries = teacher.blockchainEntries || [];
+        },
+        error: err => {
+          console.error('Error al cargar las entradas blockchain', err);
+        }
       });
+    } else {
+      console.error('No se encontró el ID del docente en la URL');
+    }
   }
 
-  downloadDocument(e: BlockchainEntry) {
-    console.log('Download document for', e.id);
-    // aquí puedes disparar la descarga real
+
+  downloadDocument(entry: BlockchainEntry): void {
+    if (entry.type === 'Syllabus' && entry.course?.syllabusFileName) {
+      const url = `/assets/${entry.course.syllabusFileName}`;
+      window.open(url, '_blank');
+    } else {
+      alert('Documento no disponible para descarga.');
+    }
   }
 
-  goToBlock(e: BlockchainEntry) {
-    console.log('Go to block', e.id);
-    // aquí rediriges al explorador de bloques
+  goToBlock(entry: BlockchainEntry): void {
+    const fakeUrl = `https://explorer.blockchain.edu/block/${entry.id}`;
+    window.open(fakeUrl, '_blank');
+  }
+
+  getEntryLabel(entry: BlockchainEntry): string {
+    switch (entry.type) {
+      case 'Certificate':
+        return `Certificado para estudiante ${entry.studentCode}`;
+      case 'Syllabus':
+        return `Sílabo del curso ${entry.course?.name}`;
+      case 'Grade':
+        return `Notas del curso ${entry.course?.name} - Estudiante ${entry.studentCode}`;
+      default:
+        return 'Entrada desconocida';
+    }
   }
 }
