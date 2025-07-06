@@ -1,0 +1,58 @@
+<div class="page-container">
+  <h2 class="page-title">
+    <mat-icon class="page-icon">workspace_premium</mat-icon>
+    Mis Certificados
+  </h2>
+
+  <!-- Estado de Carga -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    <p>Cargando tus certificados...</p>
+  </div>
+
+  <!-- Estado de Error -->
+  <div *ngIf="error" class="message-container error-state">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- Contenido Principal -->
+  <div *ngIf="!isLoading && !error">
+    <!-- Estado Vacío (si no hay certificados) -->
+    <div *ngIf="certifiedEnrollments.length === 0" class="message-container empty-state">
+      <mat-icon>school</mat-icon>
+      <p>Aún no has obtenido ningún certificado.</p>
+      <span>¡Sigue esforzándote en tus cursos para conseguirlos!</span>
+    </div>
+
+    <!-- [DISEÑO ACTUALIZADO] Lista de Certificados -->
+    <div *ngIf="certifiedEnrollments.length > 0" class="certificates-list">
+      <div *ngFor="let enrollment of certifiedEnrollments" class="certificate-card">
+
+        <!-- Fila Superior: Título y Docente -->
+        <div class="card-header">
+          <mat-icon class="header-icon">verified</mat-icon>
+          <div class="card-info">
+            <span class="card-title">{{ enrollment.course?.name }}</span>
+            <span class="card-subtitle">Docente: {{ enrollment.course?.teacherName }}</span>
+          </div>
+        </div>
+
+        <!-- Fila Inferior: Fecha y Botón de Descarga -->
+        <div class="card-footer">
+          <div class="issued-date">
+            <mat-icon>calendar_today</mat-icon>
+            <span>{{ enrollment.certificate?.issuedAt | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <a class="download-button"
+             [href]="enrollment.certificate!.fileData"
+             [download]="enrollment.certificate!.fileName">
+            <mat-icon>download</mat-icon>
+            <span>Descargar Certificado</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

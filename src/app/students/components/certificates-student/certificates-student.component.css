@@ -1,24 +1,150 @@
-.courses-container {
-  padding: 2rem;
-  background-color: #F4F7FA;
-  min-height: 100vh;
-  margin-left: 240px; /* espacio para el sidebar */
+/* Estilos generales y variables (consistentes con el resto de la app) */
+:host {
+  --color-primary: #4f46e5;
+  --color-text-header: #111827;
+  --color-text-body: #374151;
+  --color-text-muted: #6b7280;
+  --color-surface: #ffffff;
+  --color-border: #e5e7eb;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --border-radius-lg: 0.75rem;
 }
 
-.course-card {
-  background-color: #ffffff;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.page-container {
+  padding: var(--spacing-lg) var(--spacing-xl);
+  font-family: 'Inter', 'Roboto', sans-serif;
 }
 
-.course-card h3 {
-  margin-bottom: 0.5rem;
-  color: #2563EB;
+.page-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--color-text-header);
+  margin: 0 auto var(--spacing-xl);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-md);
+  text-transform: uppercase;
 }
 
-.course-card p,
-.course-card ul {
-  margin: 0.3rem 0;
+.page-icon {
+  font-size: 2rem;
+  width: 2rem;
+  height: 2rem;
+}
+
+/* Contenedores de estado (Carga, Error, Vacío) */
+.loading-container, .message-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+.message-container mat-icon {
+  font-size: 4rem;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: var(--spacing-lg);
+}
+.message-container p {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0;
+}
+.message-container span {
+  margin-top: var(--spacing-md);
+  max-width: 400px;
+}
+.error-state {
+  color: #b91c1c;
+}
+
+/* ========================================================== */
+/*  [DISEÑO ACTUALIZADO] Lista y Tarjeta de Certificado       */
+/* ========================================================== */
+
+.certificates-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  max-width: 900px; /* Ancho máximo para legibilidad en pantallas grandes */
+  margin: 0 auto;
+}
+
+.certificate-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  background-color: var(--color-surface);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease-in-out;
+}
+.certificate-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+.card-header, .card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap; /* Para que se ajuste en pantallas pequeñas */
+  gap: var(--spacing-md);
+}
+
+.card-header {
+  justify-content: flex-start; /* Alinea los items al inicio */
+}
+
+.header-icon {
+  font-size: 2rem;
+  width: 2rem;
+  height: 2rem;
+  color: var(--color-text-header);
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-header);
+}
+
+.card-subtitle {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.issued-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-body);
+  font-size: 0.9rem;
+}
+
+.download-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  font-weight: 500;
+  color: var(--color-primary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-lg);
+  transition: background-color 0.2s ease-in-out;
+}
+.download-button:hover {
+  background-color: rgba(79, 70, 229, 0.05);
 }

@@ -1,85 +1,104 @@
-<h2 class="page-title">
-  MIS CURSOS <mat-icon class="page-icon">school</mat-icon>
-</h2>
+<div class="page-container">
+  <h2 class="page-title">
+    <mat-icon class="page-icon">school</mat-icon>
+    Mis Cursos
+  </h2>
 
-<!-- ═════════ GRID DE CURSOS ═════════ -->
-<div class="course-grid">
+  <!-- ========================================================== -->
+  <!-- VISTA 1: LISTA DE CURSOS MATRICULADOS                      -->
+  <!-- ========================================================== -->
+  <div *ngIf="!selectedEnrollment; else detailView" class="course-list-container">
+    <div *ngIf="!enrollments.length" class="empty-state-full-page">
+      <mat-icon>sentiment_dissatisfied</mat-icon>
+      <h3>Aún no estás matriculado en ningún curso.</h3>
+    </div>
 
-  <!-- Usamos un wrapper para la barra de color y el *ngFor -->
-  <div class="course-card-wrapper" *ngFor="let c of courses">
-
-    <mat-card class="course-card">
-      <!-- ───── Cabecera de la Tarjeta ───── -->
-      <mat-card-header>
-        <mat-card-title>{{ c.name }}</mat-card-title>
-        <mat-card-subtitle>{{ c.code }}  •  Sección {{ c.section }}</mat-card-subtitle>
-      </mat-card-header>
-
-      <!-- ───── Cuerpo de la Tarjeta ───── -->
-      <mat-card-content class="course-card-content">
-
-        <!-- INFO IZQUIERDA -->
-        <section class="course-info">
-          <p class="teacher-line">
-            <mat-icon>person</mat-icon>
-            <span>Docente: {{ c.teacherName || 'Cargando...' }}</span>
-          </p>
-          <p class="grade-line">
-            <mat-icon>verified</mat-icon>
-            <span>Nota mínima aprobatoria: {{ c.passingGrade }}</span>
-          </p>
-        </section>
-
-        <!-- NOTAS A LA DERECHA (solo cuando la tarjeta está seleccionada) -->
-        <section class="note-table-wrapper" *ngIf="selectedCourse?.id === c.id">
-          <h4>Mis Notas</h4>
-          <div class="table-container">
-            <table class="note-table">
-              <thead>
-              <tr>
-                <!-- Mapeamos los pesos a nombres más descriptivos -->
-                <th *ngFor="let w of c.notesWeight; let idx = index">
-                  {{ noteLabels[idx] }}
-                  <span class="weight">{{ w }}%</span>
-                </th>
-                <th>Prom. Final</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td *ngFor="let n of student.notes" [ngClass]="{'low-grade': n < (c.passingGrade ?? 101), 'high-grade': n >= 18}">{{ n }}</td>                <td>
-                  <div class="final-average">{{ student.average }}</div>
-                </td>
-              </tr>
-              </tbody>
-            </table>
+    <!-- Iteramos sobre las matrículas del estudiante -->
+    <div class="course-list-item-wrapper" *ngFor="let enrollment of enrollments">
+      <mat-card class="course-list-item">
+        <div class="course-card-content">
+          <!-- Bloque de Título y Subtítulo -->
+          <div class="header-section">
+            <h3 class="course-name">{{ enrollment.course?.name }}</h3>
+            <p class="course-meta">
+              <span>{{ enrollment.course?.code }}</span>
+              <span class="dot-separator">•</span>
+              <span>Sección {{ enrollment.course?.section }}</span>
+            </p>
           </div>
-        </section>
+          <!-- Bloque de Información con Iconos -->
+          <div class="info-section">
+            <div class="info-line">
+              <mat-icon>person_outline</mat-icon>
+              <span>Docente: {{ enrollment.course?.teacherName }}</span>
+            </div>
+            <div class="info-line">
+              <mat-icon>check_circle_outline</mat-icon>
+              <span>Nota mínima aprobatoria: {{ enrollment.course?.passingGrade }}</span>
+            </div>
+          </div>
+        </div>
+        <!-- Bloque de Acciones -->
+        <div class="actions-section">
+          <button mat-stroked-button (click)="viewSyllabus(enrollment.course)" aria-label="Ver sílabo del curso">
+            <mat-icon>picture_as_pdf</mat-icon>
+            Ver Sílabo
+          </button>
+          <button mat-flat-button color="primary" (click)="selectEnrollment(enrollment)" aria-label="Ver notas del curso">
+            <mat-icon>visibility</mat-icon>
+            Ver Notas
+          </button>
+        </div>
+      </mat-card>
+    </div>
+  </div>
 
-      </mat-card-content>
+  <!-- ========================================================== -->
+  <!-- VISTA 2: DETALLE DE NOTAS DE UN CURSO                      -->
+  <!-- ========================================================== -->
+  <ng-template #detailView>
+    <div class="detail-view-container" *ngIf="selectedEnrollment">
+      <button mat-stroked-button class="back-btn" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver a Mis Cursos
+      </button>
 
-      <!-- ───── Acciones de la Tarjeta ───── -->
-      <mat-card-actions class="course-card-actions">
-        <button mat-stroked-button color="primary" (click)="viewSyllabus(c)">
-          <mat-icon>picture_as_pdf</mat-icon>
-          Ver Sílabo
-        </button>
-        <!-- Este botón ahora controla la visibilidad de las notas -->
-        <button mat-flat-button color="primary" (click)="selectCourse(c)">
-          <mat-icon>visibility</mat-icon>
-          {{ selectedCourse?.id === c.id ? 'Ocultar Notas' : 'Ver Notas' }}
-        </button>
-      </mat-card-actions>
-    </mat-card>
+      <mat-card class="notes-detail-card">
+        <mat-card-header>
+          <div mat-card-avatar class="course-avatar"><mat-icon>class</mat-icon></div>
+          <mat-card-title>{{ selectedEnrollment.course?.name }}</mat-card-title>
+          <mat-card-subtitle>Sección {{ selectedEnrollment.course?.section }}</mat-card-subtitle>
 
-  </div> <!-- /course-card-wrapper -->
+          <!-- Chip de Promedio -->
+          <div class="average-container">
+            <span>Promedio Ponderado</span>
+            <span class="avg-chip" [ngClass]="{
+              'low-avg': selectedEnrollment.average! < (selectedEnrollment.course?.passingGrade ?? 101),
+              'high-avg': selectedEnrollment.average! > 17
+            }">
+              {{ selectedEnrollment.average | number:'1.1-1' }}
+            </span>
+          </div>
+        </mat-card-header>
 
-</div> <!-- /course-grid -->
+        <mat-card-content>
+          <mat-divider></mat-divider>
+          <div *ngIf="!selectedEnrollment.notesRecords?.length" class="empty-notes-detail">
+            <mat-icon>info_outline</mat-icon>
+            <span>Aún no se han registrado calificaciones para este curso.</span>
+          </div>
 
-
-<!-- Mensaje cuando aún no hay cursos -->
-<div class="empty-state" *ngIf="!courses.length">
-  <mat-icon class="empty-icon">school</mat-icon>
-  <h2>No tienes cursos asignados</h2>
-  <p>Cuando te inscribas en un curso, aparecerá aquí.</p>
+          <!-- Lista de Notas -->
+          <mat-list *ngIf="selectedEnrollment.notesRecords?.length">
+            <mat-list-item *ngFor="let note of selectedEnrollment.notesRecords">
+              <span matListItemTitle>{{ note.title }}</span>
+              <span class="note-score" [ngClass]="{ 'failing-score': note.score < (selectedEnrollment.course?.passingGrade ?? 101) }">
+                {{ note.score }}
+              </span>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </ng-template>
 </div>

@@ -2,88 +2,170 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :host {
-  display: block; padding: 1rem 1.5rem 3rem; font-family: 'Inter', 'Roboto', sans-serif;
-  background-color: #f3f4f6;
+  /* Usamos las mismas variables que en el resto de la app para consistencia */
+  --font-primary: 'Inter', 'Roboto', sans-serif;
+  --color-primary: #4f46e5; /* Color por defecto para la barra de acento */
+  --color-text-header: #111827;
+  --color-text-body: #374151;
+  --color-text-muted: #6b7280;
+  --color-surface: #ffffff;
+  --color-background: #f8f9fa;
+  --color-border: #e5e7eb;
+  --color-error: #dc2626;
+  --color-error-bg: #fee2e2;
+  --color-success: #16a34a;
+  --color-success-bg: #dcfce7;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --border-radius-md: 0.5rem;
+  --border-radius-lg: 0.75rem;
+  --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --transition-speed: 0.2s;
+  --transition-ease: ease-in-out;
 }
 
-/* ───── Título de Página ───── */
+/* --- Estructura de Página --- */
+.page-container { padding: var(--spacing-lg) var(--spacing-xl); font-family: var(--font-primary); }
 .page-title {
-  font-size: 1.875rem; font-weight: 700; color: #111827;
-  text-align: center; margin: 1.5rem 0 2.5rem; display: flex;
-  align-items: center; justify-content: center; gap: 0.75rem;
-  text-transform: uppercase;
+  font-size: 1.875rem; font-weight: 700; color: var(--color-text-header);
+  margin: 0 auto var(--spacing-xl); display: flex;
+  justify-content: center; align-items: center; gap: var(--spacing-md); text-transform: uppercase;
 }
 .page-icon { font-size: 2rem; width: 2rem; height: 2rem; }
 
-/* ───── VISTA 1: LISTA DE CURSOS ───── */
+/* ========================================================== */
+/*  VISTA 1: LISTA DE CURSOS (Layout de Lista Vertical)       */
+/* ========================================================== */
+
+/* [CAMBIO CLAVE] Se vuelve a un layout de lista vertical */
 .course-list-container {
-  display: flex; flex-direction: column; gap: 1.5rem;
-  max-width: 840px; margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  max-width: 900px; /* Ancho máximo para mejorar la legibilidad */
+  margin: 0 auto;
 }
-.course-card-wrapper { position: relative; padding-left: 12px; }
-.course-card-wrapper::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
-  border-radius: 6px 0 0 6px; background-color: #3b82f6; /* Azul por defecto para profes */
-}
-.course-card {
-  transition: box-shadow 0.2s ease-in-out; border: 1px solid #e5e7eb;
-  border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
-  background-color: #fff;
-}
-.course-card:hover { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-.course-card-header .mat-card-title { font-weight: 600; }
-.course-info-line { display: flex; align-items: center; gap: 0.5rem; color: #4b5563; }
-.course-card-actions { justify-content: flex-end; padding: 0.5rem 1rem !important; }
 
-/* ───── VISTA 2: DETALLE DE CURSO ───── */
-.back-btn { margin-bottom: 1.5rem; font-weight: 500; }
-.detail-layout {
-  display: grid;
-  grid-template-columns: 2fr 1fr; /* Layout 2/3 para contenido, 1/3 para sidebar */
-  gap: 1.5rem;
-  align-items: flex-start;
+.course-list-item {
+  display: flex;
+  flex-wrap: wrap; /* Permite que los elementos se ajusten en pantallas pequeñas */
+  justify-content: space-between;
+  align-items: center; /* Alinea verticalmente el contenido y los botones */
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) !important;
+  border: 1px solid var(--color-border);
+  border-left: 5px solid var(--color-primary); /* Barra de acento vertical */
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow-sm);
+  transition: box-shadow var(--transition-speed) var(--transition-ease);
 }
-/* Responsividad para el layout principal */
-@media (max-width: 960px) { .detail-layout { grid-template-columns: 1fr; } }
+.course-list-item:hover {
+  box-shadow: var(--box-shadow-md);
+}
 
-/* ───── Columna Principal: Estudiantes ───── */
-.students-card { padding: 0.5rem; }
-.student-panel-header { font-size: 1rem; }
-.student-title { font-weight: 500; display: flex; align-items: center; gap: 1rem; }
-.student-index {
-  color: #9ca3af; font-weight: 400; font-size: 0.9rem;
-  width: 2rem; text-align: right;
+.course-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  flex-grow: 1; /* Permite que esta sección ocupe el espacio sobrante */
 }
-.student-avg { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #6b7280; }
-.avg-chip {
-  font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 1rem;
-  background-color: #e5e7eb; color: #374151;
-}
-.avg-chip.low-avg { background-color: #fee2e2; color: #b91c1c; }
-.avg-chip.high-avg { background-color: #dcfce7; color: #166534; }
 
-/* Editor de notas */
-.grades-editor { display: flex; flex-direction: column; gap: 1.5rem; padding: 1rem 0; }
-.grade-row {
-  display: flex; align-items: center; gap: 1rem; padding-left: 3rem;
+.header-section .course-name {
+  font-size: 1.25rem; font-weight: 600; color: var(--color-text-header); margin: 0 0 var(--spacing-sm);
 }
-.note-field { flex: 1; max-width: 150px; }
-.percent-tag { font-size: 0.9rem; color: #6b7280; width: 4rem; }
-.blockchain-btn { font-weight: 500; }
-.empty-state { text-align: center; padding: 2rem; color: #6b7280; }
-.empty-icon { font-size: 3rem; width: 3rem; height: 3rem; }
+.header-section .course-meta {
+  font-size: 0.9rem; color: var(--color-text-muted); margin: 0;
+}
+.header-section .dot-separator { margin: 0 0.5em; }
 
-/* ───── Barra Lateral ───── */
-.sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
-.info-card, .eval-card { padding: 0.5rem; }
-.info-card mat-card-content p { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #4b5563;}
-.info-card a { color: #4f46e5; cursor: pointer; text-decoration: underline; }
+/* [CAMBIO CLAVE] Se ajusta para que la info se muestre en una sola línea */
+.info-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+}
+.info-section .info-line {
+  display: flex; align-items: center; gap: var(--spacing-sm); font-size: 0.9rem; color: var(--color-text-body);
+}
+.info-section .info-line mat-icon {
+  color: var(--color-text-muted); font-size: 1.125rem; width: 1.125rem; height: 1.125rem;
+}
+
+.actions-section {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-shrink: 0; /* Evita que los botones se encojan */
+}
+.actions-section mat-icon { margin-right: 0.25rem; }
+
+
+/* ========================================================== */
+/*  VISTA 2: DETALLE DE CURSO (Sin cambios en esta sección)   */
+/* ========================================================== */
+
+.back-btn { margin-bottom: var(--spacing-lg); font-weight: 500; }
+.detail-layout { display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-lg); align-items: flex-start; }
+@media (max-width: 992px) { .detail-layout { grid-template-columns: 1fr; } }
+
+.students-card, .info-card, .eval-card {
+  border: 1px solid var(--color-border); box-shadow: var(--box-shadow-sm);
+}
+
+/* --- Panel de Estudiante --- */
+.student-title { font-weight: 500; display: flex; align-items: center; gap: var(--spacing-md); }
+.student-index { color: var(--color-text-muted); font-size: 0.9rem; }
+.student-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-border); }
+.student-avg { display: flex; align-items: center; gap: var(--spacing-sm); font-size: 0.9rem; color: var(--color-text-muted); }
+.avg-chip { font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 1rem; background-color: #e5e7eb; color: var(--color-text-body); }
+.avg-chip.low-avg { background-color: var(--color-error-bg); color: var(--color-error); }
+.avg-chip.high-avg { background-color: var(--color-success-bg); color: var(--color-success); }
+.empty-state { text-align: center; padding: 2rem; color: var(--color-text-muted); }
+
+/* --- Área de Gestión de Notas --- */
+.notes-management-area { padding: var(--spacing-md) var(--spacing-lg); background-color: #fafafa; }
+.notes-subtitle { font-size: 1rem; font-weight: 600; color: var(--color-text-body); margin: 0 0 var(--spacing-md); padding-top: var(--spacing-sm); }
+.existing-notes-list { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-lg); }
+.empty-notes-text { color: var(--color-text-muted); font-style: italic; padding: 1rem; text-align: center; }
+.note-row { display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-sm); border-radius: var(--border-radius-md); transition: background-color var(--transition-speed) var(--transition-ease); }
+.note-row:hover { background-color: #f3f4f6; }
+.note-title { flex: 1; font-weight: 500; }
+.note-input { width: 80px; text-align: center; padding: 0.5rem; border: 1px solid var(--color-border); border-radius: var(--border-radius-md); }
+.note-input:focus { outline: 2px solid var(--color-primary); border-color: var(--color-primary); }
+.delete-note-btn { color: #d1d5db; transition: color var(--transition-speed) var(--transition-ease); }
+.delete-note-btn:hover { color: var(--color-error); }
+
+.add-note-form { padding-top: var(--spacing-lg); display: flex; flex-wrap: wrap; gap: var(--spacing-md); align-items: flex-start; }
+.add-note-field { flex: 1 1 auto; }
+.score-field { max-width: 100px; }
+.add-note-btn { margin-top: 0.5rem; }
+
+/* --- Sidebar de Detalles --- */
+.sidebar { display: flex; flex-direction: column; gap: var(--spacing-lg); }
+.info-card mat-card-content { display: flex; flex-direction: column; gap: var(--spacing-md); }
+.info-card .info-line { display: flex; align-items: center; gap: var(--spacing-sm); color: var(--color-text-body); }
+.info-card .info-line strong { margin-right: var(--spacing-sm); }
+.info-card a { color: var(--color-primary); cursor: pointer; text-decoration: none; font-weight: 500; }
+.info-card a:hover { text-decoration: underline; }
 .eval-card mat-card-header { padding-bottom: 0.5rem; }
-.eval-form { display: flex; align-items: center; gap: 1rem; }
+.eval-form { display: flex; align-items: center; gap: var(--spacing-md); }
 .eval-list { list-style-type: none; padding-left: 0; }
-.eval-list li { padding: 0.5rem; border-bottom: 1px solid #f3f4f6; }
-.empty-text { color: #6b7280; font-style: italic; }
+.eval-list li { padding: var(--spacing-sm); border-bottom: 1px solid #f3f4f6; }
+.empty-text { color: var(--color-text-muted); font-style: italic; }
 
-/* Estilos de botones consistentes */
-button[mat-flat-button] { background-color: #4f46e5; }
-button[mat-flat-button]:hover { background-color: #4338ca; }
+/* --- Área de Gestión de Certificados --- */
+.certificate-management-area { padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg); background-color: #fafafa; }
+.certificate-status { display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); border-radius: var(--border-radius-md); margin-top: var(--spacing-sm); font-size: 0.9rem; }
+.certificate-status.pending { background-color: #f3f4f6; color: var(--color-text-muted); }
+.certificate-status.approved { background-color: var(--color-success-bg); color: var(--color-success); }
+.certificate-status.approved mat-icon { color: var(--color-success); }
+.certificate-status.issued { background-color: #eff6ff; color: #1d4ed8; justify-content: space-between; }
+.certificate-status.issued .issued-icon { color: #2563eb; font-size: 32px; width: 32px; height: 32px; }
+.issued-details { display: flex; flex-direction: column; flex-grow: 1; gap: var(--spacing-sm); }
+.issued-details .file-link { font-weight: 600; color: #1d4ed8; text-decoration: none; }
+.issued-details .file-link:hover { text-decoration: underline; }
+.delete-cert-btn { color: var(--color-text-muted); transition: color var(--transition-speed) var(--transition-ease); }
+.delete-cert-btn:hover { color: var(--color-error); }
+.upload-spinner { display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); color: var(--color-text-muted); }

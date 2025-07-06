@@ -1,23 +1,16 @@
-/* src/app/student/services/student.service.ts */
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin, of } from 'rxjs';           // ←  importa `of`
+import { Observable, forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import {
   Student,
   Course,
-  Syllabus
+  Syllabus,
+  Enrollment,
+  NoteRecord,
+  Certificate // <--- [NUEVO] Importar la entidad Certificate
 } from '../model/student.entity';
-
-/* matrícula tal como está en /enrollments */
-export interface Enrollment {
-  id: string;
-  idCourse:  string;
-  idStudent: string;
-  state: 'in_progress' | 'complete';
-  average: number;
-}
 
 @Injectable({ providedIn: 'root' })
 export class StudentService {
@@ -26,63 +19,64 @@ export class StudentService {
 
   constructor(private http: HttpClient) {}
 
-  /* helpers de carga */
-  getAllCourses()     { return this.http.get<Course[]>(  `${this.BASE}/courses`     ); }
-  getAllSyllabuses()  { return this.http.get<Syllabus[]>(`${this.BASE}/syllabuses`  ); }
-  getAllEnrollments() { return this.http.get<Enrollment[]>(`${this.BASE}/enrollments`); }
-
-  /* ───────────── Perfil enriquecido del estudiante ───────────── */
   getById(id: string): Observable<Student> {
-
-    /* ① Estudiante tal cual está en /students */
+    // 1. Obtenemos el objeto base del estudiante
     return this.http.get<Student>(`${this.BASE}/students/${id}`).pipe(
-
-      /* ② Traemos todo lo necesario en paralelo                    */
+      // 2. En paralelo, obtenemos todas las colecciones de datos relacionadas
       switchMap((rawStudent: Student) =>
         forkJoin({
-          raw:        of(rawStudent),      // ✅  ¡OJO!  envuelto en `of()` (Observable)
-          courses:    this.getAllCourses(),
-          teachers:   this.http.get<any[]>(`${this.BASE}/teachers`),   // 👈
-
-          syllabuses: this.getAllSyllabuses(),
-          enrolls:    this.getAllEnrollments()
+          rawStudent: of(rawStudent),
+          courses: this.http.get<Course[]>(`${this.BASE}/courses`),
+          teachers: this.http.get<any[]>(`${this.BASE}/teachers`),
+          syllabuses: this.http.get<Syllabus[]>(`${this.BASE}/syllabuses`),
+          enrollments: this.http.get<Enrollment[]>(`${this.BASE}/enrollments?idStudent=${rawStudent.id}`),
+          notesRecords: this.http.get<NoteRecord[]>(`${this.BASE}/notesRecords`),
+          // [NUEVO] Obtenemos todos los certificados que pertenecen a este estudiante.
+          certificates: this.http.get<Certificate[]>(`${this.BASE}/certificates?idStudent=${rawStudent.id}`)
         })
       ),
 
-      /* ③ Unimos la información                                    */
-      map(({ raw, courses, teachers, syllabuses, enrolls }) => {
+      // 3. Ensamblamos el objeto Student final con todas sus relaciones
+      map(({ rawStudent, courses, teachers, syllabuses, enrollments, notesRecords, certificates }) => {
+        const studentEnrollments = enrollments.map(enrollment => {
+          const courseDetails = courses.find(c => c.id === enrollment.idCourse);
+          if (!courseDetails) return null;
 
-        /* cursos donde está matriculado */
-        const myEnrolls   = enrolls.filter((e: Enrollment) => e.idStudent === raw.id);
+          const teacherDetails = teachers.find(t => t.id === courseDetails.idTeacher);
+          courseDetails.teacherName = teacherDetails ? `${teacherDetails.firstName} ${teacherDetails.lastName}` : 'No asignado';
+          courseDetails.syllabus = syllabuses.find(s => s.idCourse === courseDetails.id);
 
-        const myCourses   = courses
-          .filter(c => myEnrolls.some(e => e.idCourse === c.id))
-          .map(c => {
-            const t = teachers.find(tt => tt.id === c.idTeacher);
-            return {
-              ...c,
-              teacherName: t ? `${t.firstName} ${t.lastName}` : '-',
-              syllabus   : syllabuses.find(s => s.idCourse === c.id)
-            };
-          });
+          const notesForEnrollment = notesRecords.filter(nr => nr.idEnrollment === enrollment.id);
 
-        /* aseguramos arreglo de notas */
-        if (!Array.isArray(raw.notes) || !raw.notes.length) {
-          const slots = myCourses[0]?.notesWeight?.length ?? 4;
-          raw.notes   = new Array(slots).fill(0);
-          raw.average = 0;
-        }
+          const weights = courseDetails.notesWeight ?? [];
+          const average = notesForEnrollment.length > 0
+            ? +(notesForEnrollment.reduce((sum, note, index) => {
+              const weight = weights[index] ?? 0;
+              return sum + (note.score * (weight / 100));
+            }, 0)).toFixed(1)
+            : 0;
 
-        return {
-          ...raw,
-          courses: myCourses
-        } as Student;
+          // [NUEVO] Buscamos el certificado para esta matrícula específica.
+          const certificateForEnrollment = certificates.find(c => c.idEnrollment === enrollment.id);
+
+          const finalEnrollment: Enrollment = {
+            ...enrollment,
+            course: courseDetails,
+            notesRecords: notesForEnrollment,
+            average: average,
+            certificate: certificateForEnrollment // <-- Lo adjuntamos aquí
+          };
+          return finalEnrollment;
+        })
+          .filter((e): e is Enrollment => e !== null);
+
+        const finalStudent: Student = { ...rawStudent, enrollments: studentEnrollments };
+        return finalStudent;
       })
     );
   }
 
-  /* actualización de datos personales */
-  update(id: string, payload: Partial<Student>) {
-    return this.http.patch(`${this.BASE}/students/${id}`, payload);
+  update(id: string, payload: Partial<Student>): Observable<Student> {
+    return this.http.patch<Student>(`${this.BASE}/students/${id}`, payload);
   }
 }

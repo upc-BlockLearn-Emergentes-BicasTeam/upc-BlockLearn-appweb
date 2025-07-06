@@ -1,202 +1,152 @@
 /* Importar una fuente moderna, como en la imagen de referencia */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* Estilos generales del componente host */
+/*
+ * ==========================================================
+ *  STYLESHEET: STUDENT COURSES COMPONENT
+ *  AUTHOR: Frontend Expert
+ *  VERSION: 2.0 (Aligned with new design system)
+ * ==========================================================
+ */
+
+/*
+ * ----------------------------------------------------------
+ *  1. DESIGN TOKENS (CSS CUSTOM PROPERTIES)
+ * ----------------------------------------------------------
+ */
 :host {
-  display: block;
-  font-family: 'Inter', 'Roboto', sans-serif;
-  background-color: #f3f4f6; /* Fondo gris claro, como en la imagen */
-  padding: 1rem 1rem 3rem;   /* Padding general para la página */
+  --font-primary: 'Inter', 'Roboto', sans-serif;
+  --color-primary: #4f46e5;
+  --color-accent-1: #4f46e5; /* Púrpura */
+  --color-accent-2: #10b981; /* Verde */
+  --color-text-header: #111827;
+  --color-text-body: #374151;
+  --color-text-muted: #6b7280;
+  --color-surface: #ffffff;
+  --color-background: #f8f9fa;
+  --color-border: #e5e7eb;
+  --color-error: #ef4444;
+  --color-error-bg: #fee2e2;
+  --color-success: #166534;
+  --color-success-bg: #dcfce7;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --border-radius-md: 0.5rem;
+  --border-radius-lg: 0.75rem;
+  --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --transition-speed: 0.2s;
+  --transition-ease: ease-in-out;
 }
 
-/* ───── Título de la página: "MIS CURSOS" ───── */
+/*
+ * ----------------------------------------------------------
+ *  2. ESTRUCTURA DE PÁGINA
+ * ----------------------------------------------------------
+ */
+.page-container {
+  padding: var(--spacing-lg) var(--spacing-xl);
+  font-family: var(--font-primary);
+}
+
 .page-title {
-  font-size: 1.875rem; /* 30px */
+  font-size: 1.875rem;
   font-weight: 700;
-  color: #111827; /* Negro/gris oscuro */
-  text-align: center;
-  margin: 1.5rem 0 2.5rem;
+  color: var(--color-text-header);
+  margin: 0 auto var(--spacing-xl);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+  gap: var(--spacing-md);
   text-transform: uppercase;
 }
 
-.page-icon {
-  font-size: 2rem; /* 32px */
-  width: 2rem;
-  height: 2rem;
-}
+.page-icon { font-size: 2rem; width: 2rem; height: 2rem; }
 
-/* ───── Contenedor principal de las tarjetas ───── */
-.course-grid {
-  /* Apila las tarjetas verticalmente */
+.empty-state-full-page {
+  text-align: center; color: var(--color-text-muted);
+  padding: var(--spacing-xl); border: 2px dashed var(--color-border);
+  border-radius: var(--border-radius-lg);
+}
+.empty-state-full-page mat-icon { font-size: 3rem; width: 3rem; height: 3rem; }
+
+/*
+ * ----------------------------------------------------------
+ *  3. VISTA 1: LISTA DE CURSOS (ESTILO DE TARJETA)
+ * ----------------------------------------------------------
+ */
+.course-list-container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; /* Espacio entre cada tarjeta */
-
-  /* Define un ancho máximo para que no se estire demasiado en pantallas grandes */
-  max-width: 840px;
-  /* Centra el contenedor en la página */
+  gap: var(--spacing-lg);
+  max-width: 900px;
   margin: 0 auto;
 }
 
-/* ───── Wrapper para cada tarjeta (permite la barra de color) ───── */
-.course-card-wrapper {
+.course-list-item-wrapper {
   position: relative;
-  /* Espacio a la izquierda para que la barra de color no se superponga */
-  padding-left: 12px;
+  padding-left: var(--spacing-md);
 }
 
-/* Barra de color vertical que le da identidad a cada curso */
-.course-card-wrapper::before {
+/* Barra de acento vertical */
+.course-list-item-wrapper::before {
   content: '';
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 6px;
-  border-radius: 6px 0 0 6px;
+  left: 0; top: 0; bottom: 0;
+  width: 5px;
+  border-radius: 5px 0 0 5px;
 }
+.course-list-item-wrapper:nth-child(odd)::before { background-color: var(--color-accent-1); }
+.course-list-item-wrapper:nth-child(even)::before { background-color: var(--color-accent-2); }
 
-/* Colores de la barra vertical, rotando para cada tarjeta */
-.course-card-wrapper:nth-child(4n + 1)::before { background-color: #8b5cf6; } /* Morado */
-.course-card-wrapper:nth-child(4n + 2)::before { background-color: #22c55e; } /* Verde */
-.course-card-wrapper:nth-child(4n + 3)::before { background-color: #3b82f6; } /* Azul */
-.course-card-wrapper:nth-child(4n + 4)::before { background-color: #f97316; } /* Naranja */
-
-
-/* ───── Estilo principal de la tarjeta de curso ───── */
-.course-card {
-  transition: box-shadow 0.2s ease-in-out;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem; /* 8px */
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+.course-list-item {
   display: flex;
-  flex-direction: column;
-  height: 100%;
-  background-color: #ffffff;
-}
-.course-card:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-}
-
-/* Cabecera de la tarjeta */
-.mat-card-header .mat-card-title {
-  font-weight: 600;
-  font-size: 1.25rem;
-  color: #1f2937;
-}
-.mat-card-header .mat-card-subtitle {
-  color: #6b7280;
-  font-size: 0.9rem;
-}
-
-/* Contenido principal de la tarjeta */
-.course-card-content {
-  display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem 2rem; /* Espacio vertical y horizontal entre elementos */
-  flex-grow: 1; /* Permite que el contenido se expanda */
-  padding-bottom: 0.5rem !important; /* Menos espacio antes de los botones */
-}
-
-/* Información del curso (Docente, Nota Mínima) */
-.course-info {
-  flex: 1 1 280px; /* Permite que el bloque se ajuste */
-}
-.course-info p {
-  display: flex;
   align-items: center;
-  gap: 0.75rem;
-  color: #4b5563;
-  font-size: 0.95rem;
-  margin: 0.6rem 0;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) !important;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow-sm);
+  transition: box-shadow var(--transition-speed) var(--transition-ease);
 }
-.course-info .mat-icon {
-  color: #9ca3af;
-}
+.course-list-item:hover { box-shadow: var(--box-shadow-md); }
 
-/* ───── Tabla de Notas (cuando se muestra) ───── */
-.note-table-wrapper {
-  margin-top: 0; /* No se necesita margen con flex gap */
-  flex: 2 1 400px; /* La tabla puede ocupar más espacio si es necesario */
-}
-.note-table-wrapper h4 {
-  font-weight: 600; color: #334155; margin-bottom: 0.75rem;
-}
-.table-container {
-  overflow-x: auto;
-}
-.note-table {
-  width: 100%; border-collapse: collapse; text-align: center;
-  font-size: 0.9rem; background-color: #fff; border: 1px solid #e2e8f0;
-  border-radius: 6px; overflow: hidden;
-}
-.note-table th {
-  background-color: #f1f5f9; font-weight: 600; color: #475569;
-  padding: 0.75rem 0.5rem; border-bottom: 2px solid #e2e8f0;
-}
-.note-table td {
-  padding: 0.75rem 0.5rem; border-top: 1px solid #f1f5f9;
-}
-.note-table .weight {
-  display: block; font-size: 0.75rem; font-weight: 500; color: #64748b;
-}
-.final-average {
-  font-weight: 700; font-size: 1.1rem; color: #fff;
-  background-color: #4f46e5; border-radius: 4px;
-  padding: 0.25rem 0.5rem; display: inline-block;
-}
-.low-grade { color: #dc2626; font-weight: 600; }
-.high-grade { color: #16a34a; font-weight: 600; }
+.course-card-content { display: flex; flex-direction: column; gap: var(--spacing-lg); flex-grow: 1; }
+.header-section .course-name { font-size: 1.25rem; font-weight: 600; color: var(--color-text-header); margin: 0 0 var(--spacing-sm); }
+.header-section .course-meta { font-size: 0.9rem; color: var(--color-text-muted); margin: 0; }
+.header-section .dot-separator { margin: 0 0.5em; }
 
-/* ───── Acciones de la Tarjeta (Botones) ───── */
-.course-card-actions {
-  display: flex;
-  justify-content: flex-start; /* Alinea los botones a la izquierda */
-  gap: 0.75rem; /* Espacio entre botones */
-  padding: 0.75rem 1rem !important;
-  background-color: transparent;
-  border-top: 1px solid #f3f4f6; /* Separador sutil */
-}
+.info-section { display: flex; gap: var(--spacing-lg); flex-wrap: wrap; }
+.info-section .info-line { display: flex; align-items: center; gap: var(--spacing-sm); font-size: 0.9rem; color: var(--color-text-body); }
+.info-section .info-line mat-icon { color: var(--color-text-muted); font-size: 1.125rem; width: 1.125rem; height: 1.125rem; }
 
-/* Botón "Ver Sílabo" */
-.course-card-actions button[mat-stroked-button] {
-  color: #4f46e5; /* Mismo color que el botón principal para consistencia */
-  border-color: #d1d5db;
-}
-.course-card-actions button[mat-stroked-button]:hover {
-  background-color: #f0efff; /* Un hover muy ligero */
-}
+.actions-section { display: flex; gap: var(--spacing-sm); align-items: center; flex-shrink: 0; }
+.actions-section mat-icon { margin-right: 0.25rem; }
 
-/* Botón "Ver Notas" */
-.course-card-actions button[mat-flat-button] {
-  background-color: #4f46e5; /* Color índigo, como en la imagen */
-}
-.course-card-actions button[mat-flat-button]:hover {
-  background-color: #4338ca; /* Tono más oscuro al pasar el mouse */
-}
+/*
+ * ----------------------------------------------------------
+ *  4. VISTA 2: DETALLE DE NOTAS
+ * ----------------------------------------------------------
+ */
+.back-btn { margin-bottom: var(--spacing-lg); font-weight: 500; }
+.notes-detail-card { border: 1px solid var(--color-border); box-shadow: var(--box-shadow-sm); }
+.notes-detail-card .mat-mdc-card-header-text { margin: 0 !important; }
 
+/* Header de la tarjeta de notas */
+.notes-detail-card .mat-mdc-card-header { align-items: center; }
+.course-avatar { background-color: var(--color-primary); color: var(--color-surface); }
+.average-container { text-align: right; margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; }
+.average-container span:first-child { font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 0.2rem; }
+.avg-chip { font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 1rem; background-color: #e5e7eb; color: var(--color-text-body); }
+.avg-chip.low-avg { background-color: var(--color-error-bg); color: var(--color-error); }
+.avg-chip.high-avg { background-color: var(--color-success-bg); color: var(--color-success); }
 
-/* ───── Estilo para cuando no hay cursos ───── */
-.empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-  border: 2px dashed #d1d5db;
-  border-radius: 12px;
-  background-color: #ffffff;
-  color: #6b7280;
-  max-width: 840px;
-  margin: 0 auto;
-}
-.empty-icon {
-  font-size: 4rem; width: 4rem; height: 4rem; color: #9ca3af;
-}
-.empty-state h2 {
-  font-size: 1.5rem; font-weight: 600; color: #374151;
-  margin: 1rem 0 0.5rem;
-}
+/* Contenido de la tarjeta de notas */
+.notes-detail-card mat-card-content { padding-top: var(--spacing-md) !important; }
+.empty-notes-detail { display: flex; align-items: center; gap: var(--spacing-sm); text-align: center; justify-content: center; padding: var(--spacing-xl); color: var(--color-text-muted); }
+.note-score { margin-left: auto; font-size: 1.1rem; font-weight: 600; }
+.note-score.failing-score { color: var(--color-error); }

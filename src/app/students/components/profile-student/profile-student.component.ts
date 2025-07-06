@@ -42,10 +42,6 @@ export class ProfileStudentComponent implements OnInit {
     email        : '',
     phone        : '',
     avatarUrl    : '',     // opcional
-    notes        :[],
-    average      : 0,
-    state        : 'PROCESS',
-    courses      :  []
   };
   readonly defaultAvatar = 'assets/img/avatar-placeholder.png';
 
