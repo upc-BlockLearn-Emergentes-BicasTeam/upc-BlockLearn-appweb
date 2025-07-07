@@ -1,74 +1,81 @@
 <mat-card class="blockchain-card">
   <mat-card-header>
-    <mat-card-title>Blockchain Entries</mat-card-title>
+    <mat-card-title>Registro de Auditoría (Blockchain)</mat-card-title>
+    <mat-card-subtitle>
+      Un historial inmutable de los eventos importantes del sistema.
+    </mat-card-subtitle>
   </mat-card-header>
   <mat-divider></mat-divider>
 
-  <mat-accordion multi class="accordion">
-    <mat-expansion-panel *ngFor="let e of entries">
-      <mat-expansion-panel-header class="panel-header">
-        <div class="col hash">{{ e.hash }}</div>
-        <div class="col type">{{ e.type }}</div>
-        <div class="col id">{{ e.id }}</div>
-        <mat-panel-description class="toggle-icon">
-          <mat-icon>expand_more</mat-icon>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
+  <!-- Estado de carga -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando registros...</p>
+  </div>
 
-      <div class="panel-content">
-        <p class="entry-label">{{ getEntryLabel(e) }}</p>
-        <ng-container [ngSwitch]="e.type">
+  <!-- Contenido principal -->
+  <div *ngIf="!isLoading">
+    <!-- Estado vacío -->
+    <div *ngIf="entries.length === 0" class="empty-state">
+      <mat-icon class="empty-icon">history_toggle_off</mat-icon>
+      <h2>No hay registros de auditoría</h2>
+      <p>A medida que se generen notas, sílabos o certificados, aparecerán aquí.</p>
+    </div>
 
-          <!-- Certificate -->
-          <div *ngSwitchCase="'Certificate'" class="details">
-            <p><strong>Student Code:</strong> {{ e.studentCode || '—' }}</p>
-            <p><strong>Course:</strong> {{ e.course?.name }}</p>
-            <p><strong>Code:</strong> {{ e.course?.code }}</p>
-            <mat-divider></mat-divider>
-            <p><strong>Final Average:</strong> {{ e.finalAverage }}</p>
-            <p><strong>Result:</strong> {{ e.result }}</p>
-          </div>
-
-          <!-- Syllabus -->
-          <div *ngSwitchCase="'Syllabus'" class="details">
-            <p><strong>Course:</strong> {{ e.course?.name }}</p>
-            <p><strong>Code:</strong> {{ e.course?.code }}</p>
-            <mat-divider></mat-divider>
-            <p>
-              <strong>Document:</strong>
-              <button
-                mat-icon-button
-                color="primary"
-                aria-label="Download syllabus"
-                (click)="downloadDocument(e)"
-              >
-                <mat-icon>description</mat-icon>
-              </button>
-            </p>
-          </div>
-
-          <!-- Grade -->
-          <div *ngSwitchCase="'Grade'" class="details">
-            <p><strong>Student Code:</strong> {{ e.studentCode || '—' }}</p>
-            <p><strong>Course:</strong> {{ e.course?.name }}</p>
-            <p><strong>Code:</strong> {{ e.course?.code }}</p>
-            <mat-divider></mat-divider>
-            <p *ngFor="let note of e.notes">
-              <strong>{{ note.label }}:</strong> {{ note.value }}
-            </p>
-            <mat-divider></mat-divider>
-            <p><strong>Final Average:</strong> {{ e.finalAverage }}</p>
-            <p><strong>Result:</strong> {{ e.result }}</p>
-          </div>
-
-        </ng-container>
-
-        <div class="block-button">
-          <button mat-raised-button color="primary" (click)="goToBlock(e)">
-            Go to Block-Chain
-          </button>
-        </div>
+    <!-- Lista de entradas de la cadena -->
+    <mat-accordion multi class="accordion" *ngIf="entries.length > 0">
+      <!-- Encabezado de la tabla (solo visible en escritorio) -->
+      <div class="panel-header header-row">
+        <div class="col index">Bloque #</div>
+        <div class="col type">Tipo de Evento</div>
+        <div class="col hash">Hash del Bloque</div>
       </div>
-    </mat-expansion-panel>
-  </mat-accordion>
+
+      <mat-expansion-panel *ngFor="let entry of entries; let i = index">
+        <mat-expansion-panel-header class="panel-header">
+          <!-- Columnas visibles cuando el panel está colapsado -->
+          <div class="col index">{{ i }}</div> <!-- Mostramos el índice como número de bloque -->
+          <div class="col type">{{ entry.type }}</div>
+          <div class="col hash">{{ entry.blockHash | slice:0:12 }}...</div> <!-- Acortamos el hash para la vista previa -->
+
+          <mat-panel-description class="toggle-icon">
+            Ver Detalles
+            <mat-icon>expand_more</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <!-- Contenido del panel cuando se expande -->
+        <div class="panel-content">
+          <h3 class="entry-label">{{ getEntryLabel(entry) }}</h3>
+
+          <div class="details">
+            <div class="detail-item">
+              <strong>ID del Registro:</strong> <span>{{ entry.id }}</span>
+            </div>
+            <div class="detail-item">
+              <strong>ID del Recurso Relacionado:</strong> <span>{{ entry.referenceId }}</span>
+            </div>
+            <div class="detail-item">
+              <strong>Fecha de Creación:</strong> <span>{{ entry.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="detail-item hash-item">
+              <strong>Hash del Bloque Anterior:</strong>
+              <span class="hash-value">{{ entry.previousBlockHash }}</span>
+            </div>
+            <div class="detail-item hash-item">
+              <strong>Hash de este Bloque:</strong>
+              <span class="hash-value">{{ entry.blockHash }}</span>
+            </div>
+          </div>
+
+          <div class="block-button">
+            <button mat-raised-button color="primary" (click)="goToBlock(entry)">
+              Ver en Explorador (Simulado)
+            </button>
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
 </mat-card>

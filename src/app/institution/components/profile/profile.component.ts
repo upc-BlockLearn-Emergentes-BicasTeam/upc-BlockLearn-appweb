@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs/operators';
+
+// Servicios y Modelos
 import { InstitutionService } from '../../services/institution.service';
+// CAMBIO: Usamos el nuevo modelo con IDs numéricos
 import { Institution } from '../../models/institution.entity';
-import { finalize } from 'rxjs/operators'; // NUEVO: Import para el operador finalize
 
 // Angular Material Modules
 import { MatCardModule } from '@angular/material/card';
@@ -14,39 +17,32 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // NUEVO: Import para el spinner
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDividerModule,
-    MatSnackBarModule,
-    MatProgressSpinnerModule // NUEVO: Añadido a los imports
+    CommonModule, FormsModule,
+    MatCardModule, MatButtonModule, MatIconModule,
+    MatFormFieldModule, MatInputModule, MatDividerModule,
+    MatSnackBarModule, MatProgressSpinnerModule
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  institutionId: string = '';
+  // CAMBIO: institutionId ahora es un número
+  institutionId: number = 0;
+  // CAMBIO: Inicializamos el objeto con valores por defecto que coincidan con el modelo numérico
   institution: Institution = {
-    id: '', name: '', address: '', email: '',
-    phone: '', logoUrl: '', createdAt: '', updatedAt: ''
+    id: 0, userId: 0, name: '', address: '', email: '',
+    phone: '', logoUrl: ''
   };
 
   isEditing = false;
-  // MEJORA: Guardamos una copia del objeto original para la función "Cancelar".
   private originalInstitution!: Institution;
-
-  // NUEVO: Estado para gestionar la carga del logo.
-  isUploadingLogo = false;
+  isUploadingLogo = false; // Mantenemos este estado para el feedback visual
 
   constructor(
     private route: ActivatedRoute,
@@ -55,22 +51,28 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.institutionId = localStorage.getItem('institutionId') ?? '';
-    if (this.institutionId) {
+    // CAMBIO: Convertimos el ID del localStorage a número
+    this.institutionId = Number(localStorage.getItem('institutionId'));
+
+    if (this.institutionId > 0) {
       this.loadInstitution();
     } else {
-      console.error('No se encontró el ID de la institución.');
+      console.error('No se encontró un ID de institución válido.');
       this.snack.open('Error: No se pudo identificar la institución.', 'Cerrar');
     }
   }
 
   private loadInstitution(): void {
+    // CAMBIO: El servicio ahora espera un número
     this.institutionService.getInstitutionById(this.institutionId).subscribe({
       next: (inst: Institution) => {
         this.institution = inst;
-        this.originalInstitution = JSON.parse(JSON.stringify(inst));
+        this.originalInstitution = JSON.parse(JSON.stringify(inst)); // Clonación profunda
       },
-      error: (err: any) => console.error('Error loading institution', err)
+      error: (err: any) => {
+        console.error('Error loading institution', err);
+        this.snack.open(err.message || 'Error al cargar los datos de la institución.', 'Cerrar');
+      }
     });
   }
 
@@ -84,9 +86,12 @@ export class ProfileComponent implements OnInit {
   }
 
   onSave(): void {
+    // CAMBIO: Preparamos los datos para la actualización.
+    // Omitimos 'id' y 'userId' ya que no se deben modificar.
     const { name, address, email, phone, logoUrl } = this.institution;
-    const updatedData: Partial<Institution> = { name, address, email, phone, logoUrl };
+    const updatedData: Partial<Omit<Institution, 'id' | 'userId'>> = { name, address, email, phone, logoUrl };
 
+    // CAMBIO: Llamamos al servicio con el ID numérico
     this.institutionService.updateInstitution(this.institutionId, updatedData).subscribe({
       next: (updatedInstitution) => {
         this.isEditing = false;
@@ -96,7 +101,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Error updating institution', err);
-        this.snack.open('Error al actualizar el perfil.', 'Cerrar', { duration: 5000 });
+        this.snack.open(err.message || 'Error al actualizar el perfil.', 'Cerrar', { duration: 5000 });
       }
     });
   }
@@ -107,55 +112,39 @@ export class ProfileComponent implements OnInit {
 
     const file = input.files[0];
 
-    // --- Validación básica del archivo (se mantiene) ---
     if (!file.type.startsWith('image/')) {
-      this.snack.open('Error: El archivo debe ser una imagen.', 'Cerrar', { duration: 4000 });
-      input.value = '';
+      this.snack.open('Error: El archivo debe ser una imagen.', 'Cerrar');
       return;
     }
     if (file.size > 2 * 1024 * 1024) { // Límite de 2MB
-      this.snack.open('Error: La imagen no puede superar los 2MB.', 'Cerrar', { duration: 4000 });
-      input.value = '';
+      this.snack.open('Error: La imagen no puede superar los 2MB.', 'Cerrar');
       return;
     }
 
-    // El FileReader es ahora la pieza central de nuestra simulación.
     const reader = new FileReader();
+    this.isUploadingLogo = true; // Mostramos el spinner
 
-    // Cuando el reader termine de cargar el archivo...
     reader.onload = () => {
-      // Obtenemos el resultado como una cadena Base64.
-      const base64Image = reader.result as string;
+      // Obtenemos la cadena Base64
+      this.institution.logoUrl = reader.result as string;
 
-      // Activamos el estado de carga
-      this.isUploadingLogo = true;
-
-      // Llamamos a nuestro servicio SIMULADO, pasándole la cadena Base64.
-      this.institutionService.uploadLogo(this.institutionId, base64Image).pipe(
-        finalize(() => {
-          this.isUploadingLogo = false;
-          input.value = '';
-        })
-      ).subscribe({
-        next: (response) => {
-          // El 'response.url' ahora contiene nuestra cadena Base64.
-          this.institution.logoUrl = response.url;
-
-          // Llamamos a onSave() para que esta cadena Base64 se guarde en el db.json.
-          this.onSave();
-
-          this.snack.open('Logo simulado y perfil guardado.', 'OK', { duration: 3000 });
-        },
-        error: (err) => {
-          // Aunque es una simulación, mantenemos el manejo de errores por si algo fallara.
-          console.error('Error en la simulación de subida', err);
-          this.snack.open('Ocurrió un error en la simulación.', 'Cerrar', { duration: 5000 });
-          this.institution.logoUrl = this.originalInstitution.logoUrl;
-        }
-      });
+      // CAMBIO: En lugar de llamar a un servicio 'uploadLogo', llamamos directamente a 'onSave'.
+      // La API guardará el campo `logoUrl` actualizado junto con el resto de los datos.
+      this.onSave();
     };
 
-    // Le decimos al reader que empiece a leer el archivo.
+    reader.onloadend = () => {
+      // Ocultamos el spinner cuando todo ha terminado (después de onSave)
+      this.isUploadingLogo = false;
+      input.value = ''; // Limpiamos el input para permitir seleccionar el mismo archivo de nuevo
+    };
+
+    reader.onerror = (error) => {
+      console.error('Error reading file:', error);
+      this.snack.open('Error al procesar la imagen.', 'Cerrar');
+      this.isUploadingLogo = false;
+    };
+
     reader.readAsDataURL(file);
   }
 }

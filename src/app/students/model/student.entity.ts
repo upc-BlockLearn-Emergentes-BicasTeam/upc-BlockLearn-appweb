@@ -1,83 +1,68 @@
-// ==========================================================
-//  NUEVA ENTIDAD: Representa una única calificación o nota.
-// ==========================================================
-export interface NoteRecord {
-  id: string;
-  idEnrollment: string;
-  title: string;
-  score: number;
-  hash?: string;
-}
+// NOTA: Todos los IDs ahora son 'number'.
+// Los campos anidados y opcionales se marcan con `?`.
 
-// ==========================================================
-//  NUEVA ENTIDAD: Representa un certificado emitido.
-//  Reutilizamos la misma entidad de la vista del profesor.
-// ==========================================================
-export interface Certificate {
-  id: string;
-  idCourse: string;
-  idStudent: string;
-  idEnrollment: string;
-  fileName: string;
-  fileType: string;
-  fileData: string;
-  issuedAt: string;
-  hash?: string;
-}
-
-// ==========================================================
-//  ENTIDAD MATRÍCULA: Actualizada para incluir el certificado.
-// ==========================================================
-export interface Enrollment {
-  id: string;
-  idCourse: string;
-  idStudent: string;
-  state: 'in_progress' | 'complete';
-
-  // Estos campos se añadirán dinámicamente en el servicio para facilitar su uso en el componente.
-  course?: Course;
-  notesRecords?: NoteRecord[];
-  average?: number;
-  certificate?: Certificate; // <--- [NUEVO] El certificado asociado a esta matrícula.
-}
-
-// ==========================================================
-//  ENTIDAD CURSO: Contiene los detalles del curso.
-// ==========================================================
-export interface Course {
-  id: string;
-  name: string;
-  code: string;
-  section: string;
-  notesWeight?: number[];
-  passingGrade?: number;
-  idTeacher?: string;
-  teacherName?: string;
-  syllabus?: Syllabus;
-}
-
-// ==========================================================
-//  ENTIDAD ESTUDIANTE: El núcleo de esta vista.
-// ==========================================================
 export interface Student {
-  id: string;
-  idUser: string;
-  idInstitution: string;
+  id: number;
+  userId: number;
+  institutionId: number;
   firstName: string;
   lastName: string;
   email: string;
   phone?: string;
   avatarUrl?: string;
-  enrollments?: Enrollment[];
+  enrollments?: Enrollment[]; // El perfil completo del estudiante puede incluir sus matrículas
 }
 
-// ==========================================================
-//  ENTIDAD SÍLABO
-// ==========================================================
-export interface Syllabus {
-  id: string;
-  idCourse: string;
+export interface Enrollment {
+  id: number;
+  courseId: number;
+  studentId: number;
+  state: string; // 'in_progress', 'completed', etc.
+  average: number;
+  course?: Course; // El curso asociado a esta matrícula
+  notesRecords?: NoteRecord[];
+  certificate?: Certificate;
+}
+
+export interface Course {
+  id: number;
+  name: string;
+  code: string;
+  section: string;
+  teacherId?: number;
+  teacherName?: string; // Nombre del profesor, añadido por el backend o frontend
+  notesWeight?: number[];
+  passingGrade?: number;
+  syllabus?: Syllabus;
+}
+
+export interface NoteRecord {
+  id: number;
+  enrollmentId: number;
+  title: string;
+  score: number;
+}
+
+export interface Certificate {
+  id: number;
+  enrollmentId: number;
   fileName: string;
-  fileData?: string;
+  fileType: string;
+  fileData: string; // Base64
+  issuedAt: string; // ISO Date
+}
+
+export interface Syllabus {
+  id: number;
+  courseId: number;
+  fileName: string;
+  fileData?: string; // Base64
   hash: string;
+}
+
+// Puedes necesitar esta interfaz para el perfil del profesor
+export interface Teacher {
+  id: number;
+  firstName: string;
+  lastName: string;
 }

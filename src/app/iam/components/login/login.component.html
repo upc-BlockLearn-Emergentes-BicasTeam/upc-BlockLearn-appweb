@@ -26,20 +26,23 @@
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Correo Electrónico</mat-label>
           <mat-icon matPrefix>email</mat-icon>
-          <input matInput type="email" id="email" [(ngModel)]="user.email" name="email" required placeholder="ejemplo@correo.com">
+          <!-- CAMBIO AQUÍ: user.email -> credentials.email -->
+          <input matInput type="email" id="email" [(ngModel)]="credentials.email" name="email" required placeholder="ejemplo@correo.com">
         </mat-form-field>
 
         <!-- Campo de Contraseña -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Contraseña</mat-label>
           <mat-icon matPrefix>lock</mat-icon>
-          <input matInput type="password" id="password" [(ngModel)]="user.password" name="password" required>
+          <!-- CAMBIO AQUÍ: user.password -> credentials.password -->
+          <input matInput type="password" id="password" [(ngModel)]="credentials.password" name="password" required>
         </mat-form-field>
 
-        <!-- Mensaje de Error -->
-        <div class="error-message" *ngIf="error">
+        <!-- Mensaje de Error (Ahora dinámico) -->
+        <!-- CAMBIO AQUÍ: Se muestra el mensaje de `errorMessage` -->
+        <div class="error-message" *ngIf="errorMessage">
           <mat-icon>warning</mat-icon>
-          <span>El correo o la contraseña son incorrectos.</span>
+          <span>{{ errorMessage }}</span>
         </div>
 
         <!-- Botón de Submit -->

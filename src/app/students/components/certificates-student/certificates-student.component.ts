@@ -10,25 +10,23 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 /* Servicio y Modelos */
 import { StudentService } from '../../services/student.service';
+// CAMBIO: Usamos los modelos actualizados
 import { Enrollment } from '../../model/student.entity';
 
 @Component({
   selector: 'app-certificates-student',
   standalone: true,
   imports: [
-    CommonModule,
-    DatePipe,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule
+    CommonModule, DatePipe,
+    MatCardModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule
   ],
   templateUrl: './certificates-student.component.html',
   styleUrls: ['./certificates-student.component.css']
 })
 export class CertificatesStudentComponent implements OnInit {
 
-  studentId = '';
+  // CAMBIO: studentId ahora es un número
+  studentId: number = 0;
   certifiedEnrollments: Enrollment[] = [];
   isLoading = true;
   error: string | null = null;
@@ -39,13 +37,14 @@ export class CertificatesStudentComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (!idParam) {
       this.error = 'No se encontró un ID de estudiante en la URL.';
       this.isLoading = false;
       return;
     }
-    this.studentId = id;
+    // CAMBIO: Convertimos el ID a número
+    this.studentId = +idParam;
     this.loadCertificates();
   }
 
@@ -53,11 +52,13 @@ export class CertificatesStudentComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
 
-    this.stuSvc.getById(this.studentId).subscribe({
+    // CAMBIO: Llamamos al nuevo método del servicio
+    this.stuSvc.getStudentProfileById(this.studentId).subscribe({
       next: student => {
-        // Filtramos para quedarnos solo con las matrículas que tienen un certificado emitido.
+        // La lógica de filtrado se mantiene, pero ahora opera sobre los datos
+        // que vinieron de una sola llamada a la API.
         this.certifiedEnrollments = student.enrollments?.filter(
-          e => !!e.certificate
+          e => !!e.certificate // Filtramos solo las matrículas que tienen un certificado
         ) ?? [];
         this.isLoading = false;
       },
@@ -69,7 +70,19 @@ export class CertificatesStudentComponent implements OnInit {
     });
   }
 
-  // No necesitamos la lógica de abrir PDFs aquí, ya que el HTML usará
-  // el atributo 'download' para una descarga directa, lo cual es más intuitivo
-  // para un certificado.
+  /**
+   * Permite al usuario descargar el certificado.
+   * La cadena Base64 se usa como una URL de datos.
+   */
+  downloadCertificate(enrollment: Enrollment): void {
+    if (!enrollment.certificate) {
+      this.error = 'No se encontró el archivo del certificado.';
+      return;
+    }
+    const link = document.createElement('a');
+    link.href = enrollment.certificate.fileData;
+    link.download = enrollment.certificate.fileName;
+    link.click();
+    link.remove();
+  }
 }

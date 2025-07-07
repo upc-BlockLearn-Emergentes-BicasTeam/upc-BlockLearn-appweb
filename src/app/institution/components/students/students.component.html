@@ -50,10 +50,7 @@
         <!-- Columna: Teléfono -->
         <td data-label="Teléfono">{{ student.phone || 'No registrado' }}</td>
 
-        <!-- ========================================================== -->
-        <!-- CAMBIO CLAVE: Celda de Cursos Matriculados -->
-        <!-- Reemplazamos los tags por un botón que abre el diálogo. -->
-        <!-- ========================================================== -->
+        <!-- Celda de Cursos Matriculados -->
         <td data-label="Cursos">
           <ng-container *ngIf="(coursesByStudent[student.id] || []).length > 0; else noCourses">
             <button mat-stroked-button class="view-courses-btn" (click)="openViewCourses(student)">
@@ -101,30 +98,32 @@
 
 <!-- ═══════════ Diálogos ═══════════ -->
 
-<!-- Diálogo: Nuevo Estudiante (sin cambios) -->
+<!-- Diálogo: Nuevo Estudiante -->
 <ng-template #addStudentTpl>
   <h2 mat-dialog-title>Nuevo Estudiante</h2>
   <mat-dialog-content class="form-dialog-content">
+    <!-- ===== CAMBIOS AQUÍ ===== -->
     <mat-form-field appearance="outline">
       <mat-label>Nombre</mat-label>
-      <input matInput [(ngModel)]="newStudent.firstName" name="firstName" required>
+      <input matInput [(ngModel)]="newStudentData.firstName" name="firstName" required>
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Apellido</mat-label>
-      <input matInput [(ngModel)]="newStudent.lastName" name="lastName" required>
+      <input matInput [(ngModel)]="newStudentData.lastName" name="lastName" required>
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Correo Electrónico</mat-label>
-      <input matInput type="email" [(ngModel)]="newStudent.email" name="email" required>
+      <input matInput type="email" [(ngModel)]="newStudentData.email" name="email" required>
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Contraseña Temporal</mat-label>
-      <input matInput type="password" [(ngModel)]="newStudent.password" name="password" required>
+      <input matInput type="password" [(ngModel)]="newUserData.password" name="password" required>
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Teléfono (Opcional)</mat-label>
-      <input matInput [(ngModel)]="newStudent.phone" name="phone">
+      <input matInput [(ngModel)]="newStudentData.phone" name="phone">
     </mat-form-field>
+    <!-- ===== FIN DE LOS CAMBIOS ===== -->
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close>Cancelar</button>
@@ -132,30 +131,27 @@
   </mat-dialog-actions>
 </ng-template>
 
-<!-- Diálogo: Asignar Cursos (sin cambios) -->
+<!-- Diálogo: Asignar Cursos -->
 <ng-template #assignCoursesTpl>
   <h2 mat-dialog-title>Matricular en Cursos</h2>
   <mat-dialog-content>
     <p class="dialog-subtitle" *ngIf="selectedStudent">
       Selecciona los cursos para <strong>{{ selectedStudent.firstName }} {{ selectedStudent.lastName }}</strong>
     </p>
-    <mat-selection-list>
-      <mat-list-option *ngFor="let c of availableCourses"
-                       [selected]="assignedCourses.has(c.id)"
-                       (click)="toggleCourse(c)">
+    <!-- CAMBIO: Usamos MatSelectionList para manejar la selección múltiple -->
+    <mat-selection-list #coursesSelectionList>
+      <mat-list-option *ngFor="let c of availableCourses" [value]="c.id" [selected]="assignedCourses.has(c.id)">
         {{ c.name }} – {{ c.section }}
       </mat-list-option>
     </mat-selection-list>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close>Cancelar</button>
-    <button mat-flat-button color="primary" (click)="saveAssigned()">Guardar Matrícula</button>
-  </mat-dialog-actions>
+    <!-- CAMBIO: Pasamos los valores seleccionados directamente al método -->
+    <button mat-flat-button color="primary" (click)="saveAssigned(coursesSelectionList.selectedOptions.selected)">Guardar Matrícula</button>  </mat-dialog-actions>
 </ng-template>
 
-<!-- ========================================================== -->
-<!-- NUEVO: Diálogo para Ver los Cursos Matriculados -->
-<!-- ========================================================== -->
+<!-- Diálogo para Ver los Cursos Matriculados -->
 <ng-template #viewCoursesTpl>
   <h2 mat-dialog-title *ngIf="selectedStudent">
     Cursos de {{ selectedStudent.firstName }} {{ selectedStudent.lastName }}

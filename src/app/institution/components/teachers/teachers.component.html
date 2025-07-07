@@ -22,7 +22,6 @@
 
   <!-- Contenedor de la Tabla Responsiva -->
   <div class="table-container" *ngIf="filteredTeachers.length > 0; else noData">
-    <!-- CAMBIO: Unificamos el nombre de la clase para compartir estilos -->
     <table class="data-table">
       <thead>
       <tr>
@@ -35,7 +34,6 @@
       <tbody>
       <tr *ngFor="let teacher of filteredTeachers">
         <td data-label="Docente">
-          <!-- CAMBIO: Unificamos clases para consistencia -->
           <div class="user-info-cell">
             <div class="avatar" [style.background-image]="'url(' + (teacher.avatarUrl || defaultAvatar) + ')'"></div>
             <div class="name-email-block">
@@ -47,10 +45,6 @@
 
         <td data-label="Teléfono">{{ teacher.phone || 'No registrado' }}</td>
 
-        <!-- ========================================================== -->
-        <!-- CAMBIO CLAVE: Celda de Cursos Asignados -->
-        <!-- Reemplazamos los tags por un botón que abre el diálogo. -->
-        <!-- ========================================================== -->
         <td data-label="Cursos">
           <ng-container *ngIf="getCoursesForTeacher(teacher.id).length > 0; else noCoursesAssigned">
             <button mat-stroked-button class="view-courses-btn" (click)="openViewCourses(teacher)">
@@ -100,26 +94,28 @@
 <ng-template #addTeacherTpl>
   <h2 mat-dialog-title>Crear Nuevo Docente</h2>
   <mat-dialog-content class="form-dialog-content">
+    <!-- ===== CAMBIOS AQUÍ ===== -->
     <mat-form-field appearance="outline">
       <mat-label>Nombre</mat-label>
-      <input matInput [(ngModel)]="newTeacher.firstName" name="firstName" required>
+      <input matInput [(ngModel)]="newTeacherData.firstName" name="firstName" required>
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Apellido</mat-label>
-      <input matInput [(ngModel)]="newTeacher.lastName" name="lastName" required>
+      <input matInput [(ngModel)]="newTeacherData.lastName" name="lastName" required>
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Correo Electrónico</mat-label>
-      <input matInput type="email" [(ngModel)]="newTeacher.email" name="email" required>
+      <input matInput type="email" [(ngModel)]="newTeacherData.email" name="email" required>
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Contraseña Temporal</mat-label>
-      <input matInput type="password" [(ngModel)]="newTeacher.password" name="password" required>
+      <input matInput type="password" [(ngModel)]="newUserData.password" name="password" required>
     </mat-form-field>
     <mat-form-field appearance="outline" class="full-span">
       <mat-label>Teléfono (Opcional)</mat-label>
-      <input matInput [(ngModel)]="newTeacher.phone" name="phone">
+      <input matInput [(ngModel)]="newTeacherData.phone" name="phone">
     </mat-form-field>
+    <!-- ===== FIN DE LOS CAMBIOS ===== -->
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close>Cancelar</button>
@@ -160,9 +156,7 @@
   </mat-dialog-actions>
 </ng-template>
 
-<!-- ========================================================== -->
-<!-- NUEVO: Diálogo para Ver los Cursos Asignados -->
-<!-- ========================================================== -->
+<!-- Diálogo para Ver los Cursos Asignados -->
 <ng-template #viewCoursesTpl>
   <h2 mat-dialog-title *ngIf="selectedTeacher">
     Cursos de {{ selectedTeacher.firstName }} {{ selectedTeacher.lastName }}

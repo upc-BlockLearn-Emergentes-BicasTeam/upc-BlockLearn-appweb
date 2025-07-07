@@ -11,11 +11,12 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatMenuModule } from '@angular/material/menu'; // Importación unificada para el menú
+import { MatMenuModule } from '@angular/material/menu';
 
 // Servicios y Modelos
 import { InstitutionService } from '../../services/institution.service';
-import { Teacher, Course } from '../../models/institution.entity';
+// AHORA USAMOS LOS NUEVOS MODELOS (con IDs numéricos)
+import { Teacher, Course, UserPayload } from '../../models/institution.entity';
 
 @Component({
   selector: 'app-teachers',
@@ -29,22 +30,34 @@ import { Teacher, Course } from '../../models/institution.entity';
   styleUrls: ['./teachers.component.css']
 })
 export class TeachersComponent implements OnInit {
-  readonly institutionId = localStorage.getItem('institutionId') ?? '1';
+  // CAMBIO: institutionId ahora es un número.
+  readonly institutionId = Number(localStorage.getItem('institutionId'));
 
   @ViewChild('addTeacherTpl') addTeacherTpl!: TemplateRef<any>;
   @ViewChild('assignCoursesTpl') assignCoursesTpl!: TemplateRef<any>;
   @ViewChild('deleteConfirmTpl') deleteConfirmTpl!: TemplateRef<any>;
-  // NUEVO: Referencia de template para el diálogo de visualización de cursos
   @ViewChild('viewCoursesTpl') viewCoursesTpl!: TemplateRef<any>;
 
   teachers: Teacher[] = [];
   filteredTeachers: Teacher[] = [];
   availableCourses: Course[] = [];
-  assignedCourses = new Set<string>();
+  // CAMBIO: El Set ahora almacena números (IDs de curso)
+  assignedCourses = new Set<number>();
   selectedTeacher: Teacher | null = null;
-  newTeacher: Partial<Teacher & { password: string }> = {};
+  // CAMBIO: Definimos explícitamente las propiedades para el formulario de nuevo profesor
+  newTeacherData = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    avatarUrl: ''
+  };
+  newUserData = {
+    email: '',
+    password: '',
+    role: 'teacher' as 'teacher' // Aseguramos el tipo literal
+  };
 
-  // NUEVO: Array para almacenar los cursos del docente seleccionado para mostrarlos en el diálogo
   coursesForViewing: Course[] = [];
 
   defaultAvatar = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNjYWQxZGUiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWNpcmNsZS11c2VyLXJvdW5kIj48cGF0aCBkPSJNMjQgMTAuM2ExMCAxMCAwIDAgMCAxMC4zLTEwLjMiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjEwIiByPSI0Ii8+PHBhdGggZD0iTTE4LjM3IDE4LjgzYTYgNiAwIDAgMC0xMi43NCAwIi8+PC9zdmc+';
@@ -56,6 +69,11 @@ export class TeachersComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if (!this.institutionId) {
+      console.error("Institution ID not found in localStorage.");
+      this.snack.open("No se pudo cargar la información de la institución.", "Cerrar");
+      return;
+    }
     this.loadTeachers();
     this.loadCourses();
   }
@@ -74,6 +92,7 @@ export class TeachersComponent implements OnInit {
   }
 
   applyFilter(event: Event) {
+    // ... (sin cambios en esta lógica)
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     if (!filterValue) {
       this.filteredTeachers = [...this.teachers];
@@ -85,50 +104,40 @@ export class TeachersComponent implements OnInit {
     });
   }
 
-  getCoursesForTeacher(teacherId: string): Course[] {
-    // Esta función existente es perfecta para lo que necesitamos
-    return this.availableCourses.filter(c => c.idTeacher === teacherId);
+  // CAMBIO: teacherId ahora es un número
+  getCoursesForTeacher(teacherId: number): Course[] {
+    return this.availableCourses.filter(c => c.teacherId === teacherId);
   }
 
-  // NUEVO: Método para abrir el diálogo que muestra los cursos asignados a un docente
   openViewCourses(teacher: Teacher): void {
-    this.selectedTeacher = teacher; // Guardamos para usar su nombre en el título
-    this.coursesForViewing = this.getCoursesForTeacher(teacher.id); // Llenamos el array con sus cursos
-    this.dialog.open(this.viewCoursesTpl, { width: '450px' }); // Abrimos el diálogo
+    this.selectedTeacher = teacher;
+    this.coursesForViewing = this.getCoursesForTeacher(teacher.id);
+    this.dialog.open(this.viewCoursesTpl, { width: '450px' });
   }
 
-  /* ═════════════ Lógica de negocio (sin cambios) ═════════════ */
   openAddTeacher() {
-    this.newTeacher = {};
+    // Reseteamos los objetos de datos
+    this.newTeacherData = { firstName: '', lastName: '', email: '', phone: '', avatarUrl: '' };
+    this.newUserData = { email: '', password: '', role: 'teacher' };
     this.dialog.open(this.addTeacherTpl, { width: '500px', disableClose: true });
   }
 
-  async saveNewTeacher() {
-    try {
-      const user = await this.instSvc.createUser({
-        email: this.newTeacher.email!,
-        password: this.newTeacher.password!,
-        role: 'teacher'
-      }).toPromise();
+  saveNewTeacher() {
+    // Sincronizamos el email
+    this.newUserData.email = this.newTeacherData.email;
 
-      if (!user?.id) { throw new Error('La creación del usuario falló o no devolvió un ID.'); }
-
-      await this.instSvc.createTeacher({
-        idUser: user.id,
-        idInstitution: this.institutionId,
-        firstName: this.newTeacher.firstName!,
-        lastName: this.newTeacher.lastName!,
-        email: this.newTeacher.email!,
-        phone: this.newTeacher.phone
-      }).toPromise();
-
-      this.snack.open('Docente creado con éxito', 'OK', { duration: 3000 });
-      this.loadTeachers();
-      this.dialog.closeAll();
-    } catch (err) {
-      console.error('Error al crear docente', err);
-      this.snack.open('Error al crear el docente. Verifique que el email no esté en uso.', 'Cerrar', { duration: 5000 });
-    }
+    // CAMBIO: Usamos la nueva firma del método del servicio
+    this.instSvc.createTeacher(this.newUserData, { ...this.newTeacherData, institutionId: this.institutionId }).subscribe({
+      next: () => {
+        this.snack.open('Docente creado con éxito', 'OK', { duration: 3000 });
+        this.loadTeachers();
+        this.dialog.closeAll();
+      },
+      error: (err) => {
+        console.error('Error al crear docente', err);
+        this.snack.open(err.message || 'Error al crear el docente. Verifique los datos.', 'Cerrar', { duration: 5000 });
+      }
+    });
   }
 
   openAssign(t: Teacher) {
@@ -137,26 +146,39 @@ export class TeachersComponent implements OnInit {
     this.dialog.open(this.assignCoursesTpl, { width: '400px', disableClose: true });
   }
 
-  async saveAssigned(selectedOptions: MatListOption[]) {
+  saveAssigned(selectedOptions: MatListOption[]) {
     if (!this.selectedTeacher) return;
     const selectedCourseIds = new Set(selectedOptions.map(opt => opt.value));
-    for (const course of this.availableCourses) {
-      const isCurrentlyAssigned = course.idTeacher === this.selectedTeacher.id;
+
+    // Recorremos todos los cursos disponibles en la institución
+    this.availableCourses.forEach(course => {
       const shouldBeAssigned = selectedCourseIds.has(course.id);
-      if (!isCurrentlyAssigned && shouldBeAssigned) {
-        await this.instSvc.updateCourse(course.id, { idTeacher: this.selectedTeacher.id }).toPromise();
+
+      // Si el curso debe ser asignado a este profesor y actualmente no lo está
+      if (shouldBeAssigned && course.teacherId !== this.selectedTeacher!.id) {
+        // CAMBIO: Usamos la nueva firma del método updateCourse
+        this.instSvc.updateCourse(course.id, { teacherId: this.selectedTeacher!.id }).subscribe({
+          next: () => console.log(`Course ${course.id} assigned to teacher ${this.selectedTeacher!.id}`),
+          error: err => console.error(`Failed to assign course ${course.id}`, err)
+        });
       }
-    }
-    this.snack.open('Asignación de cursos guardada', 'OK', { duration: 3000 });
-    this.loadCourses();
-    this.dialog.closeAll();
+    });
+
+    // Pequeño delay para dar tiempo a que las peticiones se completen antes de recargar
+    setTimeout(() => {
+      this.snack.open('Asignación de cursos guardada', 'OK', { duration: 3000 });
+      this.loadCourses(); // Recargamos para ver los cambios
+      this.dialog.closeAll();
+    }, 500);
   }
 
-  deleteTeacher(teacherId: string): void {
+  // CAMBIO: teacherId ahora es un número
+  deleteTeacher(teacherId: number): void {
     const dialogRef = this.dialog.open(this.deleteConfirmTpl, { width: '400px' });
 
     dialogRef.afterClosed().subscribe(confirmed => {
       if (confirmed) {
+        // CAMBIO: Usamos la nueva firma del método del servicio
         this.instSvc.deleteTeacher(teacherId).subscribe({
           next: () => {
             this.teachers = this.teachers.filter(t => t.id !== teacherId);
@@ -165,7 +187,7 @@ export class TeachersComponent implements OnInit {
           },
           error: (err) => {
             console.error('Error al eliminar docente', err);
-            this.snack.open('Error al eliminar el docente', 'Cerrar', { duration: 4000 });
+            this.snack.open(err.message || 'Error al eliminar el docente.', 'Cerrar', { duration: 4000 });
           }
         });
       }

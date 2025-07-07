@@ -1,55 +1,47 @@
 <div class="page-container">
-  <h2 class="page-title">
-    <mat-icon class="page-icon">menu_book</mat-icon>
-    Gestión de Cursos
-  </h2>
 
   <!-- ========================================================== -->
-  <!-- VISTA 1: LISTA DE CURSOS (Diseño de tarjetas mejorado)     -->
+  <!-- VISTA 1: LISTA DE CURSOS (Se muestra si no hay curso seleccionado) -->
   <!-- ========================================================== -->
-  <div *ngIf="!selectedCourse; else detailView" class="course-list-container">
-    <!-- Iteramos sobre cada curso para crear una tarjeta de lista -->
-    <div class="course-list-item-wrapper" *ngFor="let c of courses">
-      <mat-card class="course-list-item">
-        <div class="course-card-content">
-          <!-- Bloque de Título y Subtítulo -->
-          <div class="header-section">
-            <h3 class="course-name">{{ c.name }}</h3>
-            <p class="course-meta">
-              <span>{{ c.code }}</span>
-              <span class="dot-separator">•</span>
-              <span>Sección {{ c.section }}</span>
-            </p>
-          </div>
-          <!-- Bloque de Información con Iconos -->
-          <div class="info-section">
-            <div class="info-line">
-              <mat-icon>people_outline</mat-icon>
-              <span>{{ (enrollmentsByCourse[c.id] || []).length }} estudiantes inscritos</span>
-            </div>
-            <div class="info-line">
-              <mat-icon>check_circle_outline</mat-icon>
-              <span>Nota mínima aprobatoria: {{ c.passingGrade }}</span>
-            </div>
-          </div>
-        </div>
-        <!-- Bloque de Acciones -->
-        <div class="actions-section">
-          <button mat-stroked-button (click)="viewSyllabus(c)">
-            <mat-icon>picture_as_pdf</mat-icon>
-            Ver Sílabo
-          </button>
-          <button mat-flat-button color="primary" (click)="selectCourse(c)">
-            <mat-icon>edit_note</mat-icon>
-            Gestionar Notas
-          </button>
-        </div>
-      </mat-card>
+  <div *ngIf="!selectedCourse; else detailView">
+    <div class="page-header">
+      <h2 class="page-title">
+        Mis Cursos Asignados <mat-icon class="page-icon">class</mat-icon>
+      </h2>
     </div>
+    <div *ngIf="courses && courses.length > 0; else noCourses" class="course-list-container">
+      <div class="course-list-item-wrapper" *ngFor="let c of courses">
+        <mat-card class="course-list-item">
+          <div class="course-card-content">
+            <div class="header-section">
+              <h3 class="course-name">{{ c.name }}</h3>
+              <p class="course-meta">
+                <span>{{ c.code }}</span>
+                <span class="dot-separator">•</span>
+                <span>Sección {{ c.section }}</span>
+              </p>
+            </div>
+          </div>
+          <div class="actions-section">
+            <button mat-flat-button color="primary" (click)="selectCourse(c)">
+              <mat-icon>edit_note</mat-icon>
+              Gestionar Curso
+            </button>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+    <ng-template #noCourses>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">school</mat-icon>
+        <h2>No tienes cursos asignados</h2>
+        <p>Contacta al administrador de tu institución para que te asigne cursos.</p>
+      </div>
+    </ng-template>
   </div>
 
   <!-- ========================================================== -->
-  <!-- VISTA 2: DETALLE DE CURSO (Diseño y lógica actualizados)   -->
+  <!-- VISTA 2: DETALLE DE CURSO (Se muestra si hay un curso seleccionado) -->
   <!-- ========================================================== -->
   <ng-template #detailView>
     <div class="detail-view-container" *ngIf="selectedCourse">
@@ -67,8 +59,9 @@
             </mat-card-header>
             <mat-card-content>
               <mat-accordion multi>
-                <ng-container *ngIf="enrollmentsByCourse[selectedCourse.id]?.length; else noStudents">
-                  <mat-expansion-panel *ngFor="let enrollment of enrollmentsByCourse[selectedCourse.id]; let i = index">
+                <ng-container *ngIf="selectedCourse.enrollments?.length; else noStudentsEnrolled">
+                  <mat-expansion-panel *ngFor="let enrollment of selectedCourse.enrollments; let i = index">
+
                     <mat-expansion-panel-header class="student-panel-header">
                       <mat-panel-title class="student-title">
                         <span class="student-index">{{ i + 1 | number:'2.0' }}</span>
@@ -77,22 +70,20 @@
                       </mat-panel-title>
                       <mat-panel-description class="student-avg">
                         <span>Promedio Ponderado:</span>
-                        <span class="avg-chip" [ngClass]="{'low-avg': enrollment.average! < (selectedCourse.passingGrade ?? 101), 'high-avg': enrollment.average! > 17}">
+                        <span class="avg-chip" [ngClass]="{'low-avg': (enrollment.average || 0) < (selectedCourse.passingGrade || 101), 'high-avg': (enrollment.average || 0) > 17}">
                           {{ enrollment.average | number:'1.1-1' }}
                         </span>
                       </mat-panel-description>
                     </mat-expansion-panel-header>
 
-                    <!-- ÁREA DE GESTIÓN DE NOTAS DINÁMICA -->
+                    <!-- ÁREA DE GESTIÓN DE NOTAS -->
                     <div class="notes-management-area">
-                      <div class="existing-notes-list">
-                        <h4 class="notes-subtitle">Calificaciones Registradas</h4>
-                        <div *ngIf="!enrollment.notesRecords?.length" class="empty-notes-text">No hay notas registradas.</div>
-                        <div class="note-row" *ngFor="let note of enrollment.notesRecords">
-                          <span class="note-title">{{ note.title }}</span>
-                          <input type="number" class="note-input" [value]="note.score" min="0" max="20" (change)="updateNoteScore(enrollment, note, $event)"/>
-                          <button mat-icon-button class="delete-note-btn" (click)="deleteNote(enrollment, note)" aria-label="Eliminar nota"><mat-icon>delete</mat-icon></button>
-                        </div>
+                      <h4 class="notes-subtitle">Calificaciones Registradas</h4>
+                      <div *ngIf="!enrollment.notesRecords?.length" class="empty-notes-text">No hay notas registradas.</div>
+                      <div class="note-row" *ngFor="let note of enrollment.notesRecords">
+                        <span class="note-title">{{ note.title }}</span>
+                        <input type="number" class="note-input" [value]="note.score" min="0" max="20" (change)="updateNoteScore(enrollment, note, $event)"/>
+                        <button mat-icon-button class="delete-note-btn" (click)="deleteNote(enrollment, note)" aria-label="Eliminar nota"><mat-icon>delete</mat-icon></button>
                       </div>
                       <mat-divider *ngIf="enrollment.notesRecords?.length"></mat-divider>
                       <div class="add-note-form">
@@ -109,42 +100,39 @@
                       </div>
                     </div>
 
-                    <!-- ========================================================== -->
-                    <!-- [NUEVO] SECCIÓN: GESTIÓN DE CERTIFICADO DE APROBACIÓN      -->
-                    <!-- ========================================================== -->
+                    <!-- SECCIÓN: GESTIÓN DE CERTIFICADO -->
                     <mat-divider></mat-divider>
                     <div class="certificate-management-area">
                       <h4 class="notes-subtitle">Certificado de Aprobación</h4>
-
-                      <!-- CASO 1: Aún NO ha aprobado -->
-                      <div *ngIf="enrollment.average! < (selectedCourse!.passingGrade ?? 101)" class="certificate-status pending">
+                      <!-- CASO 1: Aún no ha aprobado -->
+                      <div *ngIf="enrollment.average < (selectedCourse.passingGrade ?? 101)" class="certificate-status pending">
                         <mat-icon>hourglass_empty</mat-icon>
-                        <span>El estudiante debe alcanzar la nota mínima ({{ selectedCourse!.passingGrade }}) para poder emitir un certificado.</span>
+                        <span>El estudiante debe alcanzar la nota mínima ({{ selectedCourse.passingGrade }}) para poder emitir un certificado.</span>
                       </div>
-
-                      <!-- CASO 2: SÍ ha aprobado, pero AÚN NO tiene certificado -->
-                      <div *ngIf="enrollment.average! >= (selectedCourse!.passingGrade ?? 101) && !certificatesByEnrollment[enrollment.id]">
-
-                        <!-- Mientras se está subiendo el archivo, mostrar un spinner -->
+                      <!-- CASO 2: Aprobado, pero el curso no ha sido finalizado -->
+                      <div *ngIf="enrollment.average >= (selectedCourse.passingGrade ?? 101) && enrollment.state === 'in_progress' && !certificatesByEnrollment[enrollment.id]">
+                        <button mat-raised-button color="accent" (click)="finalizeEnrollment(enrollment)">
+                          <mat-icon>done_all</mat-icon>
+                          Finalizar y Habilitar Certificado
+                        </button>
+                      </div>
+                      <!-- CASO 3: Aprobado, curso finalizado, pero sin certificado subido -->
+                      <div *ngIf="enrollment.state === 'completed' && !certificatesByEnrollment[enrollment.id]">
                         <div *ngIf="isUploading[enrollment.id]" class="upload-spinner">
-                          <mat-spinner diameter="30"></mat-spinner>
-                          <span>Subiendo archivo...</span>
+                          <mat-spinner diameter="30"></mat-spinner> <span>Subiendo archivo...</span>
                         </div>
-
-                        <!-- Botón para subir el archivo -->
                         <div *ngIf="!isUploading[enrollment.id]" class="certificate-status approved">
                           <mat-icon>check_circle</mat-icon>
-                          <span>¡Aprobado! Sube el certificado para este estudiante.</span>
+                          <span>¡Curso finalizado! Sube el certificado.</span>
                           <button mat-stroked-button color="primary" (click)="fileInput.click()">
                             <mat-icon>upload_file</mat-icon>
-                            Seleccionar Archivo (PDF, PNG, JPG)
+                            Seleccionar Archivo
                           </button>
-                          <input type="file" hidden #fileInput (change)="onFileSelected($event, enrollment, selectedCourse!)" accept=".pdf,.png,.jpg,.jpeg">
+                          <input type="file" hidden #fileInput (change)="onFileSelected($event, enrollment, selectedCourse)" accept=".pdf,.png,.jpg,.jpeg">
                         </div>
                       </div>
-
-                      <!-- CASO 3: SÍ ha aprobado y YA TIENE un certificado emitido -->
-                      <div *ngIf="enrollment.average! >= (selectedCourse!.passingGrade ?? 101) && certificatesByEnrollment[enrollment.id]" class="certificate-status issued">
+                      <!-- CASO 4: Certificado ya emitido -->
+                      <div *ngIf="certificatesByEnrollment[enrollment.id]" class="certificate-status issued">
                         <mat-icon class="issued-icon">verified</mat-icon>
                         <div class="issued-details">
                           <strong>Certificado Emitido</strong>
@@ -158,11 +146,10 @@
                         </button>
                       </div>
                     </div>
-
                   </mat-expansion-panel>
                 </ng-container>
+                <ng-template #noStudentsEnrolled><div class="empty-state"><p>No hay estudiantes inscritos en este curso.</p></div></ng-template>
               </mat-accordion>
-              <ng-template #noStudents><div class="empty-state"><p>No hay estudiantes inscritos en este curso.</p></div></ng-template>
             </mat-card-content>
           </mat-card>
         </div>
@@ -172,10 +159,19 @@
           <mat-card class="info-card">
             <mat-card-header><mat-card-title>Detalles del Curso</mat-card-title></mat-card-header>
             <mat-card-content>
-              <div class="info-line"><mat-icon>picture_as_pdf</mat-icon><strong>Sílabo:</strong><a (click)="viewSyllabus(selectedCourse!)">Ver/Descargar PDF</a></div>
-              <div class="info-line"><mat-icon>percent</mat-icon><strong>Pesos de Notas:</strong><span>{{ selectedCourse.notesWeight?.join('% - ') }}%</span></div>
+              <div class="info-line">
+                <mat-icon>picture_as_pdf</mat-icon>
+                <strong>Sílabo:</strong>
+                <button mat-button color="primary" (click)="viewSyllabus(selectedCourse)">Ver/Descargar PDF</button>
+              </div>
+              <div class="info-line">
+                <mat-icon>percent</mat-icon>
+                <strong>Pesos de Notas:</strong>
+                <span>{{ getFormulaString(selectedCourse.notesWeight) }}</span>
+              </div>
             </mat-card-content>
           </mat-card>
+
           <mat-card class="eval-card">
             <mat-card-header>
               <mat-card-title>Evaluaciones</mat-card-title>
@@ -191,7 +187,7 @@
               <button mat-flat-button color="primary" (click)="addEvalQuestion()">Agregar</button>
             </mat-card-content>
             <mat-card-content>
-              <ul *ngIf="evalQuestions.length; else none" class="eval-list">
+              <ul *ngIf="evalQuestions.length > 0; else none" class="eval-list">
                 <li *ngFor="let q of evalQuestions">{{ q }}</li>
               </ul>
               <ng-template #none><p class="empty-text">No hay evaluaciones creadas.</p></ng-template>
@@ -200,5 +196,17 @@
         </div>
       </div>
     </div>
+  </ng-template>
+
+  <!-- Diálogo de Confirmación (genérico) -->
+  <ng-template #deleteConfirmTpl let-data>
+    <h2 mat-dialog-title>{{ data.title || 'Confirmar Acción' }}</h2>
+    <mat-dialog-content>
+      <p>{{ data.message || '¿Estás seguro?' }}</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button [mat-dialog-close]="false">Cancelar</button>
+      <button mat-flat-button color="warn" [mat-dialog-close]="true">Sí, Continuar</button>
+    </mat-dialog-actions>
   </ng-template>
 </div>

@@ -5,10 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBar } from '@angular/material/snack-bar'; // Importar MatSnackBar
+import { ActivatedRoute } from '@angular/router';
 
 import { TeacherService } from '../../services/teacher.service';
+// CAMBIO: Usamos el modelo actualizado con IDs numéricos
 import { BlockchainEntry } from '../../models/teacher.entity';
-import {ActivatedRoute} from '@angular/router';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-blockchain',
@@ -19,56 +22,65 @@ import {ActivatedRoute} from '@angular/router';
     MatExpansionModule,
     MatDividerModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatProgressSpinner,
+    MatProgressSpinner
   ],
   templateUrl: './blockchain.component.html',
   styleUrls: ['./blockchain.component.css']
 })
 export class BlockchainComponent implements OnInit {
-  entries: BlockchainEntry[] = [];
 
-  constructor(private teacherSvc: TeacherService, private route: ActivatedRoute) {}
+  entries: BlockchainEntry[] = [];
+  isLoading = false;
+
+  constructor(
+    private teacherSvc: TeacherService,
+    private snack: MatSnackBar // Inyectar MatSnackBar para notificaciones
+  ) {}
 
   ngOnInit(): void {
-    const teacherId = this.route.snapshot.paramMap.get('id');
-    if (teacherId) {
-      this.teacherSvc.getById(teacherId).subscribe({
-        next: teacher => {
-          this.entries = teacher.blockchainEntries || [];
-        },
-        error: err => {
-          console.error('Error al cargar las entradas blockchain', err);
-        }
-      });
-    } else {
-      console.error('No se encontró el ID del docente en la URL');
-    }
+    this.loadBlockchainEntries();
   }
 
-
-  downloadDocument(entry: BlockchainEntry): void {
-    if (entry.type === 'Syllabus' && entry.course?.syllabusFileName) {
-      const url = `/assets/${entry.course.syllabusFileName}`;
-      window.open(url, '_blank');
-    } else {
-      alert('Documento no disponible para descarga.');
-    }
+  private loadBlockchainEntries(): void {
+    this.isLoading = true;
+    // CAMBIO: Llamamos al nuevo método directo del servicio.
+    this.teacherSvc.getBlockchainEntries().subscribe({
+      next: (data) => {
+        // La API devuelve los más recientes primero, los invertimos para mostrarlos cronológicamente
+        this.entries = data.reverse();
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar las entradas blockchain', err);
+        this.snack.open(err.message || 'Error al cargar el registro de auditoría.', 'Cerrar');
+        this.isLoading = false;
+      }
+    });
   }
+
+  // Este método ya no es necesario ya que no se puede descargar el documento desde aquí.
+  // downloadDocument(entry: BlockchainEntry): void { ... }
 
   goToBlock(entry: BlockchainEntry): void {
-    const fakeUrl = `https://explorer.blockchain.edu/block/${entry.id}`;
+    // Simula una URL a un explorador de bloques, usando el hash del bloque.
+    const fakeUrl = `https://explorer.blockchain.edu/block/${entry.blockHash}`;
     window.open(fakeUrl, '_blank');
   }
 
+  // Este método se mantiene igual, ya que la lógica de la etiqueta no cambia.
   getEntryLabel(entry: BlockchainEntry): string {
     switch (entry.type) {
-      case 'Certificate':
-        return `Certificado para estudiante ${entry.studentCode}`;
-      case 'Syllabus':
-        return `Sílabo del curso ${entry.course?.name}`;
-      case 'Grade':
-        return `Notas del curso ${entry.course?.name} - Estudiante ${entry.studentCode}`;
+      case 'CERTIFICATE':
+        return `Certificado emitido (ID de Referencia: ${entry.referenceId})`;
+      case 'SYLLABUS':
+        return `Sílabo registrado (ID de Referencia: ${entry.referenceId})`;
+      case 'NOTE_RECORD':
+        return `Nota registrada (ID de Referencia: ${entry.referenceId})`;
       default:
+        // Forzar un chequeo exhaustivo por parte de TypeScript
+        const _exhaustiveCheck: never = entry.type;
         return 'Entrada desconocida';
     }
   }

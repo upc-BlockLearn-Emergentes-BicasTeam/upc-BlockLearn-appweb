@@ -1,32 +1,30 @@
-/* src/app/institution/pages/courses/courses.component.ts */
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { CommonModule }  from '@angular/common';
-import { FormsModule }   from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { forkJoin, Observable } from 'rxjs';
 
-/* ── Angular Material ────────────────────────────────────────── */
-import { MatCardModule }      from '@angular/material/card';
-import { MatIconModule }      from '@angular/material/icon';
-import { MatButtonModule }    from '@angular/material/button';
+/* Angular Material */
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatListModule }      from '@angular/material/list';
-import { MatDividerModule }   from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule }     from '@angular/material/input';
-import { MatDialog, MatDialogModule }  from '@angular/material/dialog';
-import { MatSelectModule }    from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTooltipModule }   from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-/* ── Servicios + Modelos ─────────────────────────────────────── */
+/* Servicios y Modelos */
 import { InstitutionService } from '../../services/institution.service';
-import {
-  Course, Teacher, Student, Syllabus
-} from '../../models/institution.entity';
+import { Course, Teacher, Student, Syllabus } from '../../models/institution.entity';
 
 @Component({
-  selector   : 'app-courses',
-  standalone : true,
-  imports    : [
+  selector: 'app-courses',
+  standalone: true,
+  imports: [
     CommonModule, FormsModule,
     MatCardModule, MatIconModule, MatButtonModule,
     MatExpansionModule, MatListModule, MatDividerModule,
@@ -34,281 +32,228 @@ import {
     MatSelectModule, MatSnackBarModule, MatTooltipModule
   ],
   templateUrl: './courses.component.html',
-  styleUrls  : ['./courses.component.css']
+  styleUrls: ['./courses.component.css']
 })
 export class CoursesComponent implements OnInit {
 
-  /* ───────── datos base ───────── */
-  readonly institutionId = localStorage.getItem('institutionId') ?? '1';
-
   @ViewChild('courseFormTpl') courseFormTpl!: TemplateRef<any>;
+  @ViewChild('deleteConfirmTpl') deleteConfirmTpl!: TemplateRef<any>;
 
-  courses     : Course[]                         = [];
-  teachers    : Teacher[]                        = [];
-  syllabuses  : Syllabus[]                       = [];
-  studentsMap : Record<string,Student[]>         = {};
-  syllabusMap : Record<string,string>            = {};
+  readonly institutionId = Number(localStorage.getItem('institutionId'));
 
-  /* modelo único (crear / editar) */
+  courses: Course[] = [];
+  teachers: Teacher[] = [];
+  studentsMap: Record<number, Student[]> = {};
+  syllabusMap: Record<number, Syllabus> = {};
+
   formCourse: {
-    id?: string;
-    name?: string;
-    code?: string;
-    section?: string;
-    passingGrade?: number;
+    id?: number;
+    name: string;
+    code: string;
+    section: string;
+    passingGrade: number;
     notesWeight: number[];
-    teacher?: Teacher;
-    syllabusFile?: File;        // archivo crudo (opcional)
-    syllabusFileName?: string;  // nombre “humano”
-    syllabusData?: string;      // base-64 (Data URI)
-  } = { notesWeight: [] };
+    teacherId?: number;
+    syllabusFile?: File;
+    syllabusFileName?: string;
+    syllabusData?: string;
+  } = this.getEmptyFormCourse();
 
   isEditing = false;
 
-
-  @ViewChild('deleteConfirmTpl') deleteConfirmTpl!: TemplateRef<any>;
-
-
   constructor(
-
-    private instSvc : InstitutionService,
-    private dialog  : MatDialog,
-    private snack   : MatSnackBar
+    private instSvc: InstitutionService,
+    private dialog: MatDialog,
+    private snack: MatSnackBar
   ) {}
 
-  /* ───────── life-cycle ───────── */
   ngOnInit(): void {
-    this.loadCourses();
-    this.loadTeachers();
-    this.loadEnrollments();
-    this.loadSyllabuses();
+    if (!this.institutionId) {
+      this.snack.open("Error: No se pudo identificar la institución.", "Cerrar");
+      return;
+    }
+    this.initialLoad();
   }
 
-  /* ───────── cargas ───────── */
-  private loadCourses() {
-    this.instSvc.getCoursesByInstitution(this.institutionId)
-      .subscribe(c => this.courses = c);
-  }
-  private loadTeachers() {
-    this.instSvc.getTeachersByInstitution(this.institutionId)
-      .subscribe(t => this.teachers = t);
-  }
-  private loadEnrollments() {
-    this.instSvc.getEnrollments().subscribe(enrs => {
-      this.instSvc.getStudentsByInstitution(this.institutionId)
-        .subscribe(sts => {
-          this.studentsMap = {};
-          enrs.forEach(e => {
-            const st = sts.find(s => s.id === e.idStudent);
-            if (st) { (this.studentsMap[e.idCourse] ??= []).push(st); }
-          });
-        });
-    });
-  }
-  private loadSyllabuses() {
-    this.instSvc.getSyllabuses().subscribe(syl => {
-      this.syllabuses  = syl;
-      this.syllabusMap = {};
-      syl.forEach(s => this.syllabusMap[s.idCourse] = s.hash);
+  private initialLoad(): void {
+    forkJoin({
+      courses: this.instSvc.getCoursesByInstitution(this.institutionId),
+      teachers: this.instSvc.getTeachersByInstitution(this.institutionId),
+    }).subscribe({
+      next: ({ courses, teachers }) => {
+        this.courses = courses;
+        this.teachers = teachers;
+        this.courses.forEach(course => this.loadSyllabusForCourse(course.id));
+      },
+      error: (err) => {
+        this.snack.open(err.message || 'Error al cargar los datos iniciales.', 'Cerrar');
+        console.error(err);
+      }
     });
   }
 
-  /* ───────── helpers de vista ───────── */
-  getStudentsForCourse(id: string) { return this.studentsMap[id] ?? []; }
-  getSyllabusHash(id:string)       { return this.syllabusMap[id] ?? 'Sin registro'; }
-  getTeacherFullName(id:string)    {
+  private loadSyllabusForCourse(courseId: number): void {
+    this.instSvc.getSyllabusByCourse(courseId).subscribe(syllabus => {
+      if (syllabus) {
+        this.syllabusMap[courseId] = syllabus;
+      }
+    });
+  }
+
+  getStudentsForCourse(id: number) { return this.studentsMap[id] ?? []; }
+  getSyllabusHash(id: number) { return this.syllabusMap[id]?.hash ?? 'Sin registro'; }
+  getTeacherFullName(id: number) {
     const t = this.teachers.find(x => x.id === id);
     return t ? `${t.firstName} ${t.lastName}` : 'No asignado';
   }
 
-  deleteCourse(courseId: string): void {
-    const dialogRef = this.dialog.open(this.deleteConfirmTpl, {
-      width: '400px',
-      disableClose: true // Evita que se cierre haciendo clic fuera
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === true) {
-
+  deleteCourse(courseId: number): void {
+    const dialogRef = this.dialog.open(this.deleteConfirmTpl, { width: '400px', disableClose: true });
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
         this.instSvc.deleteCourse(courseId).subscribe({
           next: () => {
-            console.log(`Curso con ID: ${courseId} eliminado de la base de datos.`);
-            this.courses = this.courses.filter(course => course.id !== courseId);
-            this.snack.open('Curso eliminado correctamente.', 'OK', {
-              duration: 3000,
-              panelClass: 'success-snackbar'
-            });
+            this.snack.open('Curso eliminado correctamente.', 'OK', { duration: 3000 });
+            this.initialLoad();
           },
           error: (err) => {
-            console.error(`Error al intentar eliminar el curso ${courseId}:`, err);
-            this.snack.open('Error al eliminar el curso. Por favor, inténtelo de nuevo.', 'Cerrar', {
-              duration: 4000,
-              panelClass: 'error-snackbar'
-            });
+            console.error(`Error al eliminar el curso ${courseId}:`, err);
+            this.snack.open(err.message || 'Error al eliminar el curso.', 'Cerrar');
           }
         });
       }
     });
   }
 
-  /* ═════════ diálogo alta / edición ═════════ */
   openAddCourse() {
-    this.isEditing  = false;
-    this.formCourse = { notesWeight:[25,25,25,25] };
-    this.dialog.open(this.courseFormTpl,{width:'560px',disableClose:true});
-  }
-  openEditCourse(c:Course) {
-    this.isEditing  = true;
-    this.formCourse = {
-      id:c.id, name:c.name, code:c.code, section:c.section,
-      passingGrade:c.passingGrade,
-      notesWeight:[...(c.notesWeight ?? [])],
-      teacher:this.teachers.find(t=>t.id===c.idTeacher),
-      syllabusFileName:c.syllabusFileName
-    };
-    this.dialog.open(this.courseFormTpl,{width:'560px',disableClose:true});
+    this.isEditing = false;
+    this.formCourse = this.getEmptyFormCourse();
+    this.dialog.open(this.courseFormTpl, { width: '560px', disableClose: true });
   }
 
-  /* ───────── guardar ───────── */
-  async saveCourse() {
+  openEditCourse(c: Course) {
+    this.isEditing = true;
+    this.formCourse = {
+      id: c.id,
+      name: c.name,
+      code: c.code,
+      section: c.section,
+      passingGrade: c.passingGrade ?? 70,
+      notesWeight: [...(c.notesWeight ?? [])],
+      teacherId: c.teacherId,
+      syllabusFileName: this.syllabusMap[c.id]?.fileName
+    };
+    this.dialog.open(this.courseFormTpl, { width: '560px', disableClose: true });
+  }
+
+  saveCourse() {
     const f = this.formCourse;
-    if (!f.name || !f.teacher) {
-      this.snack.open('Complete los campos obligatorios','Cerrar',{duration:2500});
+    if (!f.name || !f.teacherId) {
+      this.snack.open('Nombre del curso y profesor son obligatorios', 'Cerrar', { duration: 3000 });
       return;
     }
 
-    /* ① Si hay PDF nuevo → ya tenemos `f.syllabusData` listo      */
-
-    /* ② payload común */
-    const data: Omit<Course,'id'> = {
-      name         : f.name,
-      code         : f.code || Math.random().toString(36).slice(2,6).toUpperCase(),
-      section      : f.section || 'A',
-      passingGrade : f.passingGrade || 70,
-      idInstitution: this.institutionId,
-      idTeacher    : f.teacher.id,
-      notesWeight  : f.notesWeight,
-      syllabusFileName: f.syllabusFileName ?? '',
-      syllabusHash    : ''
+    const coursePayload = {
+      name: f.name,
+      code: f.code,
+      section: f.section,
+      passingGrade: f.passingGrade,
+      institutionId: this.institutionId,
+      teacherId: f.teacherId,
+      notesWeight: f.notesWeight,
+      syllabusFileName: f.syllabusFileName, // Se puede enviar vacío
+      syllabusHash: '' // El hash se genera en el backend
     };
 
-    try {
-      if (this.isEditing && f.id) {
-        /* ——— actualización ——— */
-        await this.instSvc.updateCourse(f.id,data).toPromise();
+    const saveOperation: Observable<Course> = this.isEditing && f.id
+      ? this.instSvc.updateCourse(f.id, coursePayload)
+      : this.instSvc.createCourse(coursePayload);
 
-        if (f.syllabusData) {
-          await this.instSvc.uploadSyllabusBase64({
-            idCourse : f.id,
-            fileName : f.syllabusFileName!,
-            fileData : f.syllabusData,
-            hash     : '000'+Math.random().toString(36).substr(2,8)
-          }).toPromise();
+    saveOperation.subscribe({
+      next: (savedCourse) => {
+        const action = this.isEditing ? 'actualizado' : 'creado';
+        if (f.syllabusData && f.syllabusFileName) {
+          const syllabusPayload: Omit<Syllabus, 'id'> = {
+            courseId: savedCourse.id,
+            fileName: f.syllabusFileName,
+            fileData: f.syllabusData,
+            hash: '' // El backend debería generar el hash
+          };
+          this.instSvc.uploadSyllabus(syllabusPayload).subscribe({
+            next: () => {
+              this.snack.open(`Curso ${action} y sílabo subido.`, 'OK', { duration: 3000 });
+              this.dialog.closeAll();
+              this.initialLoad();
+            },
+            error: err => {
+              this.snack.open(`Curso guardado, pero falló la subida del sílabo: ${err.message}`, 'Cerrar');
+            }
+          });
+        } else {
+          this.snack.open(`Curso ${action} con éxito.`, 'OK', { duration: 3000 });
+          this.dialog.closeAll();
+          this.initialLoad();
         }
-
-        this.snack.open('Curso actualizado','OK',{duration:2500});
-
-      } else {
-        /* ——— alta ——— */
-        const created = await this.instSvc.createCourse(data).toPromise();
-        if (!created?.id) { throw new Error('API no devolvió id'); }
-
-        if (f.syllabusData) {
-          await this.instSvc.uploadSyllabusBase64({
-            idCourse : created.id,
-            fileName : f.syllabusFileName!,
-            fileData : f.syllabusData,
-            hash     : '000'+Math.random().toString(36).substr(2,8)
-          }).toPromise();
-        }
-
-        this.snack.open('Curso creado','OK',{duration:2500});
+      },
+      error: (err) => {
+        console.error('Error al guardar el curso', err);
+        this.snack.open(err.message || 'Error al guardar el curso.', 'Cerrar');
       }
-
-      this.dialog.closeAll();
-      this.ngOnInit();
-
-    } catch(err) {
-      console.error(err);
-      this.snack.open('Error al guardar','Cerrar',{duration:3000});
-    }
+    });
   }
 
-  /* ───────── selección de archivo ───────── */
-  onFileSelected(e:Event) {
+  onFileSelected(e: Event) {
     const file = (e.target as HTMLInputElement).files?.[0];
-    if (!file) { return; }
-
+    if (!file) return;
     this.formCourse.syllabusFileName = file.name;
-
     const fr = new FileReader();
-    fr.onload = () => {
-      this.formCourse.syllabusData = fr.result as string; // data:application/pdf;base64,…
-    };
+    fr.onload = () => this.formCourse.syllabusData = fr.result as string;
     fr.readAsDataURL(file);
   }
 
-
-  private openBase64Pdf(dataUri: string, title = 'syllabus.pdf') {
-    /* 1. separa la cabecera “data:application/pdf;base64,”  */
-    const base64 = dataUri.split(',')[1];
-
-    /* 2. decodifica → Uint8Array */
-    const byteChars  = atob(base64);
-    const byteNumbers = Array.from(byteChars, c => c.charCodeAt(0));
-    const byteArray   = new Uint8Array(byteNumbers);
-
-    /* 3. crea el blob + URL temporal */
-    const blob     = new Blob([byteArray], { type: 'application/pdf' });
-    const blobUrl  = URL.createObjectURL(blob);
-
-    /* 4. abre en nueva pestaña  */
-    const w = window.open(blobUrl, '_blank');
-    if (!w) {
-      this.snack.open('Bloqueado por el navegador: permita pop-ups', 'Cerrar',
-        { duration: 4000 });
+  viewSyllabus(c: Course) {
+    const syllabus = this.syllabusMap[c.id];
+    if (syllabus && syllabus.fileData) {
+      this.openBase64Pdf(syllabus.fileData, syllabus.fileName);
+    } else {
+      this.snack.open('Este curso no tiene un sílabo cargado.', 'Cerrar', { duration: 3000 });
     }
-
-    /* 5. opcional: libera memoria cuando la pestaña se cierre */
-    w?.addEventListener('beforeunload', () => URL.revokeObjectURL(blobUrl));
   }
 
-  /* ───────── ver PDF ───────── */
-  viewSyllabus(c: Course) {
-    const syl = this.syllabuses.find(s => s.idCourse === c.id);
-    if (!syl) {
-      this.snack.open('Curso sin sílabo', 'Cerrar', { duration: 2500 });
+  private openBase64Pdf(dataUri: string, title = 'syllabus.pdf') {
+    const base64 = dataUri.split(',')[1];
+    if (!base64) {
+      this.snack.open('Error: El formato del sílabo no es válido.', 'Cerrar');
       return;
     }
-
-    /* a) si hay base-64 en BD ⇒ úsalo */
-    if (syl.fileData?.startsWith('data:application/pdf')) {
-      this.openBase64Pdf(syl.fileData, syl.fileName || 'syllabus.pdf');
-      return;
+    const byteChars = atob(base64);
+    const byteNumbers = Array.from(byteChars, char => char.charCodeAt(0));
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'application/pdf' });
+    const blobUrl = URL.createObjectURL(blob);
+    const newWindow = window.open(blobUrl, '_blank');
+    if (!newWindow) {
+      this.snack.open('El navegador bloqueó la apertura de una nueva pestaña.', 'Cerrar');
     }
+  }
 
-    /* b) fallback: intente en /assets (o URL pública) */
-    if (syl.fileName) {
-      window.open(`/assets/${encodeURIComponent(syl.fileName)}`, '_blank');
-      return;
-    }
+  addNoteWeight() { this.formCourse.notesWeight.push(0); }
+  removeNoteWeight(i: number) { this.formCourse.notesWeight.splice(i, 1); }
+  trackById(_: number, c: Course) { return c.id; }
 
-    this.snack.open('No se encontró el PDF', 'Cerrar', { duration: 2500 });
+  private getEmptyFormCourse() {
+    return {
+      name: '',
+      code: '',
+      section: '',
+      passingGrade: 70,
+      notesWeight: [25, 25, 25, 25]
+    };
   }
 
   getFormulaString(weights: number[] | undefined): string {
-    if (!weights || weights.length === 0) {
-      return 'Sin definir';
-    }
+    if (!weights || weights.length === 0) return 'Sin definir';
     const labels = ['PC1', 'EA', 'PC2', 'EB'];
-    return weights
-      .map((w, i) => `${w}% (${labels[i] || 'N' + (i + 1)})`)
-      .join(' + ');
+    return weights.map((w, i) => `${w}% (${labels[i] || 'N' + (i + 1)})`).join(' + ');
   }
-
-
-  /* ───────── utilidades ───────── */
-  addNoteWeight()            { this.formCourse.notesWeight.push(0); }
-  removeNoteWeight(i:number) { this.formCourse.notesWeight.splice(i,1); }
-  trackById(_:number,c:Course){ return c.id; }
 }

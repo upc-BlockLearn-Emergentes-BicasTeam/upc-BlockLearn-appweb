@@ -1,103 +1,124 @@
-/* src/app/student/components/profile/profile-student.component.ts */
 import { Component, OnInit } from '@angular/core';
-import { CommonModule }      from '@angular/common';
-import { FormsModule }       from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { ActivatedRoute } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar'; // Importar MatSnackBar
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-/* ── Angular Material ─────────────────────── */
-import { MatCardModule }     from '@angular/material/card';
-import { MatIconModule }     from '@angular/material/icon';
-import { MatButtonModule }   from '@angular/material/button';
-import { MatDividerModule }  from '@angular/material/divider';
-import { MatFormFieldModule} from '@angular/material/form-field';
-import { MatInputModule }    from '@angular/material/input';
-
-/* ── Router / servicio ────────────────────── */
-import { ActivatedRoute }    from '@angular/router';
-import { StudentService }    from '../../services/student.service';
-
-/* ── Modelo ───────────────────────────────── */
-import {Course, Student} from '../../model/student.entity';
-import {MatProgressSpinner} from '@angular/material/progress-spinner';
+/* Servicios y Modelo */
+import { StudentService } from '../../services/student.service';
+// CAMBIO: Usamos el nuevo modelo con IDs numéricos
+import { Student } from '../../model/student.entity';
 
 @Component({
-  selector   : 'app-profile-student',
-  standalone : true,
+  selector: 'app-profile-student',
+  standalone: true,
   imports: [
     CommonModule, FormsModule,
-    MatCardModule, MatIconModule, MatButtonModule,
-    MatDividerModule, MatFormFieldModule, MatInputModule, MatProgressSpinner, MatProgressSpinner, MatProgressSpinner, MatProgressSpinner
+    MatCardModule, MatIconModule, MatButtonModule, MatDividerModule,
+    MatFormFieldModule, MatInputModule, MatProgressSpinnerModule
   ],
-  templateUrl : './profile-student.component.html',
-  styleUrls   : ['./profile-student.component.css']
+  templateUrl: './profile-student.component.html',
+  styleUrls: ['./profile-student.component.css']
 })
 export class ProfileStudentComponent implements OnInit {
 
-  /* ───── estado ───── */
+  // CAMBIO: Inicializamos con valores por defecto y tipos correctos
   student: Student = {
-    id           : '',
-    idUser       : '',
-    idInstitution: '',
-    firstName    : '',
-    lastName     : '',
-    email        : '',
-    phone        : '',
-    avatarUrl    : '',     // opcional
+    id: 0,
+    userId: 0,
+    institutionId: 0,
+    firstName: '',
+    lastName: '',
+    email: '',
   };
+
+  private originalStudent!: Student; // Para la función "Cancelar"
+  isEditing = false;
+  isLoading = false;
+
   readonly defaultAvatar = 'assets/img/avatar-placeholder.png';
 
-  isEditing  = false;
-  isLoading  = false;
-
   constructor(
-    private stuSvc : StudentService,
-    private route  : ActivatedRoute
+    private stuSvc: StudentService,
+    private route: ActivatedRoute,
+    private snack: MatSnackBar // Inyectar MatSnackBar
   ) {}
 
-  /* ═════════ ciclo de vida ═════════ */
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) { console.error('No ID de estudiante en la URL'); return; }
-    this.student.id = id;
-    this.loadStudent();
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (!idParam) {
+      console.error('No ID de estudiante en la URL');
+      this.snack.open('Error: No se pudo identificar al estudiante.', 'Cerrar');
+      return;
+    }
+    // CAMBIO: Asignamos el ID numérico
+    this.student.id = +idParam;
+    this.loadStudentProfile();
   }
 
-  /* ───── carga ───── */
-  private loadStudent(): void {
+  private loadStudentProfile(): void {
     this.isLoading = true;
-    this.stuSvc.getById(this.student.id).subscribe({
-      next : s  => { this.student = s; this.isLoading = false; },
-      error: err => { console.error('Error cargando estudiante', err);
-        this.isLoading = false; }
+    // CAMBIO: Llamamos al nuevo método del servicio
+    this.stuSvc.getStudentProfileById(this.student.id).subscribe({
+      next: (profile) => {
+        this.student = profile;
+        this.originalStudent = JSON.parse(JSON.stringify(profile)); // Guardamos copia para "cancelar"
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error cargando perfil del estudiante', err);
+        this.snack.open(err.message || 'Error al cargar el perfil.', 'Cerrar');
+        this.isLoading = false;
+      }
     });
   }
 
-  /* ───── edición ───── */
-  onChangeData() { this.isEditing = true; }
-  onCancel()     { this.isEditing = false; this.loadStudent(); }
+  onChangeData(): void {
+    this.isEditing = true;
+  }
+
+  onCancel(): void {
+    this.isEditing = false;
+    // Restauramos desde la copia original sin llamar a la API
+    this.student = JSON.parse(JSON.stringify(this.originalStudent));
+  }
 
   onSave(): void {
-    const updated: Partial<Student> = {
-      firstName : this.student.firstName,
-      lastName  : this.student.lastName,
-      email     : this.student.email,
-      phone     : this.student.phone,
-      avatarUrl : this.student.avatarUrl
-    };
+    // Preparamos los datos a enviar, solo los campos editables del perfil
+    const { firstName, lastName, email, phone, avatarUrl } = this.student;
+    const updatedData: Partial<Student> = { firstName, lastName, email, phone, avatarUrl };
 
-    this.stuSvc.update(this.student.id, updated).subscribe({
-      next : ()  => { this.isEditing = false; this.loadStudent(); },
-      error: err => console.error('Error guardando cambios', err)
+    // CAMBIO: Llamamos al nuevo método de actualización
+    this.stuSvc.updateStudentProfile(this.student.id, updatedData).subscribe({
+      next: (updatedStudent) => {
+        this.isEditing = false;
+        this.student = updatedStudent;
+        this.originalStudent = JSON.parse(JSON.stringify(updatedStudent));
+        this.snack.open('Perfil actualizado con éxito.', 'OK', { duration: 3000 });
+      },
+      error: (err) => {
+        console.error('Error guardando cambios', err);
+        this.snack.open(err.message || 'Error al guardar los cambios.', 'Cerrar');
+      }
     });
   }
 
-  /* ───── avatar (opcional) ───── */
   onAvatarSelected(evt: Event): void {
-    const inp = evt.target as HTMLInputElement;
-    if (!inp.files?.length) { return; }
+    const input = evt.target as HTMLInputElement;
+    if (!input.files?.length) return;
 
-    const file    = inp.files[0];
-    const reader  = new FileReader();
-    reader.onload = () => this.student.avatarUrl = reader.result as string;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.student.avatarUrl = reader.result as string;
+    };
     reader.readAsDataURL(file);
   }
 }
