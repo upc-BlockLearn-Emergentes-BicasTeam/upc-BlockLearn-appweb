@@ -13,7 +13,7 @@ import {map} from 'rxjs/operators';
 })
 export class AuthService {
   // ¡ACTUALIZADO! Esta es la nueva URL base de tu API de Spring Boot
-  private baseUrl = 'http://localhost:8080/api/v1';
+  private baseUrl = 'https://app-blocklearn.azurewebsites.net/api/v1';
 
   constructor(private http: HttpClient) {}
 

@@ -9,7 +9,7 @@ import {
 } from '../models/institution.entity';
 
 // Apunta a la nueva API de Spring Boot
-const API = 'http://localhost:8080/api/v1';
+const API = 'https://app-blocklearn.azurewebsites.net/api/v1';
 
 @Injectable({ providedIn: 'root' })
 export class InstitutionService {

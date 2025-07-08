@@ -5,7 +5,7 @@ import { catchError } from 'rxjs/operators';
 import {Student, Syllabus} from '../model/student.entity'; // Usando los modelos actualizados con IDs numéricos
 
 // Apunta a la nueva API de Spring Boot
-const API = 'http://localhost:8080/api/v1';
+const API = 'https://app-blocklearn.azurewebsites.net/api/v1';
 
 @Injectable({ providedIn: 'root' })
 export class StudentService {
