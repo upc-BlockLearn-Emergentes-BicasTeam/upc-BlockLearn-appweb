@@ -73,15 +73,17 @@ export class BlockchainComponent implements OnInit {
   getEntryLabel(entry: BlockchainEntry): string {
     switch (entry.type) {
       case 'CERTIFICATE':
-        return `Certificado emitido (ID de Referencia: ${entry.referenceId})`;
+        return `Certificado Emitido (Ref: #${entry.referenceId})`;
       case 'SYLLABUS':
-        return `Sílabo registrado (ID de Referencia: ${entry.referenceId})`;
+        return `Sílabo Registrado (Ref: #${entry.referenceId})`;
       case 'NOTE_RECORD':
-        return `Nota registrada (ID de Referencia: ${entry.referenceId})`;
+        return `Nota Creada (Ref: #${entry.referenceId})`;
+      case 'NOTE_RECORD_UPDATE':
+        return `Nota Actualizada (Ref: #${entry.referenceId})`;
       default:
-        // Forzar un chequeo exhaustivo por parte de TypeScript
+        // Esto ayuda a que TypeScript te avise si olvidas un caso
         const _exhaustiveCheck: never = entry.type;
-        return 'Entrada desconocida';
+        return `Evento Desconocido (Ref: #${entry.referenceId})`;
     }
   }
 }

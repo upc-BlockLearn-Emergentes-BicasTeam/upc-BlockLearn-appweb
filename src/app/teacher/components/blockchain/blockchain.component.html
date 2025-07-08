@@ -1,81 +1,118 @@
-<mat-card class="blockchain-card">
-  <mat-card-header>
-    <mat-card-title>Registro de Auditoría (Blockchain)</mat-card-title>
-    <mat-card-subtitle>
-      Un historial inmutable de los eventos importantes del sistema.
-    </mat-card-subtitle>
-  </mat-card-header>
-  <mat-divider></mat-divider>
+<div class.page-container>
+  <mat-card class="blockchain-card">
+    <mat-card-header>
+      <mat-card-title>Registro de Auditoría (Blockchain)</mat-card-title>
+      <mat-card-subtitle>
+        Un historial inmutable de los eventos importantes del sistema.
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-divider></mat-divider>
 
-  <!-- Estado de carga -->
-  <div *ngIf="isLoading" class="loading-spinner">
-    <mat-spinner diameter="50"></mat-spinner>
-    <p>Cargando registros...</p>
-  </div>
-
-  <!-- Contenido principal -->
-  <div *ngIf="!isLoading">
-    <!-- Estado vacío -->
-    <div *ngIf="entries.length === 0" class="empty-state">
-      <mat-icon class="empty-icon">history_toggle_off</mat-icon>
-      <h2>No hay registros de auditoría</h2>
-      <p>A medida que se generen notas, sílabos o certificados, aparecerán aquí.</p>
+    <!-- Estado de carga -->
+    <div *ngIf="isLoading" class="loading-spinner">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Cargando registros...</p>
     </div>
 
-    <!-- Lista de entradas de la cadena -->
-    <mat-accordion multi class="accordion" *ngIf="entries.length > 0">
-      <!-- Encabezado de la tabla (solo visible en escritorio) -->
-      <div class="panel-header header-row">
-        <div class="col index">Bloque #</div>
-        <div class="col type">Tipo de Evento</div>
-        <div class="col hash">Hash del Bloque</div>
+    <!-- Contenido principal -->
+    <div *ngIf="!isLoading">
+      <!-- Estado vacío -->
+      <div *ngIf="entries.length === 0" class="empty-state">
+        <mat-icon class="empty-icon">history_toggle_off</mat-icon>
+        <h2>No hay registros de auditoría</h2>
+        <p>A medida que se generen notas, sílabos o certificados, aparecerán aquí.</p>
       </div>
 
-      <mat-expansion-panel *ngFor="let entry of entries; let i = index">
-        <mat-expansion-panel-header class="panel-header">
-          <!-- Columnas visibles cuando el panel está colapsado -->
-          <div class="col index">{{ i }}</div> <!-- Mostramos el índice como número de bloque -->
-          <div class="col type">{{ entry.type }}</div>
-          <div class="col hash">{{ entry.blockHash | slice:0:12 }}...</div> <!-- Acortamos el hash para la vista previa -->
-
-          <mat-panel-description class="toggle-icon">
-            Ver Detalles
-            <mat-icon>expand_more</mat-icon>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-
-        <!-- Contenido del panel cuando se expande -->
-        <div class="panel-content">
-          <h3 class="entry-label">{{ getEntryLabel(entry) }}</h3>
-
-          <div class="details">
-            <div class="detail-item">
-              <strong>ID del Registro:</strong> <span>{{ entry.id }}</span>
-            </div>
-            <div class="detail-item">
-              <strong>ID del Recurso Relacionado:</strong> <span>{{ entry.referenceId }}</span>
-            </div>
-            <div class="detail-item">
-              <strong>Fecha de Creación:</strong> <span>{{ entry.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</span>
-            </div>
-            <mat-divider></mat-divider>
-            <div class="detail-item hash-item">
-              <strong>Hash del Bloque Anterior:</strong>
-              <span class="hash-value">{{ entry.previousBlockHash }}</span>
-            </div>
-            <div class="detail-item hash-item">
-              <strong>Hash de este Bloque:</strong>
-              <span class="hash-value">{{ entry.blockHash }}</span>
-            </div>
-          </div>
-
-          <div class="block-button">
-            <button mat-raised-button color="primary" (click)="goToBlock(entry)">
-              Ver en Explorador (Simulado)
-            </button>
-          </div>
+      <!-- Lista de entradas de la cadena -->
+      <mat-accordion multi class="accordion" *ngIf="entries.length > 0">
+        <!-- Encabezado de la tabla (solo visible en escritorio) -->
+        <div class="panel-header header-row">
+          <div class="col index">Bloque #</div>
+          <div class="col type">Tipo de Evento</div>
+          <div class="col hash">Hash del Bloque</div>
+          <div class="col validation">Estado</div> <!-- Nueva columna para el estado -->
         </div>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </div>
-</mat-card>
+
+        <mat-expansion-panel *ngFor="let entry of entries; let i = index">
+          <mat-expansion-panel-header class="panel-header">
+            <!-- Columnas visibles cuando el panel está colapsado -->
+            <div class="col index">{{ i }}</div> <!-- El bloque 0 es el Génesis -->
+            <div class="col type">{{ getEntryLabel(entry) }}</div>
+            <div class="col hash">{{ entry.blockHash | slice:0:12 }}...</div>
+
+            <!-- ========================================================== -->
+            <!-- [NUEVO] Icono de estado de validación en la cabecera        -->
+            <!-- ========================================================== -->
+            <div class="col validation">
+              <ng-container *ngIf="i > 0">
+                <mat-icon *ngIf="entry.previousBlockHash === entries[i - 1].blockHash"
+                          class="valid-icon" matTooltip="Cadena válida">
+                  verified_user
+                </mat-icon>
+                <mat-icon *ngIf="entry.previousBlockHash !== entries[i - 1].blockHash"
+                          class="invalid-icon" matTooltip="¡Cadena ROTA!">
+                  gpp_bad
+                </mat-icon>
+              </ng-container>
+              <mat-icon *ngIf="i === 0" class="genesis-icon" matTooltip="Bloque Génesis">anchor</mat-icon>
+            </div>
+
+            <mat-panel-description class="toggle-icon">
+              Ver Detalles <mat-icon>expand_more</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <!-- Contenido del panel cuando se expande -->
+          <div class="panel-content">
+            <h3 class="entry-label">{{ getEntryLabel(entry) }}</h3>
+
+            <div class="details">
+              <div class="detail-item">
+                <strong>ID del Bloque:</strong> <span>{{ entry.id }}</span>
+              </div>
+              <div class="detail-item">
+                <strong>ID del Recurso Relacionado:</strong> <span>{{ entry.referenceId }}</span>
+              </div>
+              <div class="detail-item">
+                <strong>Fecha de Creación:</strong> <span>{{ entry.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+              </div>
+              <mat-divider></mat-divider>
+              <div class="detail-item hash-item">
+                <strong>Hash del Bloque Anterior:</strong>
+                <span class="hash-value">{{ entry.previousBlockHash }}</span>
+              </div>
+              <div class="detail-item hash-item">
+                <strong>Hash de este Bloque:</strong>
+                <span class="hash-value">{{ entry.blockHash }}</span>
+              </div>
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- [NUEVO] Sección de Validación Detallada                     -->
+            <!-- ========================================================== -->
+            <mat-divider></mat-divider>
+            <div class="validation-details" *ngIf="i > 0">
+              <h4>Verificación de Integridad</h4>
+              <div class="validation-status" [ngClass]="{'is-valid': entry.previousBlockHash === entries[i - 1].blockHash, 'is-invalid': entry.previousBlockHash !== entries[i - 1].blockHash}">
+                <ng-container *ngIf="entry.previousBlockHash === entries[i - 1].blockHash; else invalidBlock">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>El hash del bloque anterior ({{ i - 1 }}) coincide. La cadena es consistente.</span>
+                </ng-container>
+                <ng-template #invalidBlock>
+                  <mat-icon>warning</mat-icon>
+                  <span><strong>¡ALERTA!</strong> El hash del bloque anterior no coincide. La cadena ha sido alterada.</span>
+                </ng-template>
+              </div>
+            </div>
+
+            <div class="block-button">
+              <button mat-raised-button color="primary" (click)="goToBlock(entry)">
+                Ver en Explorador (Simulado)
+              </button>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </mat-card>
+</div>

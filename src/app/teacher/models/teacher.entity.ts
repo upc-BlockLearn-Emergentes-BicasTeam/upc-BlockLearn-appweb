@@ -90,7 +90,7 @@ export interface BlockchainEntry {
   id: number;
   blockHash: string;
   previousBlockHash: string;
-  type: 'SYLLABUS' | 'CERTIFICATE' | 'NOTE_RECORD';
+  type: 'SYLLABUS' | 'CERTIFICATE' | 'NOTE_RECORD' | 'NOTE_RECORD_UPDATE';
   referenceId: number;
   createdAt: string; // Fecha en formato ISO
 }
