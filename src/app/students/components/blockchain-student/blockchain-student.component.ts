@@ -7,11 +7,13 @@ import {CourseService} from '../../services/course.service';
 import {CertificateService} from '../../services/certificate.service';
 import {AuthService} from '../../../iam/services/auth.service';
 import {NgForOf} from '@angular/common';
+import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-blockchain-student',
   imports: [
-    NgForOf
+    NgForOf, CommonModule
   ],
   templateUrl: './blockchain-student.component.html',
   styleUrl: './blockchain-student.component.css'

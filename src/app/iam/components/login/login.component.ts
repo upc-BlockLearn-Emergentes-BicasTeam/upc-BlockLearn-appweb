@@ -8,11 +8,13 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgOptimizedImage } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-login',
   // ... tus imports no cambian ...
-  imports: [ FormsModule, RouterLink, MatLabel, MatFormField, MatPrefix, MatInput, MatButton, MatIcon ],
+  imports: [ FormsModule, RouterLink, MatLabel, MatFormField, MatPrefix, MatInput, MatButton, MatIcon, CommonModule ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })

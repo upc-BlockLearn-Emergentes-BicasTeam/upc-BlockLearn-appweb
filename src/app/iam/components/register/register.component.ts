@@ -8,11 +8,13 @@ import { MatFormField, MatInput, MatLabel, MatPrefix } from '@angular/material/i
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-register',
   // ... tus imports no cambian ...
-  imports: [ FormsModule, RouterLink, MatLabel, MatIcon, MatPrefix, MatInput, MatFormField, MatButton ],
+  imports: [ FormsModule, RouterLink, MatLabel, MatIcon, MatPrefix, MatInput, MatFormField, MatButton, CommonModule ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
