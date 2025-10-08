@@ -26,11 +26,6 @@
   margin-left: 1rem;
 }
 
-
-.spacer {
-  flex-grow: 5; /* Este elemento "crece" para empujar lo que venga después hacia abajo */
-}
-
 /* Mat-nav-list / Mat-list-item */
 .mat-nav-list {
   margin-top: 1rem;

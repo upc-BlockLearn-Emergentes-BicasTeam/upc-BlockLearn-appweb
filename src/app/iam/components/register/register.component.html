@@ -5,9 +5,7 @@
   <!-- ========================================================== -->
   <div class="branding-pane">
     <div class="branding-content">
-      <img src="../assets/logoblocklearn.png" alt="Intranet Logo" class="branding-logo">
-      <h1 class="branding-title">Bienvenido</h1>
-
+      <img src="assets/images/intranet-logo.svg" alt="Intranet Logo" class="branding-logo">
       <h1 class="branding-title">Crea tu Cuenta</h1>
       <p class="branding-subtitle">Registra tu institución y empieza a transformar la gestión académica.</p>
     </div>
@@ -27,31 +25,27 @@
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Nombre de la Institución</mat-label>
           <mat-icon matPrefix>domain</mat-icon>
-          <!-- CAMBIO AQUÍ: institution.name -> institutionData.name -->
-          <input matInput id="institutionName" [(ngModel)]="institutionData.name" name="institutionName" required>
+          <input matInput id="institutionName" [(ngModel)]="institution.name" name="institutionName" required>
         </mat-form-field>
 
         <!-- Campo de Email -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Correo Electrónico del Administrador</mat-label>
           <mat-icon matPrefix>email</mat-icon>
-          <!-- CAMBIO AQUÍ: user.email -> userData.email -->
-          <input matInput type="email" id="email" [(ngModel)]="userData.email" name="email" required placeholder="tu@correo.com">
+          <input matInput type="email" id="email" [(ngModel)]="user.email" name="email" required placeholder="tu@correo.com">
         </mat-form-field>
 
         <!-- Campo de Contraseña -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Contraseña</mat-label>
           <mat-icon matPrefix>lock</mat-icon>
-          <!-- CAMBIO AQUÍ: user.password -> userData.password -->
-          <input matInput type="password" id="password" [(ngModel)]="userData.password" name="password" required>
+          <input matInput type="password" id="password" [(ngModel)]="user.password" name="password" required>
         </mat-form-field>
 
         <!-- Mensaje de Error (Ahora dinámico) -->
-        <!-- CAMBIO AQUÍ: Se muestra el mensaje de `errorMessage` -->
-        <div class="error-message" *ngIf="errorMessage">
+        <div class="error-message" *ngIf="error">
           <mat-icon>warning</mat-icon>
-          <span>{{ errorMessage }}</span>
+          <span>{{ error }}</span>
         </div>
 
         <!-- Botón de Submit -->

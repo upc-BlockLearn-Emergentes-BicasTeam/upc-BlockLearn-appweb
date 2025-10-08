@@ -1,14 +1,10 @@
 export class InstitutionEntity {
   id?: number;
   name: string;
-  userId: number; // Cambiamos 'idUser' a 'userId' para que coincida con la API
-  logoUrl?: string;
-  address?: string;
-  email?: string;
-  phone?: string;
+  idUser: number ;
 
   constructor() {
     this.name = '';
-    this.userId = 0;
+    this.idUser = 0;
   }
 }

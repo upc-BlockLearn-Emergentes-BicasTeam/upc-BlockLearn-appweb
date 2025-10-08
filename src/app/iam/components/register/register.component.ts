@@ -4,76 +4,83 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { UserEntity } from '../../model/user.entity';
 import { InstitutionEntity } from '../../model/institution.entity';
-import { MatFormField, MatInput, MatLabel, MatPrefix } from '@angular/material/input';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { HttpErrorResponse } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
-
+import { firstValueFrom } from 'rxjs';
+import {MatFormField, MatInput, MatLabel, MatPrefix} from '@angular/material/input';
+import {MatButton} from '@angular/material/button';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-register',
-  // ... tus imports no cambian ...
-  imports: [ FormsModule, RouterLink, MatLabel, MatIcon, MatPrefix, MatInput, MatFormField, MatButton, CommonModule ],
+  imports: [
+    FormsModule,
+    RouterLink,
+    MatLabel,
+    MatLabel,
+    MatIcon,
+    MatPrefix,
+    MatInput,
+    MatFormField,
+    MatIcon,
+    MatButton,
+    MatIcon,
+    MatIcon,
+    MatIcon
+  ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
-  // Los datos del formulario se vinculan a estos objetos
-  userData: Omit<UserEntity, 'id'> = { email: '', password: '', role: 'institution' };
-  institutionData: Omit<InstitutionEntity, 'id' | 'userId'> = { name: '', address: '', email: '', phone: '', logoUrl: '' };
-
-  errorMessage: string | null = null;
+  user: UserEntity = new UserEntity();
+  institution: InstitutionEntity = new InstitutionEntity();
+  error: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
   async registerInstitution() {
-    this.errorMessage = null; // Resetea el mensaje de error
+    await this.validateInputs();
+    if (!this.error) {
+      try {
+        // Crear usuario con rol "institution"
+        this.user.role = 'institution';
+        const userCreated: any = await firstValueFrom(this.authService.registerUser(this.user));
+        this.institution.idUser = userCreated.id;
 
-    // 1. Validar que el email no exista
-    try {
-      // findUserByEmailAndPassword ahora solo toma el email para esta validación
-      await this.authService.findUserByEmailAndPassword(this.userData.email!).toPromise();
-      // Si la petición tiene éxito, significa que el email YA existe.
-      this.errorMessage = 'El correo electrónico ya está en uso.';
-      return;
-    } catch (error) {
-      const httpError = error as HttpErrorResponse;
-      // Esperamos un error 404, que significa que el email está disponible.
-      if (httpError.status !== 404) {
-        this.errorMessage = 'Error al validar el correo. Por favor, inténtelo de nuevo.';
-        console.error('Error validating email:', httpError);
-        return;
+        // Crear institución asociada al usuario
+        this.authService.registerInstitution(this.institution).subscribe((data: any) => {
+          console.log("Institute Created Successfully", data);
+          this.router.navigate([`/institution/profile/${data.id}`]); // Redirige con ID de la institución
+        });
+
+      } catch (e) {
+        console.log("Error in register Institution", e);
+        this.error = true;
       }
     }
+  }
 
-    // Si el email está disponible (error 404), continuamos...
 
-    // 2. Registrar el usuario
-    this.authService.registerUser(this.userData).subscribe({
-      next: (createdUser) => {
-        if (!createdUser.id) {
-          this.errorMessage = 'No se pudo obtener el ID del usuario creado.';
-          return;
-        }
+  async createUser() {
+    try {
+      this.user.role = "institution";
+      const data: any = await firstValueFrom(this.authService.registerUser(this.user));
+      console.log(data);
+      this.institution.idUser = data.id;
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
-        // 3. Con el ID del usuario, registrar la institución
-        this.authService.registerInstitution(createdUser.id, this.institutionData).subscribe({
-          next: (createdInstitution) => {
-            console.log("Institution and User created successfully", createdInstitution);
-            // Redirigir al perfil de la institución recién creada
-            this.router.navigate([`/institution/profile/${createdInstitution.id}`]);
-          },
-          error: (err) => {
-            this.errorMessage = 'Error al crear el perfil de la institución.';
-            console.error('Error creating institution:', err);
-          }
-        });
-      },
-      error: (err) => {
-        this.errorMessage = 'Error al crear el usuario.';
-        console.error('Error creating user:', err);
+
+  async validateInputs() {
+    try {
+      const emailCheckResult: any = await firstValueFrom(this.authService.findUserByEmail(this.user.email));
+      console.log(emailCheckResult);
+      if (emailCheckResult.length > 0) {
+        console.log('email already exists');
+        this.error = true;
       }
-    });
+    } catch (e) {
+      console.log("Error email Checking", e);
+    }
   }
 }

@@ -1,3 +1,5 @@
+<!-- src/app/institution/pages/courses/courses.component.html -->
+
 <!-- Contenedor principal con nuestro estilo unificado -->
 <div class="page-container">
 
@@ -24,8 +26,7 @@
           <div class="info-item">
             <mat-icon class="info-icon">person_outline</mat-icon>
             <span class="info-label">Docente:</span>
-            <!-- CAMBIO: Ahora se usa `teacherId` para buscar el nombre -->
-            <span class="info-value">{{ getTeacherFullName(course.teacherId) || 'No asignado' }}</span>
+            <span class="info-value">{{ getTeacherFullName(course.idTeacher) || 'No asignado' }}</span>
           </div>
           <div class="info-item">
             <mat-icon class="info-icon">group</mat-icon>
@@ -40,11 +41,10 @@
           <div class="info-item">
             <mat-icon class="info-icon">picture_as_pdf</mat-icon>
             <span class="info-label">Sílabo:</span>
-            <!-- CAMBIO: Usamos `syllabusMap` para determinar si el botón está deshabilitado -->
-            <button mat-stroked-button color="primary" class="syllabus-btn" (click)="viewSyllabus(course)" [disabled]="!syllabusMap[course.id]">
+            <button mat-stroked-button color="primary" class="syllabus-btn" (click)="viewSyllabus(course)" [disabled]="!course.syllabusFileName">
               Ver Sílabo
             </button>
-            <span class="info-value-subtle" *ngIf="!syllabusMap[course.id]">(No subido)</span>
+            <span class="info-value-subtle" *ngIf="!course.syllabusFileName">(No subido)</span>
           </div>
         </mat-card-content>
         <mat-card-actions class="course-card-actions">
@@ -91,11 +91,8 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Docente a cargo</mat-label>
-        <!-- ===== CAMBIO CLAVE AQUÍ ===== -->
-        <!-- Ahora el ngModel se vincula a `formCourse.teacherId` -->
-        <!-- y el [value] de cada opción es el `t.id` (un número) -->
-        <mat-select [(ngModel)]="formCourse.teacherId">
-          <mat-option *ngFor="let t of teachers" [value]="t.id">{{ t.firstName }} {{ t.lastName }}</mat-option>
+        <mat-select [(ngModel)]="formCourse.teacher">
+          <mat-option *ngFor="let t of teachers" [value]="t">{{ t.firstName }} {{ t.lastName }}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
@@ -108,7 +105,7 @@
         <div *ngFor="let w of formCourse.notesWeight; let i = index" class="weight-row">
           <mat-form-field appearance="outline" class="weight-field">
             <mat-label>Peso {{ i + 1 }}</mat-label>
-            <input type="number" matInput [(ngModel)]="formCourse.notesWeight[i]" name="weight-{{i}}">
+            <input type="number" matInput [(ngModel)]="formCourse.notesWeight[i]">
           </mat-form-field>
           <button mat-icon-button color="warn" (click)="removeNoteWeight(i)" matTooltip="Eliminar peso">
             <mat-icon>remove_circle_outline</mat-icon>
@@ -144,7 +141,7 @@
   </mat-dialog-actions>
 </ng-template>
 
-<!-- Diálogo de Confirmación de Eliminación -->
+<!-- ═══════════ Diálogo de Confirmación de Eliminación ═══════════ -->
 <ng-template #deleteConfirmTpl>
   <h2 mat-dialog-title>Confirmar Eliminación</h2>
   <mat-dialog-content>
@@ -153,6 +150,7 @@
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close>Cancelar</button>
+    <!-- [mat-dialog-close]="true" enviará 'true' como resultado cuando se cierre -->
     <button mat-flat-button color="warn" [mat-dialog-close]="true">
       Sí, Eliminar
     </button>

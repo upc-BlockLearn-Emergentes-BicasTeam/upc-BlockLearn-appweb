@@ -1,60 +1,82 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import {Student, Syllabus} from '../model/student.entity'; // Usando los modelos actualizados con IDs numéricos
+import { HttpClient } from '@angular/common/http';
+import { Observable, forkJoin, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
-// Apunta a la nueva API de Spring Boot
-const API = 'https://app-blocklearn.azurewebsites.net/api/v1';
+import {
+  Student,
+  Course,
+  Syllabus,
+  Enrollment,
+  NoteRecord,
+  Certificate // <--- [NUEVO] Importar la entidad Certificate
+} from '../model/student.entity';
 
 @Injectable({ providedIn: 'root' })
 export class StudentService {
 
+  private readonly BASE = 'http://localhost:3000';
+
   constructor(private http: HttpClient) {}
 
-  /**
-   * Obtiene el perfil completo de un estudiante, incluyendo todas sus matrículas,
-   * y los detalles de cada curso, notas y certificados.
-   * @param studentId - El ID del perfil del estudiante.
-   */
-  getStudentProfileById(studentId: number): Observable<Student> {
-    // Esta única llamada ahora devuelve toda la información necesaria y ensamblada.
-    // Llama al nuevo endpoint que creaste en el backend.
-    return this.http.get<Student>(`${API}/students/${studentId}/profile`).pipe(
-      catchError(this.handleError)
+  getById(id: string): Observable<Student> {
+    // 1. Obtenemos el objeto base del estudiante
+    return this.http.get<Student>(`${this.BASE}/students/${id}`).pipe(
+      // 2. En paralelo, obtenemos todas las colecciones de datos relacionadas
+      switchMap((rawStudent: Student) =>
+        forkJoin({
+          rawStudent: of(rawStudent),
+          courses: this.http.get<Course[]>(`${this.BASE}/courses`),
+          teachers: this.http.get<any[]>(`${this.BASE}/teachers`),
+          syllabuses: this.http.get<Syllabus[]>(`${this.BASE}/syllabuses`),
+          enrollments: this.http.get<Enrollment[]>(`${this.BASE}/enrollments?idStudent=${rawStudent.id}`),
+          notesRecords: this.http.get<NoteRecord[]>(`${this.BASE}/notesRecords`),
+          // [NUEVO] Obtenemos todos los certificados que pertenecen a este estudiante.
+          certificates: this.http.get<Certificate[]>(`${this.BASE}/certificates?idStudent=${rawStudent.id}`)
+        })
+      ),
+
+      // 3. Ensamblamos el objeto Student final con todas sus relaciones
+      map(({ rawStudent, courses, teachers, syllabuses, enrollments, notesRecords, certificates }) => {
+        const studentEnrollments = enrollments.map(enrollment => {
+          const courseDetails = courses.find(c => c.id === enrollment.idCourse);
+          if (!courseDetails) return null;
+
+          const teacherDetails = teachers.find(t => t.id === courseDetails.idTeacher);
+          courseDetails.teacherName = teacherDetails ? `${teacherDetails.firstName} ${teacherDetails.lastName}` : 'No asignado';
+          courseDetails.syllabus = syllabuses.find(s => s.idCourse === courseDetails.id);
+
+          const notesForEnrollment = notesRecords.filter(nr => nr.idEnrollment === enrollment.id);
+
+          const weights = courseDetails.notesWeight ?? [];
+          const average = notesForEnrollment.length > 0
+            ? +(notesForEnrollment.reduce((sum, note, index) => {
+              const weight = weights[index] ?? 0;
+              return sum + (note.score * (weight / 100));
+            }, 0)).toFixed(1)
+            : 0;
+
+          // [NUEVO] Buscamos el certificado para esta matrícula específica.
+          const certificateForEnrollment = certificates.find(c => c.idEnrollment === enrollment.id);
+
+          const finalEnrollment: Enrollment = {
+            ...enrollment,
+            course: courseDetails,
+            notesRecords: notesForEnrollment,
+            average: average,
+            certificate: certificateForEnrollment // <-- Lo adjuntamos aquí
+          };
+          return finalEnrollment;
+        })
+          .filter((e): e is Enrollment => e !== null);
+
+        const finalStudent: Student = { ...rawStudent, enrollments: studentEnrollments };
+        return finalStudent;
+      })
     );
   }
 
-  /**
-   * Actualiza los datos del perfil de un estudiante (nombre, teléfono, avatar).
-   * @param studentId - El ID del perfil del estudiante a actualizar.
-   * @param payload - Los datos a modificar.
-   */
-  updateStudentProfile(studentId: number, payload: Partial<Omit<Student, 'id' | 'userId' | 'institutionId'>>): Observable<Student> {
-    // Llama al endpoint PUT que ya creaste en el backend para actualizar.
-    return this.http.put<Student>(`${API}/students/${studentId}`, payload).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  /**
-   * Manejador de errores centralizado para el servicio.
-   */
-  private handleError(error: HttpErrorResponse) {
-    console.error('An error occurred in StudentService:', error);
-    const errorBody = error.error;
-    // Intenta obtener un mensaje de error más específico del backend si está disponible
-    const errorMessage = (errorBody && typeof errorBody.message === 'string')
-      ? errorBody.message
-      : `Error: ${error.statusText} (Status: ${error.status})`;
-
-    return throwError(() => new Error(errorMessage || 'An error occurred. Please try again later.'));
-  }
-
-
-  getSyllabusByCourseId(courseId: number): Observable<Syllabus> {
-    return this.http.get<Syllabus>(`${API}/syllabuses/course/${courseId}`).pipe(
-      catchError(this.handleError)
-    );
+  update(id: string, payload: Partial<Student>): Observable<Student> {
+    return this.http.patch<Student>(`${this.BASE}/students/${id}`, payload);
   }
 }

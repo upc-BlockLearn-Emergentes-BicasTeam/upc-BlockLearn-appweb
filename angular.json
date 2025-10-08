@@ -24,8 +24,7 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              },
-              "src/assets"
+              }
             ],
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
@@ -38,13 +37,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "2.5mb"
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "20kb",
-                  "maximumError": "25kb"
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
                 }
               ],
               "outputHashing": "all"
@@ -84,8 +83,7 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              },
-              "src/assets"
+              }
             ],
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",

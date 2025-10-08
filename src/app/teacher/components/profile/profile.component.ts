@@ -8,10 +8,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar'; // Importar MatSnackBar
 
 import { TeacherService } from '../../services/teacher.service';
-// CAMBIO: Usamos el modelo actualizado con IDs numéricos
 import { Teacher } from '../../models/teacher.entity';
 
 @Component({
@@ -31,52 +29,48 @@ import { Teacher } from '../../models/teacher.entity';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  // CAMBIO: Inicializamos con valores por defecto y tipos correctos
   teacher: Teacher = {
-    id: 0,
-    userId: 0,
-    institutionId: 0,
+    id: '',
+    idUser: '',
+    idInstitution: '',
     firstName: '',
     lastName: '',
     email: '',
+    phone: '',
+    avatarUrl: '',
+    courses: [],
+    blockchainEntries: []
   };
 
-  private originalTeacher!: Teacher; // Para la función "Cancelar"
+  defaultAvatar = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNjYWQxZGUiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWNpcmNsZS11c2VyLXJvdW5kIj48cGF0aCBkPSJNMjQgMTAuM2ExMCAxMCAwIDAgMCAxMC4zLTEwLjMiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjEwIiByPSI0Ii8+PHBhdGggZD0iTTE4LjM3IDE4LjgzYTYgNiAwIDAgMC0xMi43NCAwIi8+PC9zdmc+';
+
   isEditing = false;
   isLoading = false;
 
-  defaultAvatar = 'data:image/svg+xml;base64,...'; // (Tu SVG aquí)
-
   constructor(
     private teacherSvc: TeacherService,
-    private route: ActivatedRoute,
-    private snack: MatSnackBar // Inyectar MatSnackBar para notificaciones
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    // CAMBIO: Obtenemos el ID de la URL y lo convertimos a número
     const teacherId = this.route.snapshot.paramMap.get('id');
     if (teacherId) {
-      this.teacher.id = +teacherId; // El '+' convierte string a número
+      this.teacher.id = teacherId;
       this.loadTeacher();
     } else {
       console.error('No se encontró el ID del docente en la URL');
-      this.snack.open('Error: No se pudo identificar al docente.', 'Cerrar');
     }
   }
 
   private loadTeacher(): void {
     this.isLoading = true;
-    // CAMBIO: Llamamos al nuevo método del servicio
-    this.teacherSvc.getTeacherProfile(this.teacher.id).subscribe({
+    this.teacherSvc.getById(this.teacher.id).subscribe({
       next: t => {
         this.teacher = t;
-        this.originalTeacher = JSON.parse(JSON.stringify(t)); // Guardamos copia para "cancelar"
         this.isLoading = false;
       },
       error: err => {
         console.error('Error al cargar el perfil del docente', err);
-        this.snack.open(err.message || 'Error al cargar el perfil.', 'Cerrar');
         this.isLoading = false;
       }
     });
@@ -87,29 +81,26 @@ export class ProfileComponent implements OnInit {
   }
 
   onSave(): void {
-    // Preparamos los datos a enviar, solo los campos editables
-    const { firstName, lastName, email, phone, avatarUrl } = this.teacher;
-    const updatedData: Partial<Teacher> = { firstName, lastName, email, phone, avatarUrl };
+    const updated: Partial<Teacher> = {
+      firstName: this.teacher.firstName,
+      lastName: this.teacher.lastName,
+      email: this.teacher.email,
+      phone: this.teacher.phone,
+      avatarUrl: this.teacher.avatarUrl
+    };
 
-    // CAMBIO: Llamamos al nuevo método de actualización
-    this.teacherSvc.updateTeacherProfile(this.teacher.id, updatedData).subscribe({
-      next: (updatedTeacher) => {
+    this.teacherSvc.update(this.teacher.id, updated).subscribe({
+      next: () => {
         this.isEditing = false;
-        this.teacher = updatedTeacher; // Actualizamos con la respuesta del servidor
-        this.originalTeacher = JSON.parse(JSON.stringify(updatedTeacher));
-        this.snack.open('Perfil actualizado con éxito.', 'OK', { duration: 3000 });
+        this.loadTeacher();
       },
-      error: err => {
-        console.error('Error al guardar los cambios', err);
-        this.snack.open(err.message || 'Error al guardar.', 'Cerrar');
-      }
+      error: err => console.error('Error al guardar los cambios', err)
     });
   }
 
   onCancel(): void {
     this.isEditing = false;
-    // Restauramos desde la copia original
-    this.teacher = JSON.parse(JSON.stringify(this.originalTeacher));
+    this.loadTeacher();
   }
 
   onLogoSelected(evt: Event): void {
@@ -119,7 +110,6 @@ export class ProfileComponent implements OnInit {
     const file = input.files[0];
     const reader = new FileReader();
     reader.onload = () => {
-      // Asignamos el resultado Base64 al avatarUrl para la vista previa
       this.teacher.avatarUrl = reader.result as string;
     };
     reader.readAsDataURL(file);

@@ -1,7 +1,7 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 
 /* Angular Material */
 import { MatCardModule } from '@angular/material/card';
@@ -20,35 +20,50 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 /* Servicios y modelos */
 import { TeacherService } from '../../services/teacher.service';
-import { Course, Enrollment, NoteRecord, Certificate } from '../../models/teacher.entity';
+import { Course, Student, BlockchainEntry, Syllabus, Enrollment, NoteRecord, Certificate } from '../../models/teacher.entity';
+
+// Si tuvieras un componente de diálogo reutilizable, lo importarías así:
+// import { ConfirmationDialogComponent } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-courses',
   standalone: true,
   imports: [
-    CommonModule, FormsModule,
-    MatCardModule, MatButtonModule, MatIconModule, MatDividerModule,
-    MatExpansionModule, MatFormFieldModule, MatSelectModule, MatOptionModule,
-    MatInputModule, MatDialogModule, MatProgressSpinnerModule, MatTooltipModule
+    CommonModule,
+    FormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDividerModule,
+    MatExpansionModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatInputModule,
+    MatDialogModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule
   ],
   templateUrl: './courses.component.html',
   styleUrls: ['./courses.component.css']
 })
 export class CoursesComponent implements OnInit {
 
-  @ViewChild('deleteConfirmTpl') deleteConfirmTpl!: TemplateRef<any>;
-
-  teacherId: number = 0;
+  teacherId = '';
   courses: Course[] = [];
+  enrollmentsByCourse: Record<string, Enrollment[]> = {};
+  syllabuses: Syllabus[] = [];
   selectedCourse: Course | null = null;
-  expanded: Record<number, boolean> = {};
+  expanded: Record<string, boolean> = {};
 
+  // Propiedades para la sección de Evaluaciones
   showCreateEval = false;
   newEvalQuestion = '';
   evalQuestions: string[] = [];
 
-  certificatesByEnrollment: Record<number, Certificate | null> = {};
-  isUploading: Record<number, boolean> = {};
+  // Propiedades para la gestión de certificados
+  certificatesByEnrollment: Record<string, Certificate | null> = {};
+  isUploading: Record<string, boolean> = {}; // Para mostrar un spinner por estudiante
 
   constructor(
     private route: ActivatedRoute,
@@ -59,119 +74,103 @@ export class CoursesComponent implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.teacherId = +id;
-      this.loadInitialData();
-    } else {
+    if (!id) {
       console.error('No se encontró el ID del profesor en la URL');
-      this.snack.open('Error: No se pudo identificar al profesor.', 'Cerrar');
+      return;
     }
+    this.teacherId = id;
+    this.initialLoad();
   }
 
-  private loadInitialData(): void {
-    this.tSvc.getTeacherProfile(this.teacherId).subscribe({
-      next: teacher => {
-        this.courses = teacher.courses ?? [];
-      },
-      error: err => {
-        console.error('Error al cargar los cursos del profesor', err);
-        this.snack.open(err.message || 'Error al cargar los cursos.', 'Cerrar');
-      }
-    });
-  }
-
-  selectCourse(course: Course): void {
-    this.expanded = {};
-    this.tSvc.getCourseDetails(course.id).subscribe({
-      next: detailedCourse => {
-        this.selectedCourse = detailedCourse;
-        this.selectedCourse.enrollments?.forEach(enrollment => {
-          this.recalculateAverage(enrollment);
+  private initialLoad(): void {
+    this.tSvc.getById(this.teacherId).subscribe(teacher => {
+      this.courses = teacher.courses ?? [];
+      this.enrollmentsByCourse = {};
+      this.courses.forEach(course => {
+        this.enrollmentsByCourse[course.id] = course.enrollments ?? [];
+        // Por cada matrícula, verificamos si ya tiene un certificado emitido
+        course.enrollments?.forEach(enrollment => {
           this.checkExistingCertificate(enrollment);
         });
-      },
-      error: err => {
-        this.snack.open(err.message || `Error al cargar detalles del curso ${course.name}.`, 'Cerrar');
-        this.selectedCourse = course;
-      }
+      });
     });
+
+    this.tSvc.getAllSyllabuses().subscribe(syls => this.syllabuses = syls);
+  }
+
+  /* ═════════════════ Acciones UI ═════════════════ */
+
+  selectCourse(c: Course): void {
+    this.selectedCourse = c;
+    this.expanded = {};
+    // Reseteamos el estado de las evaluaciones al seleccionar un nuevo curso
+    this.evalQuestions = [];
+    this.showCreateEval = false;
+    this.newEvalQuestion = '';
   }
 
   goBack(): void {
     this.selectedCourse = null;
-    this.loadInitialData();
   }
+
+  toggleExpand(enrollmentId: string): void {
+    this.expanded[enrollmentId] = !this.expanded[enrollmentId];
+  }
+
+  /* ═════════════════ Lógica de Gestión de Notas ═════════════════ */
 
   addNoteToEnrollment(enrollment: Enrollment, titleInput: HTMLInputElement, scoreInput: HTMLInputElement) {
     const newNoteTitle = titleInput.value.trim();
-    const newNoteScore = parseInt(scoreInput.value, 10);
+    const newNoteScore = parseFloat(scoreInput.value);
 
     if (!newNoteTitle || isNaN(newNoteScore) || newNoteScore < 0 || newNoteScore > 20) {
-      this.snack.open('Por favor, ingresa un título y una nota válida (0-20).', 'Cerrar');
+      this.snack.open('Por favor, ingresa un título y una nota válida (0-20).', 'Cerrar', { duration: 3000 });
       return;
     }
 
-    const newNoteData: Omit<NoteRecord, 'id'> = { enrollmentId: enrollment.id, title: newNoteTitle, score: newNoteScore };
+    const newNoteData: Omit<NoteRecord, 'id'> = {
+      idEnrollment: enrollment.id,
+      title: newNoteTitle,
+      score: newNoteScore
+    };
+
     this.tSvc.addNote(newNoteData).subscribe(createdNote => {
-      (enrollment.notesRecords = enrollment.notesRecords ?? []).push(createdNote);
-      this.recalculateAverage(enrollment);
+      enrollment.notesRecords?.push(createdNote);
+      this.recalculateAverage(enrollment, this.selectedCourse!);
       this.snack.open(`Nota "${createdNote.title}" añadida con éxito.`, 'OK', { duration: 2000 });
-      titleInput.value = ''; scoreInput.value = '';
+
+      titleInput.value = '';
+      scoreInput.value = '';
     });
   }
 
   updateNoteScore(enrollment: Enrollment, note: NoteRecord, event: Event) {
-    const inputElement = event.target as HTMLInputElement;
-    const newScore = parseInt(inputElement.value, 10);
-
-    if (isNaN(newScore) || newScore < 0 || newScore > 20) {
-      inputElement.value = note.score.toString();
-      this.snack.open('Por favor, ingrese una nota válida (0-20).', 'Cerrar');
-      return;
-    }
-
+    const newScore = parseFloat((event.target as HTMLInputElement).value);
+    if (isNaN(newScore) || newScore < 0 || newScore > 20) return;
     if (note.score === newScore) return;
 
-    // SOLUCIÓN 2: Lógica robusta de actualización
-    this.tSvc.updateNote(note.id, { score: newScore }).subscribe({
-      next: (updatedNote) => {
-        note.score = updatedNote.score;
-        this.recalculateAverage(enrollment);
-        this.snack.open(`Nota "${note.title}" actualizada.`, 'OK', { duration: 2000 });
-      },
-      error: (err) => {
-        inputElement.value = note.score.toString(); // Revertir el cambio en la vista si falla
-        console.error('Error updating note:', err);
-        this.snack.open(err.message || 'Error al actualizar la nota.', 'Cerrar');
-      }
+    this.tSvc.updateNote(note.id, { score: newScore }).subscribe(updatedNote => {
+      note.score = updatedNote.score;
+      this.recalculateAverage(enrollment, this.selectedCourse!);
+      this.snack.open(`Nota "${note.title}" actualizada a ${newScore}.`, 'OK', { duration: 2000 });
     });
   }
 
   deleteNote(enrollment: Enrollment, noteToDelete: NoteRecord) {
-    // --- INICIO DEL CAMBIO ---
-    const dialogRef = this.dialog.open(this.deleteConfirmTpl, {
-      width: '400px',
-      data: {
-        title: 'Confirmar Eliminación de Nota',
-        message: `¿Estás seguro de que quieres eliminar la nota "${noteToDelete.title}"?`
-      }
-    });
+    if (!confirm(`¿Estás seguro de que quieres eliminar la nota "${noteToDelete.title}"?`)) return;
 
-    dialogRef.afterClosed().subscribe(confirmed => {
-      if (confirmed) {
-        this.tSvc.deleteNote(noteToDelete.id).subscribe(() => {
-          enrollment.notesRecords = enrollment.notesRecords?.filter(n => n.id !== noteToDelete.id);
-          this.recalculateAverage(enrollment);
-          this.snack.open('Nota eliminada.', 'OK', { duration: 2000 });
-        });
+    this.tSvc.deleteNote(noteToDelete.id).subscribe(() => {
+      if (enrollment.notesRecords) {
+        enrollment.notesRecords = enrollment.notesRecords.filter(n => n.id !== noteToDelete.id);
       }
+      this.recalculateAverage(enrollment, this.selectedCourse!);
+      this.snack.open(`Nota eliminada.`, 'OK', { duration: 2000 });
     });
-    // --- FIN DEL CAMBIO ---
   }
 
-  private recalculateAverage(enrollment: Enrollment) {
+  private recalculateAverage(enrollment: Enrollment, course: Course) {
     const notes = enrollment.notesRecords ?? [];
-    const weights = this.selectedCourse?.notesWeight ?? [];
+    const weights = course.notesWeight ?? [];
 
     if (notes.length === 0) {
       enrollment.average = 0;
@@ -179,49 +178,71 @@ export class CoursesComponent implements OnInit {
     }
 
     const weightedSum = notes.reduce((sum, note, index) => {
-      const weight = weights[index] ?? (100 / notes.length);
-      return sum + (note.score * (weight / 100));
+      const weight = weights[index] ?? 0;
+      const weightedScore = note.score * (weight / 100);
+      return sum + weightedScore;
     }, 0);
 
     enrollment.average = +weightedSum.toFixed(1);
   }
 
+  /* ═════════════════ Lógica de Gestión de Certificados ═════════════════ */
+
   private checkExistingCertificate(enrollment: Enrollment): void {
-    this.tSvc.getCertificateByEnrollmentId(enrollment.id).subscribe({
-      next: cert => { this.certificatesByEnrollment[enrollment.id] = cert; },
-      error: () => { this.certificatesByEnrollment[enrollment.id] = null; }
+    this.tSvc.getCertificateByEnrollmentId(enrollment.id).subscribe(certs => {
+      this.certificatesByEnrollment[enrollment.id] = certs.length > 0 ? certs[0] : null;
     });
   }
 
   onFileSelected(event: Event, enrollment: Enrollment, course: Course): void {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) return;
+
     const file = input.files[0];
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+    const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
+
+    if (!allowedTypes.includes(file.type)) {
+      this.snack.open('Error: Solo se permiten archivos PDF, JPG o PNG.', 'Cerrar', { duration: 4000 });
+      return;
+    }
+    if (file.size > maxSizeInBytes) {
+      this.snack.open('Error: El archivo no puede superar los 5MB.', 'Cerrar', { duration: 4000 });
+      return;
+    }
 
     this.isUploading[enrollment.id] = true;
+
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      const certificateData: Omit<Certificate, 'id' | 'issuedAt'> = {
-        enrollmentId: enrollment.id,
-        courseId: course.id,
-        studentId: enrollment.studentId,
+      const certificateData: Omit<Certificate, 'id'> = {
+        idCourse: course.id,
+        idStudent: enrollment.idStudent,
+        idEnrollment: enrollment.id,
         fileName: file.name,
         fileType: file.type,
         fileData: reader.result as string,
+        issuedAt: new Date().toISOString(),
       };
 
       this.tSvc.uploadCertificate(certificateData).subscribe({
         next: newCertificate => {
           this.certificatesByEnrollment[enrollment.id] = newCertificate;
-          this.snack.open('Certificado subido con éxito.', 'OK');
+          this.snack.open('Certificado subido con éxito.', 'OK', { duration: 3000 });
           this.isUploading[enrollment.id] = false;
         },
         error: err => {
-          this.snack.open(err.message || 'Error al subir el archivo.', 'Cerrar');
+          console.error('Error al subir certificado:', err);
+          this.snack.open('Ocurrió un error al subir el archivo.', 'Cerrar', { duration: 4000 });
           this.isUploading[enrollment.id] = false;
         }
       });
+    };
+    reader.onerror = error => {
+      console.error('Error al leer el archivo:', error);
+      this.snack.open('No se pudo leer el archivo seleccionado.', 'Cerrar', { duration: 4000 });
+      this.isUploading[enrollment.id] = false;
     };
   }
 
@@ -229,32 +250,30 @@ export class CoursesComponent implements OnInit {
     const cert = this.certificatesByEnrollment[enrollment.id];
     if (!cert) return;
 
-    // --- INICIO DEL CAMBIO ---
-    const dialogRef = this.dialog.open(this.deleteConfirmTpl, {
-      width: '450px',
-      data: {
-        title: 'Eliminar Certificado',
-        message: `¿Seguro que quieres eliminar el certificado "${cert.fileName}"? Esta acción es irreversible.`
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(confirmed => {
-      if (confirmed) {
-        this.tSvc.deleteCertificate(cert.id).subscribe({
-          next: () => {
-            this.certificatesByEnrollment[enrollment.id] = null;
-            this.snack.open('Certificado eliminado.', 'OK');
-          },
-          error: err => {
-            this.snack.open(err.message || 'No se pudo eliminar el certificado.', 'Cerrar');
-          }
-        });
-      }
-    });
-    // --- FIN DEL CAMBIO ---
+    if (confirm(`¿Seguro que quieres eliminar el certificado "${cert.fileName}"? Esta acción es irreversible.`)) {
+      this.performDelete(cert.id, enrollment.id);
+    }
   }
 
-  toggleEvalForm() { this.showCreateEval = !this.showCreateEval; }
+  private performDelete(certificateId: string, enrollmentId: string): void {
+    this.tSvc.deleteCertificate(certificateId).subscribe({
+      next: () => {
+        this.certificatesByEnrollment[enrollmentId] = null;
+        this.snack.open('Certificado eliminado. Ahora puedes subir uno nuevo.', 'OK', { duration: 3000 });
+      },
+      error: err => {
+        console.error('Error al eliminar el certificado:', err);
+        this.snack.open('No se pudo eliminar el certificado.', 'Cerrar', { duration: 4000 });
+      }
+    });
+  }
+
+  /* ═════════════════ Lógica de Evaluaciones ═════════════════ */
+
+  toggleEvalForm() {
+    this.showCreateEval = !this.showCreateEval;
+  }
+
   addEvalQuestion() {
     const q = this.newEvalQuestion.trim();
     if (q) {
@@ -263,71 +282,38 @@ export class CoursesComponent implements OnInit {
     }
   }
 
-  viewSyllabus(course: Course) {
-    this.tSvc.getSyllabusByCourseId(course.id).subscribe({
-      next: (syllabus) => {
-        if (syllabus && syllabus.fileData) {
-          // La lógica para abrir el PDF que ya tenías en el InstitutionComponent
-          const base64 = syllabus.fileData.split(',')[1];
-          if (!base64) {
-            this.snack.open('Error: Formato de sílabo no válido.', 'Cerrar');
-            return;
-          }
-          const byteChars = atob(base64);
-          const byteNumbers = Array.from(byteChars, char => char.charCodeAt(0));
-          const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: 'application/pdf' });
-          const blobUrl = URL.createObjectURL(blob);
-          window.open(blobUrl, '_blank');
-        } else {
-          this.snack.open('No se encontró el archivo del sílabo para este curso.', 'Cerrar');
-        }
-      },
-      error: (err) => {
-        console.error("Error fetching syllabus:", err);
-        this.snack.open('No se encontró el sílabo para este curso.', 'Cerrar');
-      }
-    });
-  }
+  /* ═════════════════ Funciones Auxiliares ═════════════════ */
 
-  getFormulaString(weights: number[] | undefined): string {
-    if (!weights || weights.length === 0) return 'Sin definir';
-    const labels = ['PC1', 'EA', 'PC2', 'EB']; // O las etiquetas que correspondan
-    return weights.map((w, i) => `${w}% (${labels[i] || 'N' + (i + 1)})`).join(' + ');
-  }
-
-  finalizeEnrollment(enrollment: Enrollment): void {
-    if (enrollment.average < (this.selectedCourse?.passingGrade ?? 101)) {
-      this.snack.open('No se puede finalizar: el estudiante no ha alcanzado la nota mínima.', 'Cerrar');
+  viewSyllabus(c: Course) {
+    const syl = this.syllabuses.find(s => s.idCourse === c.id);
+    if (!syl) {
+      this.snack.open('Curso sin sílabo', 'Cerrar', { duration: 2500 });
       return;
     }
-
-    // --- INICIO DEL CAMBIO ---
-    // En lugar de confirm(), abrimos el diálogo de Material
-    const dialogRef = this.dialog.open(this.deleteConfirmTpl, {
-      width: '400px',
-      data: {
-        title: 'Finalizar Curso',
-        message: '¿Estás seguro de finalizar el curso para este estudiante? Esta acción permitirá emitir un certificado.'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(confirmed => {
-      // El diálogo devuelve 'true' si se hizo clic en "Sí, Continuar"
-      if (confirmed) {
-        this.tSvc.updateEnrollmentState(enrollment.id, 'completed').subscribe({
-          next: (updatedEnrollment) => {
-            enrollment.state = updatedEnrollment.state;
-            this.snack.open('Curso finalizado para el estudiante. Ya se puede emitir el certificado.', 'OK', { duration: 3500 });
-          },
-          error: (err) => {
-            console.error('Error finalizing enrollment:', err);
-            this.snack.open(err.message || 'Error al finalizar el curso.', 'Cerrar');
-          }
-        });
-      }
-    });
-    // --- FIN DEL CAMBIO ---
+    if (syl.fileData?.startsWith('data:application/pdf')) {
+      this.openBase64Pdf(syl.fileData, syl.fileName || 'syllabus.pdf');
+      return;
+    }
+    if (syl.fileName) {
+      window.open(`/assets/${this.encodeFile(syl.fileName)}`, '_blank');
+      return;
+    }
+    this.snack.open('No se encontró el PDF', 'Cerrar', { duration: 2500 });
   }
 
+  private openBase64Pdf(dataUri: string, title = 'syllabus.pdf') {
+    const base64 = dataUri.split(',')[1];
+    const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+    const blob = new Blob([bytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const w = window.open(url, '_blank');
+    if (!w) {
+      this.snack.open('Bloqueado por el navegador: permita pop-ups', 'Cerrar', { duration: 4000 });
+    }
+    w?.addEventListener('beforeunload', () => URL.revokeObjectURL(url));
+  }
+
+  private encodeFile(f: string) { return encodeURIComponent(f); }
+
+  goToBlock(id: string) { console.log('block-id', id); }
 }

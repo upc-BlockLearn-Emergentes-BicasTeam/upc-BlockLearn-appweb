@@ -1,132 +1,180 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import {forkJoin, Observable, throwError} from 'rxjs';
-import {catchError, map} from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable, forkJoin, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
+
+// Importamos los modelos actualizados y todas las entidades necesarias
 import {
   Teacher,
   Course,
+  Student,
+  BlockchainEntry,
+  Syllabus,
   Enrollment,
   NoteRecord,
-  Certificate,
-  BlockchainEntry,
-  Student,
-  Syllabus
+  Certificate // <--- [NUEVO] Se importa la nueva entidad Certificate
 } from '../models/teacher.entity';
-
-// Apuntamos a la nueva API de Spring Boot
-const API = 'https://app-blocklearn.azurewebsites.net/api/v1';
 
 @Injectable({ providedIn: 'root' })
 export class TeacherService {
 
+  private readonly BASE = 'http://localhost:3000';
+
   constructor(private http: HttpClient) {}
 
-  /**
-   * Obtiene el perfil completo de un profesor, incluyendo la lista de sus cursos.
-   * Asume un endpoint en el backend: GET /teachers/{id}?include=courses
-   */
-  getTeacherProfile(teacherId: number): Observable<Teacher> {
-    // Idealmente, el backend ya devuelve el profesor con sus cursos.
-    return this.http.get<Teacher>(`${API}/teachers/${teacherId}`).pipe(catchError(this.handleError));
-  }
+  /* ========================================================== */
+  /*  MÉTODOS CRUD PARA GESTIONAR NOTAS (NoteRecord)            */
+  /* ========================================================== */
 
-  /**
-   * Obtiene el detalle de un curso, incluyendo la lista de estudiantes matriculados.
-   * Asume un endpoint en el backend: GET /courses/{id}?include=enrollments.student
-   */
-
-
-  // --- MÉTODOS CRUD PARA NOTAS (NoteRecord) ---
-
-  getNotesByEnrollmentId(enrollmentId: number): Observable<NoteRecord[]> {
-    const params = new HttpParams().set('enrollmentId', enrollmentId);
-    return this.http.get<NoteRecord[]>(`${API}/notes-records`, { params }).pipe(catchError(this.handleError));
+  getNotesByEnrollmentId(enrollmentId: string): Observable<NoteRecord[]> {
+    return this.http.get<NoteRecord[]>(`${this.BASE}/notesRecords?idEnrollment=${enrollmentId}`);
   }
 
   addNote(noteData: Omit<NoteRecord, 'id'>): Observable<NoteRecord> {
-    return this.http.post<NoteRecord>(`${API}/notes-records`, noteData).pipe(catchError(this.handleError));
+    return this.http.post<NoteRecord>(`${this.BASE}/notesRecords`, noteData);
   }
 
-  updateNote(noteId: number, updatedData: Partial<NoteRecord>): Observable<NoteRecord> {
-    return this.http.put<NoteRecord>(`${API}/notes-records/${noteId}`, updatedData).pipe(catchError(this.handleError));
+  updateNote(noteId: string, updatedData: Partial<NoteRecord>): Observable<NoteRecord> {
+    return this.http.patch<NoteRecord>(`${this.BASE}/notesRecords/${noteId}`, updatedData);
   }
 
-  deleteNote(noteId: number): Observable<any> {
-    return this.http.delete(`${API}/notes-records/${noteId}`).pipe(catchError(this.handleError));
+  deleteNote(noteId: string): Observable<{}> {
+    return this.http.delete<{}>(`${this.BASE}/notesRecords/${noteId}`);
   }
 
-  // --- MÉTODOS CRUD PARA CERTIFICADOS (Certificate) ---
+  /* ==================================================================== */
+  /*  [NUEVO] MÉTODOS CRUD PARA GESTIONAR CERTIFICADOS (Certificate)      */
+  /* ==================================================================== */
 
-
-
-  getCertificateByEnrollmentId(enrollmentId: number): Observable<Certificate> {
-    const params = new HttpParams().set('enrollmentId', enrollmentId.toString());
-    // Asume que la API devuelve un solo objeto o 404, no un array.
-    return this.http.get<Certificate>(`${API}/certificates`, { params }).pipe(catchError(this.handleError));
+  /**
+   * Sube un nuevo certificado al sistema.
+   * @param certificateData - Los datos del certificado a crear, omitiendo el 'id'.
+   * @returns Un Observable con el certificado recién creado por el servidor.
+   */
+  uploadCertificate(certificateData: Omit<Certificate, 'id'>): Observable<Certificate> {
+    return this.http.post<Certificate>(`${this.BASE}/certificates`, certificateData);
   }
 
-  // --- HELPER DE MANEJO DE ERRORES ---
-
-  private handleError(error: HttpErrorResponse) {
-    console.error('An error occurred in TeacherService:', error);
-    const errorBody = error.error;
-    const errorMessage = (errorBody && typeof errorBody.message === 'string')
-      ? errorBody.message
-      : `Error: ${error.statusText} (Status: ${error.status})`;
-
-    return throwError(() => new Error(errorMessage || 'An error occurred.'));
+  /**
+   * Obtiene los certificados asociados a una matrícula específica.
+   * Usualmente devolverá un array con 0 o 1 elemento.
+   * @param enrollmentId - El ID de la matrícula.
+   * @returns Un Observable con un array de certificados.
+   */
+  getCertificateByEnrollmentId(enrollmentId: string): Observable<Certificate[]> {
+    return this.http.get<Certificate[]>(`${this.BASE}/certificates?idEnrollment=${enrollmentId}`);
   }
 
-  updateTeacherProfile(teacherId: number, changes: Partial<Omit<Teacher, 'id' | 'userId' | 'institutionId'>>): Observable<Teacher> {
-    return this.http.put<Teacher>(`${API}/teachers/${teacherId}`, changes).pipe(catchError(this.handleError));
+  /**
+   * Elimina un certificado existente.
+   * Útil si el profesor subió un archivo incorrecto y necesita reemplazarlo.
+   * @param certificateId - El ID del certificado a eliminar.
+   * @returns Un Observable vacío al completarse.
+   */
+  deleteCertificate(certificateId: string): Observable<{}> {
+    return this.http.delete<{}>(`${this.BASE}/certificates/${certificateId}`);
   }
 
-  deleteCertificate(certificateId: number): Observable<any> {
-    return this.http.delete(`${API}/certificates/${certificateId}`).pipe(catchError(this.handleError));
-  }
 
-  uploadCertificate(certificateData: Omit<Certificate, 'id' | 'issuedAt'>): Observable<Certificate> {
-    return this.http.post<Certificate>(`${API}/certificates`, certificateData).pipe(catchError(this.handleError));
-  }
+  /* ========================================================== */
+  /*  MÉTODOS HELPER EXISTENTES (SIN CAMBIOS)                   */
+  /* ========================================================== */
+  getAllStudents(): Observable<Student[]> { return this.http.get<Student[]>(`${this.BASE}/students`); }
+  getAllEnrollments(): Observable<Enrollment[]> { return this.http.get<Enrollment[]>(`${this.BASE}/enrollments`); }
+  getAllSyllabuses(): Observable<Syllabus[]> { return this.http.get<Syllabus[]>(`${this.BASE}/syllabuses`); }
+  update(id: string, payload: Partial<Teacher>): Observable<Teacher> { return this.http.patch<Teacher>(`${this.BASE}/teachers/${id}`, payload); }
 
-  getBlockchainEntries(): Observable<BlockchainEntry[]> {
-    return this.http.get<BlockchainEntry[]>(`${API}/blockchain-entries`).pipe(catchError(this.handleError));
-  }
 
-  getCourseDetails(courseId: number): Observable<Course> {
-    // Ahora hacemos 4 llamadas en paralelo
-    return forkJoin({
-      course: this.http.get<Course>(`${API}/courses/${courseId}`),
-      enrollments: this.http.get<Enrollment[]>(`${API}/enrollments`, { params: { courseId: courseId.toString() } }),
-      students: this.http.get<Student[]>(`${API}/students`),
-      // NUEVA LLAMADA: Obtiene TODOS los registros de notas
-      allNotes: this.http.get<NoteRecord[]>(`${API}/notes-records`)
-    }).pipe(
-      map(({ course, enrollments, students, allNotes }) => {
+  /* ========================================================== */
+  /*  MÉTODO getById REFACTORIZADO Y CORREGIDO                  */
+  /* ========================================================== */
 
-        // Ensamblamos los datos aquí en el frontend
-        enrollments.forEach(enrollment => {
-          // 1. Asignamos el perfil del estudiante a la matrícula
-          enrollment.student = students.find(s => s.id === enrollment.studentId);
+  /**
+   * Obtiene toda la información de un profesor y sus cursos relacionados.
+   *
+   * **NOTA DE ARQUITECTURA:** Este método actualmente descarga múltiples colecciones completas
+   * (todos los estudiantes, todas las matrículas, etc.) y las ensambla en el cliente.
+   * Si bien funciona para entornos pequeños, NO es escalable para una institución real.
+   *
+   * **RECOMENDACIÓN A FUTURO:** Refactorizar el backend para que un solo endpoint
+   * (ej. `GET /teachers/{id}?_embed=courses.enrollments`) devuelva el objeto ya ensamblado.
+   * Esto reducirá drásticamente la carga de red y la complejidad del cliente.
+   */
+  getById(id: string): Observable<Teacher> {
 
-          // 2. NUEVO: Asignamos los registros de notas a la matrícula
-          enrollment.notesRecords = allNotes.filter(note => note.enrollmentId === enrollment.id);
+    // 1. Obtenemos el objeto del profesor
+    return this.http.get<Teacher>(`${this.BASE}/teachers/${id}`).pipe(
+
+      // 2. En paralelo, obtenemos todas las colecciones de datos relacionadas
+      switchMap(rawTeacher =>
+        forkJoin({
+          rawTeacher: of(rawTeacher),
+          courses: this.http.get<Course[]>(`${this.BASE}/courses?idTeacher=${rawTeacher.id}`),
+          students: this.getAllStudents(),
+          enrolls: this.getAllEnrollments(),
+          notesRecords: this.http.get<NoteRecord[]>(`${this.BASE}/notesRecords`),
+          entries: this.http.get<BlockchainEntry[]>(`${this.BASE}/blockchainEntries`)
+        })
+      ),
+
+      // 3. Ensamblamos el objeto Teacher final con todas sus relaciones
+      map(({ rawTeacher, courses, students, enrolls, notesRecords, entries }) => {
+
+        // Para cada curso del profesor...
+        const teacherCourses: Course[] = courses.map(course => {
+
+          // ...filtramos las matrículas que pertenecen a este curso
+          const courseEnrollments: Enrollment[] = enrolls
+            .filter(e => e.idCourse === course.id)
+            .map(enrollment => {
+
+              // Para cada matrícula, encontramos los datos del estudiante
+              const studentDetails = students.find(s => s.id === enrollment.idStudent);
+              if (!studentDetails) {
+                return null;
+              }
+
+              // Y también encontramos todas las notas asociadas a ESTA matrícula
+              const notesForEnrollment = notesRecords.filter(nr => nr.idEnrollment === enrollment.id);
+
+              // Calculamos el promedio para esta matrícula
+              const average = notesForEnrollment.length > 0
+                ? +(notesForEnrollment.reduce((sum, note) => sum + note.score, 0) / notesForEnrollment.length).toFixed(1)
+                : 0;
+
+              // Devolvemos un objeto de matrícula "enriquecido"
+              const finalEnrollment: Enrollment = {
+                ...enrollment,
+                student: studentDetails,
+                notesRecords: notesForEnrollment,
+                average: average
+              };
+              return finalEnrollment;
+            })
+            .filter(e => e !== null) as Enrollment[];
+
+          // Lógica para Blockchain (sin cambios)
+          const bcs = entries
+            .filter(e => e.course?.id === course.id || (e as any).idCourse === course.id)
+            .map(e => ({ ...e, course: undefined }));
+
+          // Construimos explícitamente el objeto Course final
+          const finalCourse: Course = {
+            ...course,
+            enrollments: courseEnrollments,
+            blockchainEntries: bcs
+          };
+          return finalCourse;
         });
 
-        course.enrollments = enrollments;
-        return course;
-      }),
-      catchError(this.handleError)
+        // Construimos explícitamente el objeto Teacher final
+        const finalTeacher: Teacher = {
+          ...rawTeacher,
+          courses: teacherCourses,
+        };
+
+        return finalTeacher;
+      })
     );
   }
-
-  getSyllabusByCourseId(courseId: number): Observable<Syllabus> {
-    return this.http.get<Syllabus>(`${API}/syllabuses/course/${courseId}`).pipe(catchError(this.handleError));
-  }
-
-  updateEnrollmentState(enrollmentId: number, newState: string): Observable<Enrollment> {
-    const payload = { state: newState };
-    return this.http.put<Enrollment>(`${API}/enrollments/${enrollmentId}/state`, payload).pipe(catchError(this.handleError));
-  }
-
 }

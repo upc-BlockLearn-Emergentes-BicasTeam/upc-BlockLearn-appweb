@@ -199,8 +199,3 @@
     font-size: 1.75rem;
   }
 }
-
-.branding-logo {
-  width: 150px; /* <-- Cambia este valor al tamaño que prefieras */
-  height: 50px;  /* <-- Buena práctica para mantener la proporción de la imagen */
-}

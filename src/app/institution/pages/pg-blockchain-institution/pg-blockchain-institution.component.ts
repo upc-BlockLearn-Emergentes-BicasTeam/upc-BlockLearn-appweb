@@ -9,8 +9,8 @@ import { MatButtonModule }   from '@angular/material/button';
 
 
 import {SidebarInstitutionComponent} from '../../components/sidebar-institution/sidebar-institution.component';
+import {BlockchainComponent} from '../../components/blockchain/blockchain.component';
 import {CoursesComponent} from '../../components/courses/courses.component';
-import {BlockchainComponent} from '../../../teacher/components/blockchain/blockchain.component';
 
 
 @Component({
@@ -23,7 +23,7 @@ import {BlockchainComponent} from '../../../teacher/components/blockchain/blockc
     MatIconModule,
     MatButtonModule,
 
-    SidebarInstitutionComponent, BlockchainComponent, CoursesComponent, BlockchainComponent],
+    SidebarInstitutionComponent, BlockchainComponent, CoursesComponent],
   templateUrl: './pg-blockchain-institution.component.html',
   styleUrls: ['./pg-blockchain-institution.component.css']
 })
